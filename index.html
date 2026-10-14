@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>لیگ موفقیت کلاس ششم ۵</title>
+<style>
+:root{--bg:#f2f5ef;--card:#fff;--ink:#14302a;--muted:#5d726b;--line:#d9e2da;--brand:#0f5c4d;--onbrand:#fff;--gold:#e3a72f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1e1a;--card:#172a25;--ink:#e8f1ed;--muted:#9bb3aa;--line:#27403a;--brand:#1c7a67;--onbrand:#fff;--gold:#f0b94a}}
+:root[data-theme="dark"]{--bg:#0f1e1a;--card:#172a25;--ink:#e8f1ed;--muted:#9bb3aa;--line:#27403a;--brand:#1c7a67;--onbrand:#fff;--gold:#f0b94a}
+*{box-sizing:border-box}
+html{height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'Vazirmatn',Tahoma,'Segoe UI',sans-serif;line-height:1.7}
+.wrap{max-width:720px;margin:0 auto;padding:28px 16px 16px}
+.hero{background:var(--brand);color:var(--onbrand);border-radius:20px;padding:24px 20px;display:flex;gap:16px;align-items:center}
+.medal{flex:none;width:64px;height:64px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-size:32px;box-shadow:0 0 0 5px rgba(255,255,255,.25)}
+.hero h1{margin:0;font-size:1.45rem;font-weight:800;line-height:1.4}
+.hero p{margin:4px 0 0;font-size:.95rem;opacity:.92}
+h2{font-size:1.1rem;margin:24px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 8px;text-align:center;font:inherit;color:var(--ink);cursor:pointer;min-height:104px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.tile:active{background:var(--line)}
+.tile:focus-visible,.back:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.tile .ic{font-size:30px}
+.tile b{font-weight:600;font-size:.95rem}
+.view{display:none}
+.view.on{display:block}
+.back{background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 14px;font:inherit;cursor:pointer;margin-bottom:12px}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:32px 16px;text-align:center}
+.empty .ic{font-size:48px}
+.foot{margin-top:28px;text-align:center;color:var(--muted);font-size:.85rem}
+.btn{background:var(--brand);color:var(--onbrand);border:0;border-radius:10px;padding:10px 16px;font:inherit;cursor:pointer}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:none;color:#c0392b;border:1px solid #c0392b}
+.btn.armed{background:#c0392b;color:#fff}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin:4px 0 10px}
+label{font-size:.9rem;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.badge{background:var(--gold);color:#222;border-radius:8px;padding:2px 10px;font-size:.85rem}
+.fs{width:100%;margin:4px 0 10px;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+.sc{width:90px;margin:0;text-align:center}
+.msg{background:var(--card);border:1px solid var(--gold);border-radius:10px;padding:10px;margin-bottom:12px}
+.strip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:14px}
+.muted{color:var(--muted);font-size:.9rem}
+ol{padding:0;margin:0;list-style:none}
+.st:last-child{border-bottom:0}
+.st{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+</style><link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f5c4d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="لیگ موفقیت">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+var parentText='',VER='۰٫۹۶',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
+function load(){try{var s=localStorage.getItem(KEY);if(s){var d=JSON.parse(s);if(d&&d.classes)return d}}catch(e){}return{v:1,classes:[],activeId:null}}
+var db=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){msg='ذخیره‌سازی در این مرورگر ممکن نشد.'}}
+function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function fa(n){return Number(n).toLocaleString('fa-IR')}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function norm(s){return String(s||'').replace(/\s+/g,' ').trim()}
+function active(){return db.classes.filter(function(c){return c.id===db.activeId&&!c.archived})[0]||null}
+function val(id){var e=document.getElementById(id);return e?norm(e.value):''}
+var menu=[['classes','کلاس‌ها','🏫'],['students','دانش‌آموزان','👧'],['groups','گروه‌ها','👥'],['exams','ثبت آزمون','📝'],['leagueInd','لیگ فردی','🥇'],['leagueGrp','لیگ گروهی','🏅'],['honors','افتخارات','⭐'],['backup','پشتیبان‌گیری','💾'],['settings','تنظیمات','⚙️']];
+function msgBox(){var m=msg?'<div class="msg" role="status">'+esc(msg)+'</div>':'';msg='';return m}
+function vHome(){
+  var c=active(),h='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>لیگ موفقیت<br>کلاس ششم&nbsp;۵</h1><p>دبستان سیدالشهدا<br>آموزگار: مرتضی دعائی</p></div></header>';
+  h+=msgBox();
+  h+='<div class="strip">'+(c?'کلاس فعال: <b>'+esc(c.name)+'</b><div class="muted">'+fa(c.students.length)+' از '+fa(MAX)+' دانش‌آموز</div>':'هنوز کلاسی نساخته‌اید. از منوی «کلاس‌ها» شروع کنید.')+'</div>';
+  h+='<h2>منوی اصلی</h2><nav class="grid">';
+  menu.forEach(function(m){h+='<button class="tile" type="button" data-act="go" data-v="'+esc(m[0])+'"><span class="ic" aria-hidden="true">'+m[2]+'</span><b>'+m[1]+'</b></button>'});
+  return h+'</nav><p class="foot">نسخه '+VER+' · سازنده: مرتضی دعائی<br>اطلاعات فقط روی همین گوشی و در همین مرورگر ذخیره می‌شود.</p>';
+}
+function back(){return '<button class="back" data-act="go" data-v="home">بازگشت به داشبورد</button>'}
+function vClasses(){
+  var h=back()+'<h2>کلاس‌ها</h2>'+msgBox();
+  var vis=db.classes.filter(function(k){return !k.archived});
+  if(!vis.length)h+='<div class="empty"><p>هنوز کلاسی ندارید. فرم پایین را پر کنید.</p></div>';
+  vis.forEach(function(c){
+    h+='<div class="card"><div class="row"><b>'+esc(c.name)+'</b>'+(c.id===db.activeId?'<span class="badge">فعال</span>':'')+'</div><div class="muted">'+esc(c.grade)+' - '+esc(c.school)+' - '+esc(c.year)+'<br>آموزگار: '+esc(c.teacher)+' - '+fa(c.students.length)+' از '+fa(MAX)+' دانش‌آموز</div><div class="row" style="margin-top:10px">'+(c.id===db.activeId?'<span></span>':'<button class="btn" data-act="pick" data-id="'+c.id+'">انتخاب کلاس</button>')+'<button class="btn danger" data-act="delClass" data-id="'+c.id+'">حذف کلاس</button></div></div>';
+  });
+  h+='<h2>کلاس جدید</h2><div class="card"><label for="cn">نام کلاس</label><input id="cn" value="ششم ۵"><label for="cg">پایه</label><input id="cg" value="ششم"><label for="cs">مدرسه</label><input id="cs" value="دبستان سیدالشهدا"><label for="cy">سال تحصیلی</label><input id="cy" value="۱۴۰۵-۱۴۰۶"><label for="ct">آموزگار</label><input id="ct" value="مرتضی دعائی"><button class="btn" data-act="addClass">ساخت کلاس</button></div>';
+  return h;
+}
+function transferStudent(from,to,sid){
+  var s=from.students.filter(function(x){return x.id===sid})[0];
+  if(!s||!to)return 'دانش‌آموز یا کلاس مقصد پیدا نشد.';
+  if(to.id===from.id)return 'کلاس مقصد باید با کلاس فعلی فرق داشته باشد.';
+  if(to.archived)return 'کلاس مقصد بایگانی شده است.';
+  if(to.students.length>=MAX)return 'ظرفیت کلاس مقصد پر است (حداکثر '+fa(MAX)+' نفر).';
+  if(to.students.some(function(x){return x.name===s.name}))return 'دانش‌آموزی با همین نام در کلاس مقصد هست.';
+  var rows=[],tot=0,mx=0;
+  exs(from).forEach(function(e){var v=e.scores&&e.scores[sid];if(v!=null){rows.push({t:e.title,d:e.date,m:e.max,v:v});tot+=v;mx+=e.max}});
+  s.history=(s.history||[]).concat([{cls:from.name,year:from.year||'',rows:rows,total:r2(tot),max:mx,date:new Date().toISOString()}]);
+  s.groupId=null;
+  from.students=from.students.filter(function(x){return x.id!==sid});
+  if(!from.former)from.former=[];
+  from.former.push({id:sid,name:s.name,to:to.name,date:new Date().toISOString()});
+  to.students.push(s);
+  return null;
+}
+function formerCard(c){
+  var f=c.former||[];if(!f.length)return '';
+  var h='<h2>منتقل‌شده‌ها</h2><div class="card">';
+  f.slice().reverse().forEach(function(x){h+='<div class="st"><span>'+esc(x.name)+'</span><span class="muted">به «'+esc(x.to)+'» - '+esc(new Date(x.date).toLocaleDateString('fa-IR'))+'</span></div>'});
+  return h+'<p class="muted">نمره‌های قبلی این دانش‌آموزان در آزمون‌های همین کلاس باقی می‌ماند.</p></div>';
+}
+function vStudents(){
+  var c=active(),h=back();
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  h+='<h2>دانش‌آموزان '+esc(c.name)+'</h2><p class="muted">'+fa(c.students.length)+' از '+fa(MAX)+' نفر</p>'+msgBox();
+  var xs=xferId?c.students.filter(function(x){return x.id===xferId})[0]:null;
+  if(xferId&&!xs)xferId=null;
+  if(xs){
+    var tg=db.classes.filter(function(k){return k.id!==c.id&&!k.archived});
+    h+='<div class="card"><b>انتقال «'+esc(xs.name)+'» به کلاس دیگر</b>';
+    if(!tg.length)h+='<p class="muted">کلاس دیگری وجود ندارد. اول در بخش کلاس‌ها یک کلاس دیگر بسازید.</p><button class="btn ghost" data-act="cancelXfer">انصراف</button>';
+    else h+='<label for="tc">کلاس مقصد</label><select id="tc" class="fs">'+tg.map(function(k){return '<option value="'+k.id+'">'+esc(k.name)+' ('+fa(k.students.length)+' از '+fa(MAX)+')</option>'}).join('')+'</select><p class="muted">نمره‌ها و جایزه‌های گذشته در این کلاس باقی می‌ماند و خلاصه آن همراه دانش‌آموز می‌رود. عضویت در گروه برداشته می‌شود.</p><div class="row"><button class="btn danger" data-act="doXfer">انتقال</button><button class="btn ghost" data-act="cancelXfer">انصراف</button></div>';
+    h+='</div>';
+  }
+  h+='<div class="card"><label for="sn">نام دانش‌آموز</label><input id="sn" placeholder="نام و نام خانوادگی"><button class="btn" data-act="addStu">افزودن</button></div>';
+  h+='<div class="card"><label for="sb">افزودن چند نفر (هر نام در یک خط)</label><textarea id="sb" rows="4"></textarea><button class="btn ghost" data-act="addBulk">افزودن همه</button></div>';
+  if(!c.students.length)return h+'<div class="empty"><p>هنوز دانش‌آموزی ثبت نشده است.</p></div>'+formerCard(c);
+  h+='<ol class="card">';
+  c.students.forEach(function(s,i){
+    var hs=(s.history||[]).map(function(x){return 'سابقه در «'+esc(x.cls)+'»: '+fn(x.total)+' از '+fn(x.max)}).join('<br>');
+    h+='<li class="st"><span>'+fa(i+1)+'. '+esc(s.name)+(hs?'<br><span class="muted">'+hs+'</span>':'')+'</span><span class="row" style="gap:6px"><button class="btn ghost" data-act="xfer" data-id="'+s.id+'">انتقال</button><button class="btn danger" data-act="delStu" data-id="'+s.id+'">حذف</button></span></li>';
+  });
+  return h+'</ol>'+formerCard(c);
+}
+function grp(c){if(!c.groups)c.groups=[];return c.groups}
+function vGroups(){
+  var c=active(),h=back();
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  var gs=grp(c);
+  h+='<h2>گروه‌های '+esc(c.name)+'</h2>'+msgBox();
+  h+='<div class="card"><label for="gn">نام گروه جدید</label><input id="gn" placeholder="مثلاً: ستاره‌ها"><button class="btn" data-act="addGroup">ساخت گروه</button></div>';
+  if(!gs.length)return h+'<div class="empty"><p>هنوز گروهی ندارید.</p></div>';
+  gs.forEach(function(g){
+    var m=c.students.filter(function(s){return s.groupId===g.id});
+    h+='<div class="card"><div class="row"><b>'+esc(g.name)+'</b><span class="muted">'+fa(m.length)+' نفر</span></div><div class="muted">'+(m.length?m.map(function(s){return esc(s.name)}).join('، '):'بدون عضو')+'</div><div style="margin-top:10px"><button class="btn danger" data-act="delGroup" data-id="'+g.id+'">حذف گروه</button></div></div>';
+  });
+  var un=c.students.filter(function(s){return !s.groupId||!gs.some(function(g){return g.id===s.groupId})}).length;
+  h+='<h2>تعیین گروه دانش‌آموزان</h2><p class="muted">بدون گروه: '+fa(un)+' نفر</p><div class="card">';
+  if(!c.students.length)h+='<p class="muted">هنوز دانش‌آموزی ثبت نشده است.</p>';
+  c.students.forEach(function(s){
+    h+='<div class="st" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0"><span>'+esc(s.name)+'</span><select data-act="setGroup" data-id="'+s.id+'" aria-label="گروه '+esc(s.name)+'"><option value="">بدون گروه</option>'+gs.map(function(g){return '<option value="'+g.id+'"'+(s.groupId===g.id?' selected':'')+'>'+esc(g.name)+'</option>'}).join('')+'</select></div>';
+  });
+  return h+'</div>';
+}
+
+function today(){return new Date().toISOString().slice(0,10)}
+function encodeBackup(){return 'LEAGUE1:'+btoa(unescape(encodeURIComponent(makeBackup())))}
+function makeBackup(){return JSON.stringify({app:'league-success',formatVersion:1,exportedAt:new Date().toISOString(),data:{v:1,classes:db.classes,activeId:db.activeId}},null,1)}
+function lastBackup(){try{var t=localStorage.getItem('league_last_backup');if(!t)return 'هنوز پشتیبان نگرفته‌اید.';var d=new Date(t);return 'آخرین پشتیبان: '+d.toLocaleDateString('fa-IR')+' ساعت '+d.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
+function validate(o){
+  if(!o||o.app!=='league-success'||!o.data)return 'این فایل، پشتیبان برنامه «لیگ موفقیت» نیست.';
+  if(typeof o.formatVersion!=='number'||o.formatVersion>1)return 'این فایل از نسخه جدیدتر برنامه است و قابل خواندن نیست.';
+  var d=o.data;if(!Array.isArray(d.classes))return 'ساختار فایل ناقص است.';
+  var ids={};
+  for(var i=0;i<d.classes.length;i++){
+    var c=d.classes[i];
+    if(!c||typeof c.id!=='string'||typeof c.name!=='string'||!Array.isArray(c.students))return 'اطلاعات کلاس شماره '+fa(i+1)+' ناقص است.';
+    if(ids[c.id])return 'شناسه یکی از کلاس‌ها تکراری است.';ids[c.id]=1;
+    if(c.students.length>MAX)return 'کلاس «'+c.name+'» بیش از '+fa(MAX)+' دانش‌آموز دارد.';
+    if(c.former&&!Array.isArray(c.former))return 'فهرست منتقل‌شده‌های کلاس «'+c.name+'» ناقص است.';
+    if(c.awards&&!Array.isArray(c.awards))return 'جوایز کلاس «'+c.name+'» ناقص است.';
+    if(c.exams&&!Array.isArray(c.exams))return 'آزمون‌های کلاس «'+c.name+'» ناقص است.';
+    if(c.groups&&!Array.isArray(c.groups))return 'گروه‌های کلاس «'+c.name+'» ناقص است.';
+    for(var j=0;j<c.students.length;j++){var st=c.students[j];if(!st||typeof st.id!=='string'||typeof st.name!=='string')return 'اطلاعات دانش‌آموزان کلاس «'+c.name+'» ناقص است.'}
+  }
+  return null;
+}
+function count(d){var st=0,g=0;d.classes.forEach(function(c){st+=c.students.length;g+=(c.groups||[]).length});return{c:d.classes.length,s:st,g:g}}
+function csvCell(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
+function buildCsv(c){
+  var list=exs(c),rows=indTotals(c),head=['رتبه','نام','گروه'];
+  list.forEach(function(e){head.push(e.title+' (از '+e.max+')')});
+  head.push('مجموع');
+  var lines=[head.map(csvCell).join(',')];
+  rows.forEach(function(r){
+    var st=c.students.filter(function(x){return x.id===r.id})[0],line=[r.rank,r.name,r.group];
+    list.forEach(function(e){var v=e.scores&&e.scores[r.id];line.push(v==null?'':v)});
+    line.push(r.total);
+    lines.push(line.map(csvCell).join(','));
+  });
+  return '\uFEFF'+lines.join('\r\n');
+}
+async function doCsv(c){
+  var text=buildCsv(c),dl=null;
+  try{dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null}catch(e){dl=null}
+  if(dl){
+    try{await dl.save({filename:'league-table-'+today()+'.csv',data:text});csvShow='';msg='فایل CSV آماده ذخیره شد.';render(true);return}
+    catch(e){if(e&&e.code==='declined'){msg='ذخیره لغو شد.';render(true);return}}
+  }
+  csvShow=text.replace('\uFEFF','');msg='ذخیره مستقیم فایل ممکن نشد. متن جدول را از کادر پایین کپی کنید.';render(true);
+}
+function vBackup(){
+  var h=back()+'<h2>پشتیبان‌گیری</h2>'+msgBox();
+  var n=count(db);
+  h+='<div class="card"><b>ساخت پشتیبان</b><p class="muted">شامل '+fa(n.c)+' کلاس، '+fa(n.s)+' دانش‌آموز و '+fa(n.g)+' گروه. '+lastBackup()+'</p><p class="muted">⚠️ این فایل نام دانش‌آموزان را دارد. آن را فقط برای افراد مجاز بفرستید.</p><div class="row"><button class="btn" data-act="export">ذخیره فایل پشتیبان</button><button class="btn ghost" data-act="showText">نمایش متن پشتیبان</button></div></div>';
+  var ac=active();
+  if(ac&&exs(ac).length&&ac.students.length)h+='<div class="card"><b>خروجی جدول لیگ (CSV)</b><p class="muted">جدول نمره‌ها و رتبه‌های کلاس فعال («'+esc(ac.name)+'») برای باز کردن در Excel. ⚠️ نام دانش‌آموزان در آن هست.</p><div class="row"><button class="btn" data-act="csv">ذخیره فایل CSV</button><button class="btn ghost" data-act="csvText">نمایش متن CSV</button></div></div>';
+  if(csvShow)h+='<div class="card"><label for="ct2">متن CSV (همه را انتخاب و کپی کنید)</label><textarea id="ct2" rows="6" readonly>'+esc(csvShow)+'</textarea></div>';
+  if(showText)h+='<div class="card"><label for="bt">متن پشتیبان (یک خط طولانی است. همه را انتخاب و کپی کنید)</label><textarea id="bt" rows="6" readonly>'+esc(showText)+'</textarea></div>';
+  h+='<div class="card"><b>بازیابی از پشتیبان</b><p class="muted">اول فقط خلاصه فایل نشان داده می‌شود و تا تأیید شما چیزی تغییر نمی‌کند.</p><label for="pt">متن پشتیبان را اینجا بچسبانید</label><textarea id="pt" rows="3"></textarea><button class="btn ghost" data-act="checkText">بررسی متن</button></div>';
+  if(pending){
+    var p=count(pending.data),ex=0;pending.data.classes.forEach(function(c){if(db.classes.some(function(x){return x.id===c.id}))ex++});
+    h+='<div class="card"><b>خلاصه فایل انتخاب‌شده</b><p class="muted">'+fa(p.c)+' کلاس، '+fa(p.s)+' دانش‌آموز، '+fa(p.g)+' گروه<br>'+fa(ex)+' کلاس از آن‌ها همین الان در برنامه هست.</p><div class="row"><button class="btn danger" data-act="restoreReplace">جایگزین کردن همه اطلاعات فعلی</button><button class="btn" data-act="restoreMerge">فقط کلاس‌های جدید را اضافه کن</button><button class="btn ghost" data-act="restoreCancel">انصراف</button></div></div>';
+  }
+  return h;
+}
+function stamp(){try{localStorage.setItem('league_last_backup',new Date().toISOString())}catch(e){}}
+async function doExport(){
+  var text=makeBackup(),dl=null;
+  try{dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null}catch(e){dl=null}
+  if(dl){
+    try{await dl.save({filename:'league-backup-'+today()+'.json',data:text});stamp();showText='';msg='فایل پشتیبان آماده ذخیره شد.';render(true);return}
+    catch(e){if(e&&e.code==='declined'){msg='ذخیره لغو شد.';render(true);return}}
+  }
+  showText=encodeBackup();msg='ذخیره مستقیم فایل ممکن نشد. متن پشتیبان را از کادر پایین کپی کنید.';render(true);
+}
+function takeText(t){
+  var o,raw=String(t||'').replace(/^\uFEFF/,'').trim();
+  if(!raw){msg='متنی برای بررسی وجود ندارد. اول فایل را انتخاب کنید یا متن را بچسبانید.';pending=null;render(true);return}
+  var k=raw.indexOf('LEAGUE1:');
+  if(k>=0){try{raw=decodeURIComponent(escape(atob(raw.slice(k+8).replace(/\s+/g,''))))}catch(e){msg='متن پشتیبان ناقص یا خراب است. طول متن: '+fa(raw.length)+' نویسه. مطمئن شوید همه متن، از اول تا آخر، کپی شده است.';pending=null;render(true);return}}
+  else raw=raw.replace(/[“”„‟«»]/g,'"');
+  var a=raw.indexOf('{'),b=raw.lastIndexOf('}');
+  if(a>=0&&b>a)raw=raw.slice(a,b+1);
+  try{o=JSON.parse(raw)}catch(e){msg='محتوا قابل خواندن نیست. طول متن: '+fa(raw.length)+' نویسه. شروع: «'+raw.slice(0,25)+'» پایان: «'+raw.slice(-25)+'»';pending=null;render(true);return}
+  var err=validate(o);
+  if(err){msg=err;pending=null}else{pending={data:o.data};msg='فایل معتبر است. خلاصه را ببینید و تصمیم بگیرید.'}
+  render(true);
+}
+function exs(c){if(!c.exams)c.exams=[];return c.exams}
+function fn(n){return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:2})}
+function num(t){t=String(t==null?'':t).trim().replace(/[۰-۹]/g,function(d){return d.charCodeAt(0)-1776}).replace(/[٠-٩]/g,function(d){return d.charCodeAt(0)-1632}).replace(/[٫\/,،]/g,'.');if(t==='')return null;if(!/^\d+(\.\d+)?$/.test(t))return NaN;return parseFloat(t)}
+function findExam(c,id){return exs(c).filter(function(e){return e.id===id})[0]||null}
+function note(t){var l=document.getElementById('live');if(l){l.innerHTML='<div class="msg" role="status">'+esc(t)+'</div>';l.scrollIntoView()}else{msg=t;render(true)}}
+function vExams(){
+  var c=active(),h=back();
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  var e=curExam?findExam(c,curExam):null;
+  if(curExam&&!e)curExam=null;
+  if(e)return vExam(c,e);
+  h+='<h2>آزمون‌های '+esc(c.name)+'</h2><div id="live">'+msgBox()+'</div>';
+  var list=exs(c);
+  if(!list.length)h+='<div class="empty"><p>هنوز آزمونی ثبت نشده است.</p></div>';
+  list.forEach(function(x){
+    var n=0;c.students.forEach(function(s){if(x.scores&&x.scores[s.id]!=null)n++});
+    h+='<div class="card"><div class="row"><b>'+esc(x.title)+'</b><span class="muted">'+esc(x.date)+'</span></div><div class="muted">نمره کل: '+fn(x.max)+' - نمره ثبت‌شده برای '+fa(n)+' از '+fa(c.students.length)+' نفر</div><div class="row" style="margin-top:10px"><button class="btn" data-act="openExam" data-id="'+x.id+'">ثبت و ویرایش نمره‌ها</button><button class="btn danger" data-act="delExam" data-id="'+x.id+'">حذف آزمون</button></div></div>';
+  });
+  return h+'<h2>آزمون جدید</h2><div class="card"><label for="xt">عنوان آزمون</label><input id="xt" placeholder="مثلاً: ریاضی فصل ۱"><label for="xm">نمره کل آزمون</label><input id="xm" inputmode="decimal" placeholder="مثلاً ۲۰"><label for="xd">تاریخ</label><input id="xd" value="'+new Date().toLocaleDateString('fa-IR')+'"><button class="btn" data-act="addExam">ساخت آزمون</button></div>';
+}
+function vExam(c,e){
+  var h='<button class="back" data-act="closeExam">بازگشت به آزمون‌ها</button><h2>'+esc(e.title)+'</h2><div id="live">'+msgBox()+'</div>';
+  h+='<div class="card"><label for="et">عنوان</label><input id="et" value="'+esc(e.title)+'"><label for="em">نمره کل</label><input id="em" inputmode="decimal" value="'+e.max+'"><label for="ed">تاریخ</label><input id="ed" value="'+esc(e.date)+'"><button class="btn ghost" data-act="editExam">ذخیره مشخصات آزمون</button></div>';
+  if(!c.students.length)return h+'<div class="empty"><p>اول دانش‌آموزان کلاس را ثبت کنید.</p></div>';
+  h+='<div class="card"><p class="muted">نمره هر دانش‌آموز را از ۰ تا '+fn(e.max)+' بنویسید. خالی بگذارید یعنی نمره ثبت نشده. برای اعشار از نقطه یا / استفاده کنید.</p>';
+  c.students.forEach(function(s,i){
+    var v=e.scores&&e.scores[s.id]!=null?e.scores[s.id]:'';
+    h+='<div class="st"><span>'+fa(i+1)+'. '+esc(s.name)+'</span><input class="sc" id="sc_'+s.id+'" inputmode="decimal" autocomplete="off" aria-label="نمره '+esc(s.name)+'" value="'+v+'"></div>';
+  });
+  return h+'<div style="margin-top:12px"><button class="btn" data-act="saveScores">ذخیره نمره‌ها</button></div></div>';
+}
+function r2(n){return Math.round(n*100)/100}
+function indTotals(c){
+  var rows=c.students.map(function(s){
+    var t=0,n=0;
+    exs(c).forEach(function(e){var v=e.scores&&e.scores[s.id];if(v!=null){t+=v;n++}});
+    var g=grp(c).filter(function(x){return x.id===s.groupId})[0];
+    return{id:s.id,name:s.name,gid:g?g.id:null,group:g?g.name:'',total:r2(t),n:n};
+  });
+  rows.sort(function(a,b){return b.total-a.total||a.name.localeCompare(b.name,'fa')});
+  rows.forEach(function(r,i){r.rank=(i>0&&r.total===rows[i-1].total)?rows[i-1].rank:i+1});
+  return rows;
+}
+function vLeagueInd(){
+  var c=active(),h=back();
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  h+='<h2>لیگ فردی '+esc(c.name)+'</h2>';
+  var list=exs(c);
+  if(!c.students.length)return h+'<div class="empty"><p>هنوز دانش‌آموزی ثبت نشده است.</p></div>';
+  if(!list.length)return h+'<div class="empty"><p>هنوز آزمونی ثبت نشده است.</p><button class="btn" data-act="go" data-v="exams">رفتن به ثبت آزمون</button></div>';
+  var sum=0;list.forEach(function(e){sum+=e.max});
+  var rows=indTotals(c),medal={1:'🥇',2:'🥈',3:'🥉'};
+  h+='<p class="muted">امتیاز هر نفر = جمع نمره‌های همه آزمون‌ها. تعداد آزمون‌ها: '+fa(list.length)+' ، جمع نمره کل آزمون‌ها: '+fn(sum)+'. نمره ثبت‌نشده (غایب) صفر حساب می‌شود.</p><ol class="card">';
+  rows.forEach(function(r){
+    h+='<li class="st"><span><b>'+(r.total>0&&medal[r.rank]?medal[r.rank]+' ':'')+fa(r.rank)+'.</b> '+esc(r.name)+(r.group?'<span class="muted"> - '+esc(r.group)+'</span>':'')+'<br><span class="muted">نمره ثبت‌شده در '+fa(r.n)+' از '+fa(list.length)+' آزمون</span></span><b>'+fn(r.total)+'</b></li>';
+  });
+  return h+'</ol><p class="muted">نفرات با امتیاز برابر، رتبه یکسان دارند.</p>';
+}
+function grpTotals(c){
+  var rows=indTotals(c),out=[];
+  grp(c).forEach(function(g){
+    var m=rows.filter(function(r){return r.gid===g.id});
+    if(!m.length)return;
+    var t=0;m.forEach(function(r){t+=r.total});
+    out.push({id:g.id,name:g.name,count:m.length,sum:r2(t),raw:t/m.length,avg:r2(t/m.length),names:m.map(function(r){return r.name})});
+  });
+  out.sort(function(a,b){return b.raw-a.raw||a.name.localeCompare(b.name,'fa')});
+  out.forEach(function(r,i){r.rank=(i>0&&Math.abs(r.raw-out[i-1].raw)<1e-9)?out[i-1].rank:i+1});
+  return out;
+}
+function vLeagueGrp(){
+  var c=active(),h=back();
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  h+='<h2>لیگ گروهی '+esc(c.name)+'</h2>';
+  var list=exs(c),gs=grp(c);
+  if(!gs.length)return h+'<div class="empty"><p>هنوز گروهی ساخته نشده است.</p><button class="btn" data-act="go" data-v="groups">رفتن به گروه‌ها</button></div>';
+  if(!list.length)return h+'<div class="empty"><p>هنوز آزمونی ثبت نشده است.</p><button class="btn" data-act="go" data-v="exams">رفتن به ثبت آزمون</button></div>';
+  var rows=grpTotals(c);
+  if(!rows.length)return h+'<div class="empty"><p>هیچ گروهی عضو ندارد. دانش‌آموزان را به گروه‌ها اضافه کنید.</p><button class="btn" data-act="go" data-v="groups">رفتن به گروه‌ها</button></div>';
+  var un=indTotals(c).filter(function(r){return !r.gid}).length,medal={1:'🥇',2:'🥈',3:'🥉'};
+  h+='<p class="muted">امتیاز هر گروه = میانگین امتیاز اعضا (جمع نمره‌های همه آزمون‌ها). نمره ثبت‌نشده (غایب) صفر حساب می‌شود.</p><ol class="card">';
+  rows.forEach(function(r){
+    h+='<li class="st"><span><b>'+(r.avg>0&&medal[r.rank]?medal[r.rank]+' ':'')+fa(r.rank)+'.</b> '+esc(r.name)+'<br><span class="muted">'+fa(r.count)+' عضو، مجموع '+fn(r.sum)+'<br>'+r.names.map(esc).join('، ')+'</span></span><b>'+fn(r.avg)+'</b></li>';
+  });
+  h+='</ol><p class="muted">گروه‌های با امتیاز برابر، رتبه یکسان دارند.';
+  if(un)h+=' '+fa(un)+' دانش‌آموز بدون گروه‌اند و در لیگ گروهی حساب نمی‌شوند.';
+  return h+'</p>';
+}
+function honorsData(c){
+  var rows=indTotals(c),list=exs(c),perfect={},per=[];
+  var top=rows.filter(function(r){return r.rank<=3&&r.total>0});
+  var tg=grpTotals(c).filter(function(r){return r.rank===1&&r.avg>0});
+  list.forEach(function(e){
+    var best=0,names=[];
+    c.students.forEach(function(s){
+      var v=e.scores&&e.scores[s.id];if(v==null)return;
+      if(v>best){best=v;names=[s.name]}else if(v===best&&v>0)names.push(s.name);
+      if(v===e.max)perfect[s.id]=(perfect[s.id]||0)+1;
+    });
+    per.push({title:e.title,max:e.max,best:best,names:best>0?names:[]});
+  });
+  var pf=c.students.filter(function(s){return perfect[s.id]}).map(function(s){return{name:s.name,n:perfect[s.id]}}).sort(function(a,b){return b.n-a.n||a.name.localeCompare(b.name,'fa')});
+  return{top:top,tg:tg,per:per,pf:pf};
+}
+var AW={week:'دانش‌آموز نمونه هفته',conduct:'دانش‌آموز نمونه اخلاق'};
+function aws(c){if(!c.awards)c.awards=[];return c.awards}
+function improveData(c){
+  var list=exs(c),out=[];
+  c.students.forEach(function(s){
+    var p=[];
+    list.forEach(function(e){var v=e.scores&&e.scores[s.id];if(v!=null&&e.max>0)p.push(v/e.max*100)});
+    if(p.length<2)return;
+    var sum=0,i;for(i=0;i<p.length-1;i++)sum+=p[i];
+    out.push({name:s.name,delta:r2(p[p.length-1]-sum/(p.length-1)),last:r2(p[p.length-1])});
+  });
+  out.sort(function(a,b){return b.delta-a.delta||a.name.localeCompare(b.name,'fa')});
+  return out.filter(function(r){return r.delta>0}).slice(0,3);
+}
+function nameOf(c,a){var st=c.students.filter(function(s){return s.id===a.sid})[0];if(st)return st.name;var mv=(c.former||[]).some(function(f){return f.id===a.sid});return a.nm+(mv?' (منتقل‌شده)':' (حذف‌شده)')}
+function stampText(ts){try{var d=new Date(ts);if(isNaN(d))return '';return d.toLocaleDateString('fa-IR')+' ساعت '+d.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
+function awardCard(c,type){
+  var h='<div class="card"><b>'+AW[type]+' (آخرین مورد)</b>',last=null;
+  aws(c).forEach(function(a){if(a.type===type)last=a});
+  if(!last)return h+'<p class="muted">هنوز ثبت نشده است.</p></div>';
+  return h+'<div class="st"><span>⭐ '+esc(nameOf(c,last))+'<br><span class="muted">'+esc(last.date)+(last.note?' - '+esc(last.note):'')+'</span></span></div></div>';
+}
+function archiveCard(c){
+  var all=aws(c).slice().reverse(),h='<h2>بایگانی دانش‌آموزان نمونه</h2><div class="card">';
+  if(!all.length)return h+'<p class="muted">هنوز موردی ثبت نشده است.</p></div>';
+  var cnt={},order=[];
+  all.forEach(function(a){var k=a.sid;if(!cnt[k]){cnt[k]={nm:nameOf(c,a),week:0,conduct:0};order.push(k)}if(cnt[k][a.type]!==undefined)cnt[k][a.type]++});
+  order.sort(function(x,y){return (cnt[y].week+cnt[y].conduct)-(cnt[x].week+cnt[x].conduct)});
+  h+='<b>خلاصه تعداد دفعات</b>';
+  order.forEach(function(k){h+='<div class="st"><span>'+esc(cnt[k].nm)+'</span><span class="muted">هفته: '+fa(cnt[k].week)+' - اخلاق: '+fa(cnt[k].conduct)+'</span></div>'});
+  h+='</div><div class="card"><div class="row" style="margin-bottom:8px">';
+  [['all','همه'],['week','نمونه هفته'],['conduct','نمونه اخلاق']].forEach(function(f){h+='<button class="btn'+(awFilter===f[0]?'':' ghost')+'" data-act="awf" data-id="'+f[0]+'">'+f[1]+'</button>'});
+  h+='</div>';
+  var n=0;
+  all.forEach(function(a){
+    if(awFilter!=='all'&&a.type!==awFilter)return;n++;
+    var st=a.ts?stampText(a.ts):'';
+    h+='<div class="st"><span><b>'+AW[a.type]+'</b><br>⭐ '+esc(nameOf(c,a))+'<br><span class="muted">تاریخ: '+esc(a.date)+(st?' - ثبت در برنامه: '+st:'')+(a.note?'<br>'+esc(a.note):'')+'</span></span><button class="btn danger" data-act="delAward" data-id="'+a.id+'">حذف</button></div>';
+  });
+  if(!n)h+='<p class="muted">موردی در این دسته نیست.</p>';
+  return h+'</div>';
+}
+function vHonors(){
+  var c=active(),h=back();
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  h+='<h2>افتخارات '+esc(c.name)+'</h2><div id="live">'+msgBox()+'</div>';
+  var medal={1:'🥇',2:'🥈',3:'🥉'};
+  if(!exs(c).length){
+    h+='<div class="card"><p class="muted">افتخارات خودکار (نفرات برتر، گروه برتر، بیشترین پیشرفت و ...) بعد از ثبت اولین آزمون نشان داده می‌شود.</p><button class="btn" data-act="go" data-v="exams">رفتن به ثبت آزمون</button></div>';
+  }else{
+    var d=honorsData(c),im=improveData(c);
+    h+='<div class="card"><b>نفرات برتر لیگ فردی</b>';
+    if(!d.top.length)h+='<p class="muted">هنوز نمره‌ای ثبت نشده است.</p>';
+    d.top.forEach(function(r){h+='<div class="st"><span>'+medal[r.rank]+' '+esc(r.name)+'</span><b>'+fn(r.total)+'</b></div>'});
+    h+='</div><div class="card"><b>گروه برتر</b>';
+    if(!d.tg.length)h+='<p class="muted">هنوز گروهی با امتیاز ثبت نشده است.</p>';
+    d.tg.forEach(function(r){h+='<div class="st"><span>🏆 '+esc(r.name)+'</span><b>'+fn(r.avg)+'</b></div>'});
+    h+='</div><div class="card"><b>بیشترین پیشرفت</b><p class="muted">درصد نمره آخرین آزمون هر دانش‌آموز نسبت به میانگین درصد آزمون‌های قبلی‌اش. حداقل دو آزمون لازم است. ترتیب آزمون‌ها به‌ترتیب ساخته‌شدن آن‌هاست.</p>';
+    if(!im.length)h+='<p class="muted">هنوز پیشرفتی قابل محاسبه نیست.</p>';
+    im.forEach(function(r){h+='<div class="st"><span>📈 '+esc(r.name)+'<br><span class="muted">درصد آخرین آزمون: '+fn(r.last)+'</span></span><b>+'+fn(r.delta)+' درصد</b></div>'});
+    h+='</div><div class="card"><b>بالاترین نمره هر آزمون</b>';
+    d.per.forEach(function(e){h+='<div class="st"><span>'+esc(e.title)+'<br><span class="muted">'+(e.names.length?e.names.map(esc).join('، '):'نمره‌ای ثبت نشده')+'</span></span><b>'+(e.names.length?fn(e.best)+' از '+fn(e.max):'')+'</b></div>'});
+    h+='</div><div class="card"><b>نمره کامل</b>';
+    if(!d.pf.length)h+='<p class="muted">هنوز کسی نمره کامل نگرفته است.</p>';
+    d.pf.forEach(function(r){h+='<div class="st"><span>⭐ '+esc(r.name)+'</span><b>'+fa(r.n)+' بار</b></div>'});
+    h+='</div>';
+  }
+  h+=awardCard(c,'week')+awardCard(c,'conduct')+archiveCard(c);
+  h+='<h2>ثبت دانش‌آموز نمونه</h2><div class="card"><p class="muted">این جایزه‌ها را خودتان ثبت می‌کنید و روی امتیاز لیگ اثر ندارند.</p>';
+  if(!c.students.length)return h+'<p class="muted">اول دانش‌آموزان کلاس را ثبت کنید.</p></div>';
+  h+='<label for="at">نوع جایزه</label><select id="at" class="fs"><option value="week">'+AW.week+'</option><option value="conduct">'+AW.conduct+'</option></select>';
+  h+='<label for="as">دانش‌آموز</label><select id="as" class="fs"><option value="">انتخاب کنید</option>'+c.students.map(function(s){return '<option value="'+s.id+'">'+esc(s.name)+'</option>'}).join('')+'</select>';
+  h+='<label for="ad">تاریخ یا هفته</label><input id="ad" value="'+new Date().toLocaleDateString('fa-IR')+'"><label for="an">توضیح (اختیاری)</label><input id="an" placeholder="مثلاً: رعایت نظم و کمک به دوستان"><button class="btn" data-act="addAward">ثبت جایزه</button></div>';
+  return h;
+}
+function firstActive(){var f=db.classes.filter(function(k){return !k.archived})[0];return f?f.id:null}
+function pCode(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function parentCards(c,opt){
+  var list=exs(c),rows=indTotals(c),gt=grpTotals(c),n=rows.length,sumMax=0,byId={},avgT=0;
+  list.forEach(function(e){sumMax+=e.max});
+  rows.forEach(function(r){byId[r.id]=r;avgT+=r.total});
+  avgT=n?r2(avgT/n):0;
+  var exAvg=list.map(function(e){var t=0,k=0;c.students.forEach(function(s){var v=e.scores&&e.scores[s.id];if(v!=null){t+=v;k++}});return k?r2(t/k):null});
+  return c.students.map(function(s){
+    var r=byId[s.id];
+    var o={v:1,s:c.school||'',c:c.name,y:c.year||'',t:c.teacher||'',n:r.name,g:r.group||'',d:new Date().toLocaleDateString('fa-IR'),tot:r.total,mx:sumMax};
+    if(opt.rank){o.rk=r.rank;o.cnt=n;var g=r.gid?gt.filter(function(x){return x.id===r.gid})[0]:null;if(g){o.gr=g.rank;o.gc=gt.length}}
+    if(opt.avg)o.avg=avgT;
+    o.ex=list.map(function(e,i){var v=e.scores&&e.scores[r.id];return[e.title,e.date,e.max,v==null?null:v,opt.avg?exAvg[i]:null]});
+    if(opt.aw)o.aw=aws(c).filter(function(a){return a.sid===r.id}).map(function(a){return[a.type==='week'?'w':'c',a.date,a.note||'']});
+    return{name:r.name,code:pCode(o)};
+  });
+}
+function vSettings(){
+  var c=active(),h=back()+'<h2>تنظیمات</h2><div id="live">'+msgBox()+'</div>';
+  h+='<div class="card"><b>درباره برنامه</b><div class="st"><span>نام برنامه</span><span>لیگ موفقیت</span></div><div class="st"><span>نام کامل پروژه</span><span>لیگ موفقیت کلاس ششم ۵ دبستان سیدالشهدا</span></div><div class="st"><span>سازنده</span><span>مرتضی دعائی</span></div><div class="st"><span>نسخه</span><span>'+VER+'</span></div><div class="st"><span>سال ساخت</span><span>۱۴۰۵</span></div><p class="muted">هدف: ثبت و مقایسه نمره‌ها و ایجاد رقابت سالم و انگیزه در دانش‌آموزان کلاس.</p></div>';
+  h+='<div class="card"><b>حریم خصوصی و ذخیره اطلاعات</b><p class="muted">اطلاعات دانش‌آموزان فقط داخل مرورگر همین گوشی ذخیره می‌شود و به جایی فرستاده نمی‌شود. اگر اطلاعات مرورگر پاک شود، از بین می‌رود. پشتیبان‌گیری مرتب فراموش نشود. '+lastBackup()+'</p><button class="btn ghost" data-act="go" data-v="backup">رفتن به پشتیبان‌گیری</button></div>';
+  if(c&&exs(c).length&&c.students.length){
+    h+='<div class="card"><b>کارنامه اولیا (فقط نمایش)</b><p class="muted">برای هر دانش‌آموز یک لینک و کد جداگانه ساخته می‌شود که فقط اطلاعات خودِ او را دارد و قابل تغییر نیست. لینک را خصوصی برای والدین همان دانش‌آموز بفرستید. ⚠️ کد هر دانش‌آموز را فقط برای والدین همان دانش‌آموز بفرستید. با ثبت نمره جدید، کدهای قبلی قدیمی می‌شوند و باید دوباره ساخته و فرستاده شوند.</p><label><input type="checkbox" id="pr" checked style="width:auto;margin:0 6px"> نمایش رتبه کلاس و گروه</label><br><label><input type="checkbox" id="pa" checked style="width:auto;margin:0 6px"> نمایش میانگین کلاس</label><br><label><input type="checkbox" id="pw" checked style="width:auto;margin:0 6px"> نمایش افتخارات (نمونه هفته و اخلاق)</label><div style="margin-top:10px"><button class="btn" data-act="genParent">ساخت کد کارنامه همه دانش‌آموزان</button></div></div>';
+    if(parentText)h+='<div class="card"><label for="ptx">کدها (برای هر والد فقط کد همان دانش‌آموز را بفرستید)</label><textarea id="ptx" rows="10" readonly>'+esc(parentText)+'</textarea></div>';
+  }
+  if(c){
+    h+='<div class="card"><b>ویرایش کلاس فعال</b><label for="kn">نام کلاس</label><input id="kn" value="'+esc(c.name)+'"><label for="kg">پایه</label><input id="kg" value="'+esc(c.grade||'')+'"><label for="ks">مدرسه</label><input id="ks" value="'+esc(c.school||'')+'"><label for="ky">سال تحصیلی</label><input id="ky" value="'+esc(c.year||'')+'"><label for="kt">آموزگار</label><input id="kt" value="'+esc(c.teacher||'')+'"><button class="btn" data-act="editClass">ذخیره تغییرات کلاس</button></div>';
+    h+='<div class="card"><b>بایگانی کلاس فعال</b><p class="muted">مثلاً برای پایان سال تحصیلی. اطلاعات کلاس پاک نمی‌شود و بعداً می‌توانید آن را بازیابی کنید. کلاس بایگانی‌شده در بخش‌های دیگر دیده نمی‌شود.</p><button class="btn danger" data-act="archiveClass">بایگانی کلاس «'+esc(c.name)+'»</button></div>';
+  }
+  var ar=db.classes.filter(function(k){return k.archived});
+  h+='<div class="card"><b>کلاس‌های بایگانی‌شده</b>';
+  if(!ar.length)h+='<p class="muted">کلاس بایگانی‌شده‌ای ندارید.</p>';
+  ar.forEach(function(k){h+='<div class="st"><span>'+esc(k.name)+'<br><span class="muted">'+esc(k.year||'')+' - '+fa(k.students.length)+' دانش‌آموز</span></span><button class="btn" data-act="restoreClass" data-id="'+k.id+'">بازیابی</button></div>'});
+  return h+'</div>';
+}
+function vPh(t){return back()+'<div class="empty"><h2>'+esc(t)+'</h2><p>این بخش در مرحله‌های بعدی ساخته می‌شود.</p></div>'}
+function render(keep){var y=window.scrollY;
+  var h=view==='home'?vHome():view==='classes'?vClasses():view==='students'?vStudents():view==='groups'?vGroups():view==='backup'?vBackup():view==='exams'?vExams():view==='leagueInd'?vLeagueInd():view==='leagueGrp'?vLeagueGrp():view==='honors'?vHonors():view==='settings'?vSettings():vPh(view.slice(3));
+  document.getElementById('app').innerHTML=h;window.scrollTo(0,keep?y:0);
+  if(focusId){var f=document.getElementById(focusId);if(f)f.focus();focusId=null}
+}
+function arm(btn,key,label){
+  if(armed===key)return true;
+  armed=key;var old=btn.textContent;btn.textContent=label;btn.classList.add('armed');
+  setTimeout(function(){if(armed===key){armed=null;if(btn.isConnected){btn.textContent=old;btn.classList.remove('armed')}}},3000);
+  return false;
+}
+function hasName(c,n){return c.students.some(function(s){return s.name===n})}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]');if(!t)return;
+  var a=t.dataset.act,id=t.dataset.id,c=active();
+  if(a==='go'){view=t.dataset.v;armed=null;curExam=null;xferId=null;render()}
+  else if(a==='pick'){db.activeId=id;save();msg='کلاس فعال تغییر کرد.';render()}
+  else if(a==='delClass'){
+    if(!arm(t,'c'+id,'مطمئنید؟ دوباره بزنید'))return;
+    armed=null;db.classes=db.classes.filter(function(x){return x.id!==id});
+    if(db.activeId===id)db.activeId=firstActive();
+    save();msg='کلاس حذف شد.';render();
+  }
+  else if(a==='addClass'){
+    var n=val('cn');if(!n){msg='نام کلاس را بنویسید.';render();return}
+    var k={id:uid('c'),name:n,grade:val('cg'),school:val('cs'),year:val('cy'),teacher:val('ct'),students:[],groups:[]};
+    if(db.classes.some(function(x){return x.name===n&&x.year===k.year})){msg='کلاسی با همین نام و سال تحصیلی وجود دارد.';render();return}
+    db.classes.push(k);db.activeId=k.id;save();msg='کلاس «'+n+'» ساخته شد و فعال است.';render();
+  }
+  else if(a==='addStu'&&c){
+    var nm=val('sn');
+    if(!nm)msg='نام را بنویسید.';
+    else if(c.students.length>=MAX)msg='ظرفیت کلاس پر است (حداکثر '+fa(MAX)+' نفر).';
+    else if(hasName(c,nm))msg='این نام قبلاً در این کلاس ثبت شده است.';
+    else{c.students.push({id:uid('s'),name:nm});save();msg='«'+nm+'» اضافه شد.'}
+    focusId='sn';render();
+  }
+  else if(a==='addBulk'&&c){
+    var lines=(document.getElementById('sb').value||'').split(/\n/).map(norm).filter(Boolean),add=0,dup=0,full=0;
+    lines.forEach(function(l){
+      if(c.students.length>=MAX){full++;return}
+      if(hasName(c,l)){dup++;return}
+      c.students.push({id:uid('s'),name:l});add++;
+    });
+    save();msg=fa(add)+' نفر اضافه شد.'+(dup?' '+fa(dup)+' نام تکراری نادیده گرفته شد.':'')+(full?' '+fa(full)+' نام به‌خاطر پر بودن ظرفیت اضافه نشد.':'');render();
+  }
+  else if(a==='addGroup'&&c){
+    var gn=val('gn'),gs=grp(c);
+    if(!gn)msg='نام گروه را بنویسید.';
+    else if(gs.some(function(g){return g.name===gn}))msg='گروهی با این نام در این کلاس وجود دارد.';
+    else{gs.push({id:uid('g'),name:gn});save();msg='گروه «'+gn+'» ساخته شد.'}
+    focusId='gn';render();
+  }
+  else if(a==='delGroup'&&c){
+    if(!arm(t,'g'+id,'مطمئنید؟ دوباره بزنید'))return;
+    armed=null;c.groups=grp(c).filter(function(g){return g.id!==id});
+    c.students.forEach(function(s){if(s.groupId===id)s.groupId=null});
+    save();msg='گروه حذف شد. اعضای آن بدون گروه شدند.';render();
+  }
+  else if(a==='openExam'){curExam=id;render()}
+  else if(a==='closeExam'){curExam=null;render()}
+  else if(a==='addExam'&&c){
+    var xt=val('xt'),xm=num(val('xm')),xd=val('xd');
+    if(!xt)note('عنوان آزمون را بنویسید.');
+    else if(xm===null||isNaN(xm)||xm<=0||xm>1000)note('نمره کل آزمون را درست بنویسید (عددی بزرگ‌تر از صفر).');
+    else if(exs(c).some(function(x){return x.title===xt&&x.date===xd}))note('آزمونی با همین عنوان و تاریخ قبلاً ثبت شده است.');
+    else{var nx={id:uid('x'),title:xt,date:xd,max:xm,scores:{}};exs(c).push(nx);save();curExam=nx.id;msg='آزمون ساخته شد. حالا نمره‌ها را وارد کنید.';render()}
+  }
+  else if(a==='editExam'&&c){
+    var ex=findExam(c,curExam);if(!ex)return;
+    var et=val('et'),em=num(val('em')),ed=val('ed'),hi=0;
+    Object.keys(ex.scores||{}).forEach(function(k){if(ex.scores[k]>hi)hi=ex.scores[k]});
+    if(!et)note('عنوان آزمون را بنویسید.');
+    else if(em===null||isNaN(em)||em<=0||em>1000)note('نمره کل آزمون را درست بنویسید.');
+    else if(em<hi)note('نمره کل نمی‌تواند از بالاترین نمره ثبت‌شده ('+fn(hi)+') کمتر باشد.');
+    else{ex.title=et;ex.max=em;ex.date=ed;save();msg='مشخصات آزمون ذخیره شد.';render(true)}
+  }
+  else if(a==='saveScores'&&c){
+    var se=findExam(c,curExam);if(!se)return;
+    var bad=[],ns={};
+    c.students.forEach(function(s){
+      var el=document.getElementById('sc_'+s.id);if(!el)return;
+      var v=num(el.value);
+      if(v===null)return;
+      if(isNaN(v)||v<0||v>se.max)bad.push(s.name);else ns[s.id]=v;
+    });
+    if(bad.length){note('نمره نامعتبر برای: '+bad.slice(0,5).join('، ')+(bad.length>5?' و '+fa(bad.length-5)+' نفر دیگر':'')+'. نمره باید بین ۰ و '+fn(se.max)+' باشد. چیزی ذخیره نشد.');return}
+    se.scores=ns;save();msg='نمره‌ها ذخیره شد: '+fa(Object.keys(ns).length)+' نفر.';render(true);
+  }
+  else if(a==='delExam'&&c){
+    if(!arm(t,'x'+id,'مطمئنید؟ دوباره بزنید'))return;
+    armed=null;c.exams=exs(c).filter(function(x){return x.id!==id});curExam=null;save();msg='آزمون حذف شد.';render(true);
+  }
+  else if(a==='addAward'&&c){
+    var ty=document.getElementById('at').value,sid=document.getElementById('as').value,ad=val('ad'),an=val('an');
+    var stu=c.students.filter(function(x){return x.id===sid})[0];
+    if(!stu)note('دانش‌آموز را انتخاب کنید.');
+    else if(!ad)note('تاریخ یا هفته را بنویسید.');
+    else if(aws(c).some(function(w){return w.type===ty&&w.sid===sid&&w.date===ad}))note('این جایزه با همین تاریخ قبلاً برای این دانش‌آموز ثبت شده است.');
+    else{aws(c).push({id:uid('w'),type:ty,sid:sid,nm:stu.name,date:ad,note:an,ts:new Date().toISOString()});save();msg='«'+stu.name+'» به‌عنوان '+AW[ty]+' ثبت شد.';render(true)}
+  }
+  else if(a==='awf'){awFilter=id;render(true)}
+  else if(a==='delAward'&&c){
+    if(!arm(t,'w'+id,'مطمئنید؟ دوباره بزنید'))return;
+    armed=null;c.awards=aws(c).filter(function(w){return w.id!==id});save();msg='جایزه حذف شد.';render(true);
+  }
+  else if(a==='editClass'&&c){
+    var kn=val('kn'),ky=val('ky');
+    if(!kn)note('نام کلاس را بنویسید.');
+    else if(db.classes.some(function(x){return x.id!==c.id&&x.name===kn&&x.year===ky}))note('کلاس دیگری با همین نام و سال تحصیلی وجود دارد.');
+    else{c.name=kn;c.grade=val('kg');c.school=val('ks');c.year=ky;c.teacher=val('kt');save();msg='تغییرات کلاس ذخیره شد.';render(true)}
+  }
+  else if(a==='archiveClass'&&c){
+    if(!arm(t,'ac','مطمئنید؟ دوباره بزنید'))return;
+    armed=null;c.archived=true;db.activeId=firstActive();save();msg='کلاس بایگانی شد. هر وقت خواستید از همین‌جا بازیابی کنید.';render(true);
+  }
+  else if(a==='restoreClass'){
+    var rc=db.classes.filter(function(x){return x.id===id})[0];
+    if(rc){rc.archived=false;if(!db.activeId)db.activeId=rc.id;save();msg='کلاس «'+rc.name+'» بازیابی شد.';render(true)}
+  }
+  else if(a==='xfer'&&c){xferId=id;render()}
+  else if(a==='cancelXfer'){xferId=null;render(true)}
+  else if(a==='doXfer'&&c&&xferId){
+    if(!arm(t,'xf','مطمئنید؟ دوباره بزنید'))return;
+    armed=null;
+    var dest=db.classes.filter(function(k){return k.id===document.getElementById('tc').value})[0];
+    var nmx=(c.students.filter(function(x){return x.id===xferId})[0]||{}).name;
+    var er=transferStudent(c,dest,xferId);
+    if(er)msg=er;else{save();msg='«'+nmx+'» به کلاس «'+dest.name+'» منتقل شد.';xferId=null}
+    render(true);
+  }
+  else if(a==='csv'&&c){doCsv(c)}
+  else if(a==='csvText'&&c){csvShow=buildCsv(c).replace('\uFEFF','');msg='متن CSV در کادر پایین است.';render(true)}
+  else if(a==='genParent'&&c){
+    var po={rank:document.getElementById('pr').checked,avg:document.getElementById('pa').checked,aw:document.getElementById('pw').checked};
+    var base=location.href.replace(/[#?].*$/,'').replace(/[^\/]*$/,'')+'karname.html';
+    parentText=parentCards(c,po).map(function(x){return 'نام: '+x.name+'\nلینک کارنامه:\n'+base+'#'+x.code+'\nکد (اگر لینک کامل باز نشد):\n'+x.code}).join('\n\n');
+    msg='کدها ساخته شد: '+fa(c.students.length)+' دانش‌آموز.';render(true);
+  }
+  else if(a==='export'){doExport()}
+  else if(a==='showText'){showText=encodeBackup();msg='متن پشتیبان در کادر پایین است.';render(true)}
+  else if(a==='checkText'){takeText((document.getElementById('pt').value||'').trim())}
+  else if(a==='restoreCancel'){pending=null;msg='بازیابی لغو شد.';render(true)}
+  else if(a==='restoreMerge'&&pending){
+    var added=0;pending.data.classes.forEach(function(k){if(!db.classes.some(function(x){return x.id===k.id})){if(!k.groups)k.groups=[];db.classes.push(k);added++}});
+    if(!db.activeId)db.activeId=firstActive();
+    save();pending=null;msg=fa(added)+' کلاس جدید اضافه شد. کلاس‌های موجود دست‌نخورده ماندند.';render(true);
+  }
+  else if(a==='restoreReplace'&&pending){
+    if(!arm(t,'rep','مطمئنید؟ دوباره بزنید'))return;
+    armed=null;
+    try{localStorage.setItem(KEY+'_prev',JSON.stringify(db))}catch(e){}
+    var nd=pending.data;nd.classes.forEach(function(k){if(!k.groups)k.groups=[]});
+    db={v:1,classes:nd.classes,activeId:nd.classes.some(function(k){return k.id===nd.activeId})?nd.activeId:(function(){var f=nd.classes.filter(function(k){return !k.archived})[0];return f?f.id:null})()};
+    save();pending=null;msg='اطلاعات بازیابی شد.';render(true);
+  }
+  else if(a==='delStu'&&c){
+    if(!arm(t,'s'+id,'مطمئنید؟'))return;
+    armed=null;c.students=c.students.filter(function(s){return s.id!==id});save();msg='دانش‌آموز حذف شد.';render();
+  }
+});
+document.addEventListener('change',function(e){
+  var t=e.target;if(!t.dataset)return;
+  if(t.dataset.act==='pickFile'){var f=t.files&&t.files[0];if(!f)return;var r=new FileReader();r.onload=function(){takeText(String(r.result))};r.onerror=function(){msg='خواندن فایل ممکن نشد.';render(true)};r.readAsText(f);return}
+  if(t.dataset.act!=='setGroup')return;
+  var c=active();if(!c)return;
+  c.students.forEach(function(s){if(s.id===t.dataset.id)s.groupId=t.value||null});
+  save();msg='گروه دانش‌آموز ذخیره شد.';render(true);
+});
+render();
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script>
+</body>
+</html>

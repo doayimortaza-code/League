@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>کارنامه لیگ موفقیت</title>
+<style>
+:root{--bg:#f2f5ef;--card:#fff;--ink:#14302a;--muted:#5d726b;--line:#d9e2da;--brand:#0f5c4d;--onbrand:#fff;--gold:#e3a72f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1e1a;--card:#172a25;--ink:#e8f1ed;--muted:#9bb3aa;--line:#27403a;--brand:#1c7a67;--onbrand:#fff;--gold:#f0b94a}}
+:root[data-theme="dark"]{--bg:#0f1e1a;--card:#172a25;--ink:#e8f1ed;--muted:#9bb3aa;--line:#27403a;--brand:#1c7a67;--onbrand:#fff;--gold:#f0b94a}
+*{box-sizing:border-box}
+html{height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'Vazirmatn',Tahoma,'Segoe UI',sans-serif;line-height:1.7}
+.wrap{max-width:640px;margin:0 auto;padding:28px 16px 16px}
+.hero{background:var(--brand);color:var(--onbrand);border-radius:20px;padding:22px 18px;display:flex;gap:14px;align-items:center}
+.medal{flex:none;width:56px;height:56px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-size:28px;box-shadow:0 0 0 5px rgba(255,255,255,.25)}
+.hero h1{margin:0;font-size:1.3rem;font-weight:800}
+.hero p{margin:4px 0 0;font-size:.92rem;opacity:.92}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.big{font-size:1.25rem}
+.muted{color:var(--muted);font-size:.9rem}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.tile b{font-size:1.1rem}
+h2{font-size:1.05rem;margin:22px 0 0}
+.row{padding:10px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.top{display:flex;justify-content:space-between;gap:8px}
+.bar{height:8px;background:var(--line);border-radius:6px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--brand);border-radius:6px}
+textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0}
+button{background:var(--brand);color:var(--onbrand);border:0;border-radius:10px;padding:10px 18px;font:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.msg{border:1px solid var(--gold);border-radius:10px;padding:10px;margin-top:12px;background:var(--card)}
+.foot{margin-top:24px;text-align:center;color:var(--muted);font-size:.85rem}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f5c4d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="لیگ موفقیت">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+var app=document.getElementById('app');
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function fa(n){return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:2})}
+function dec(c){
+  c=String(c).replace(/\s+/g,'').replace(/-/g,'+').replace(/_/g,'/');
+  while(c.length%4)c+='=';
+  var d=JSON.parse(decodeURIComponent(escape(atob(c))));
+  if(!d||d.v!==1||typeof d.n!=='string'||!Array.isArray(d.ex))throw new Error('bad');
+  return d;
+}
+var AW={w:'دانش‌آموز نمونه هفته',c:'دانش‌آموز نمونه اخلاق'};
+function render(d){
+  var h='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>کارنامه لیگ موفقیت</h1><p>'+esc(d.s)+'<br>'+esc(d.c)+(d.y?' - '+esc(d.y):'')+'</p></div></header>';
+  h+='<div class="card"><b class="big">'+esc(d.n)+'</b>'+(d.g?'<div class="muted">گروه: '+esc(d.g)+'</div>':'')+'</div>';
+  h+='<div class="tiles"><div class="tile"><span class="muted">مجموع نمره</span><b>'+fa(d.tot)+' از '+fa(d.mx)+'</b></div>';
+  if(d.rk)h+='<div class="tile"><span class="muted">رتبه در کلاس</span><b>'+fa(d.rk)+' از '+fa(d.cnt)+'</b></div>';
+  if(d.avg!=null)h+='<div class="tile"><span class="muted">میانگین مجموع کلاس</span><b>'+fa(d.avg)+'</b></div>';
+  if(d.gr)h+='<div class="tile"><span class="muted">رتبه گروه</span><b>'+fa(d.gr)+' از '+fa(d.gc)+'</b></div>';
+  h+='</div><h2>نمره‌های آزمون‌ها</h2><div class="card">';
+  if(!d.ex.length)h+='<p class="muted">هنوز آزمونی ثبت نشده است.</p>';
+  d.ex.forEach(function(e){
+    var v=e[3],pct=(v!=null&&e[2]>0)?Math.max(0,Math.min(100,v/e[2]*100)):0;
+    h+='<div class="row"><div class="top"><span>'+esc(e[0])+'<br><span class="muted">'+esc(e[1])+'</span></span><b>'+(v==null?'ثبت نشده':fa(v)+' از '+fa(e[2]))+'</b></div>';
+    if(v!=null)h+='<div class="bar" aria-hidden="true"><i style="width:'+pct+'%"></i></div>';
+    if(e[4]!=null)h+='<div class="muted">میانگین کلاس: '+fa(e[4])+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  if(d.aw&&d.aw.length){
+    h+='<h2>افتخارات</h2><div class="card">';
+    d.aw.forEach(function(a){h+='<div class="row">⭐ '+esc(AW[a[0]]||'')+'<br><span class="muted">'+esc(a[1])+(a[2]?' - '+esc(a[2]):'')+'</span></div>'});
+    h+='</div>';
+  }
+  h+='<p class="foot">آموزگار: '+esc(d.t)+(d.d?' · تاریخ تهیه: '+esc(d.d):'')+'<br>این صفحه فقط برای مشاهده است و قابل تغییر نیست.</p>';
+  app.innerHTML=h;
+}
+function ask(err){
+  app.innerHTML='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>کارنامه لیگ موفقیت</h1><p>دبستان سیدالشهدا</p></div></header>'+(err?'<div class="msg" role="status">'+esc(err)+'</div>':'')+'<div class="card"><label for="code">کد کارنامه را که آموزگار برایتان فرستاده اینجا بچسبانید</label><textarea id="code" rows="5"></textarea><button id="go">نمایش کارنامه</button></div>';
+  document.getElementById('go').onclick=function(){
+    try{render(dec(document.getElementById('code').value))}catch(e){ask('کد درست نیست یا ناقص کپی شده است. همه کد را از اول تا آخر بچسبانید.')}
+  };
+}
+(function(){
+  var m=location.hash.replace(/^#/,'');
+  if(m.indexOf('=')>-1)m=m.split('=').slice(1).join('=');
+  if(!m)return ask('');
+  try{render(dec(m))}catch(e){ask('لینک کامل نیست. کد کارنامه را در کادر زیر بچسبانید.')}
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script>
+</body>
+</html>
