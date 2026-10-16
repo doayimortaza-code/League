@@ -61,7 +61,7 @@ ol{padding:0;margin:0;list-style:none}
 <body>
 <div class="wrap" id="app"></div>
 <script>
-var parentText='',VER='۰٫۹۷',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
+var parentText='',VER='۰٫۹۹',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
 function load(){try{var s=localStorage.getItem(KEY);if(s){var d=JSON.parse(s);if(d&&d.classes)return d}}catch(e){}return{v:1,classes:[],activeId:null}}
 var db=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){msg='ذخیره‌سازی در این مرورگر ممکن نشد.'}}
@@ -460,12 +460,25 @@ function vSettings(){
   return h+'</div>';
 }
 var pr=null;
-var OPS={add:'جمع',sub:'تفریق',mul:'ضرب',frac:'کسر'},LVS={1:'آسان',2:'متوسط',3:'سخت'};
-var TG={carry:'جمع با نقلی',borrow:'تفریق با قرض گرفتن',table:'جدول ضرب',fracDen:'جمع کسرها (مخرج مشترک)',frac:'کسرها',other:'دقت در محاسبه'};
+var PS={sid:'',mode:'self',n:10},LVN={1:'ساده',2:'متوسط',3:'سخت'};
+var CHAP=[
+{k:'c1',t:'فصل ۱: عدد و الگوهای عددی',s:'عدد و الگو',ic:'🔢',topics:'الگوهای عددی، بخش‌پذیری، ب.م.م و ک.م.م، اعداد صحیح',ops:['pat','bakh','int']},
+{k:'c2',t:'فصل ۲: کسر',s:'کسر',ic:'🍕',topics:'جمع، تفریق، ضرب و تقسیم کسرها',ops:['frac']},
+{k:'c3',t:'فصل ۳: اعداد اعشاری',s:'اعشار',ic:'🔟',topics:'جمع، تفریق، ضرب و تقسیم اعداد اعشاری',ops:['dec']},
+{k:'c4',t:'فصل ۴: تقارن و مختصات',s:'تقارن و مختصات',ic:'📍',topics:'محورهای مختصات، تقارن مرکزی',ops:['coord']},
+{k:'c5',t:'فصل ۵: اندازه‌گیری',s:'اندازه‌گیری',ic:'📏',topics:'تبدیل یکاها، مساحت و محیط، دایره، زاویه، حجم',ops:['meas']},
+{k:'c6',t:'فصل ۶: تناسب و درصد',s:'تناسب و درصد',ic:'💯',topics:'نسبت و تناسب، درصد، تخفیف',ops:['ratio','pct']},
+{k:'c7',t:'فصل ۷: تقریب',s:'تقریب',ic:'🎯',topics:'گرد کردن عددهای طبیعی و اعشاری',ops:['round']},
+{k:'x1',t:'مرور محاسبه‌ها',s:'مرور محاسبه',ic:'➕',topics:'جمع، تفریق، ضرب و تقسیم عددهای بزرگ',ops:['add','sub','mul','divi']},
+{k:'x2',t:'مسئله‌های کلامی',s:'مسئله کلامی',ic:'🧩',topics:'حل مسئله چندمرحله‌ای',ops:['word']}
+];
+function chInfo(k){return CHAP.filter(function(x){return x.k===k})[0]||CHAP[0]}
+function opCh(op){var m={add:'x1',sub:'x1',mul:'x1',divi:'x1',mix:'x1',frac:'c2',dec:'c3',pct:'c6',ratio:'c6',int:'c1',bakh:'c1',pat:'c1',coord:'c4',round:'c7',meas:'c5',word:'x2'};return m[op]||'x1'}
+var TG={pat:'الگوهای عددی',coord:'مختصات و تقارن',carry:'جمع با نقلی',borrow:'تفریق با قرض گرفتن',table:'جدول ضرب',divi:'تقسیم',fracDen:'جمع کسرها (مخرج مشترک)',frac:'کسرها',decPoint:'جای ممیز در اعداد اعشاری',dec:'محاسبات اعشاری',pct:'درصد',ratio:'نسبت و تناسب',int:'اعداد صحیح',bakh:'بخش‌پذیری، ب.م.م و ک.م.م',round:'تقریب و گرد کردن',meas:'مساحت و محیط',word:'مسئله‌های کلامی',other:'دقت در محاسبه'};
 function ri(a,b){return a+Math.floor(Math.random()*(b-a+1))}
 function gcd(a,b){return b?gcd(b,a%b):a}
-function frs(n,d){var g=gcd(n,d);return (n/g)+'/'+(d/g)}
-function pf(x){return String(x).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d]})}
+function frs(n,d){var g=gcd(Math.abs(n),d);n=n/g;d=d/g;return d===1?String(n):n+'/'+d}
+function pf(x){return String(x).replace(/(\d)\.(\d)/g,'$1٫$2').replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d]})}
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function uniqOpts(ans,wrongs){
   var o=[String(ans)];
@@ -474,72 +487,255 @@ function uniqOpts(ans,wrongs){
   while(o.length<4&&typeof ans==='number'){var w2=String(ans+k*(k%2?1:-1)*ri(1,3));if(ans+k>0&&o.indexOf(w2)<0&&Number(w2)>0)o.push(w2);k++;if(k>30)break}
   return shuf(o.slice(0,4));
 }
-function mkQ(op,l){
-  var a,b,d,x,n;
-  if(op==='add'){if(l===1){a=ri(1,20);b=ri(1,20)}else if(l===2){a=ri(10,99);b=ri(10,99)}else{a=ri(100,999);b=ri(100,999)}return{op:op,a:a,b:b,t:a+' + '+b+' = ?',ans:a+b,mode:'num'}}
-  if(op==='sub'){if(l===1){a=ri(2,20);b=ri(1,a)}else if(l===2){a=ri(20,99);b=ri(10,a)}else{a=ri(200,999);b=ri(100,a)}return{op:op,a:a,b:b,t:a+' − '+b+' = ?',ans:a-b,mode:'num'}}
-  if(op==='mul'){if(l===1){a=ri(2,5);b=ri(1,10)}else if(l===2){a=ri(2,9);b=ri(2,12)}else{a=ri(12,99);b=ri(2,9)}return{op:op,a:a,b:b,t:a+' × '+b+' = ?',ans:a*b,mode:'num'}}
-  if(l===1){
-    d=ri(4,10);a=ri(1,d-2);b=ri(1,d-a-1);
-    var ans=(a+b)+'/'+d,w1=(a+b)+'/'+(2*d);
-    return{op:'frac',t:a+'/'+d+' + '+b+'/'+d+' = ?',ans:ans,mode:'opt',wrongDen:w1,opts:shuf(uniqOpts(ans,[w1,(a+b+1)+'/'+d,Math.max(1,a+b-1)+'/'+d,(a*b)+'/'+d]).map(String))};
-  }
-  if(l===2){
-    d=ri(2,6);x=ri(1,d-1);n=d*ri(2,6);
-    var an=n/d*x;
-    return{op:'frac',t:x+'/'+d+' از '+n+' چند است؟',ans:an,mode:'opt',opts:uniqOpts(an,[n/d,an+n/d,n-x,an+1])};
-  }
-  var P=[[2,3],[2,4],[3,6],[2,6],[4,6],[3,4],[5,10],[2,5]],p=P[ri(0,P.length-1)],d1=p[0],d2=p[1];
-  a=ri(1,d1-1);b=ri(1,d2-1);
-  var L=d1*d2/gcd(d1,d2),num=a*(L/d1)+b*(L/d2),an3=frs(num,L),w3=frs(a+b,d1+d2);
-  var extra=[frs(num+1,L),frs(Math.max(1,num-1),L),frs(a*b,d1*d2),frs(a+b,Math.max(d1,d2))];
-  return{op:'frac',t:a+'/'+d1+' + '+b+'/'+d2+' = ?',ans:an3,mode:'opt',wrongDen:w3,opts:shuf(uniqOpts(an3,[w3].concat(extra)).map(String))};
+function numS(t){
+  var s=String(t==null?'':t).trim().replace(/[−–—]/g,'-'),neg=false;
+  if(s.charAt(0)==='-'){neg=true;s=s.slice(1)}else if(s.charAt(s.length-1)==='-'){neg=true;s=s.slice(0,-1)}
+  var v=num(s);
+  if(v===null||isNaN(v))return v;
+  return neg?-v:v;
 }
+function pick(a){return a[ri(0,a.length-1)]}
+function dstr(x){return String(r2(x))}
+function sg(x){return x<0?'(−'+Math.abs(x)+')':String(x)}
+function fopts(n,d,wr){
+  var g=gcd(Math.abs(n),d);n=n/g;d=d/g;
+  var ans=frs(n,d),o=[ans];
+  wr.concat([frs(n+1,d),frs(Math.max(1,n-1),d),frs(n,d+1),frs(n,Math.max(1,d-1)),frs(d,n),frs(n+d,d),frs(n*2,d)]).forEach(function(x){if(o.length<4&&o.indexOf(x)<0)o.push(x)});
+  var k=1;while(o.length<4&&k<80){var x2=frs(n+k,d);if(o.indexOf(x2)<0)o.push(x2);k++}
+  return {ans:ans,opts:shuf(o)};
+}
+function N(op,a,b,t,ans,rtl){return{op:op,a:a,b:b,t:rtl?t:t+' = ?',ans:ans,mode:'num',rtl:!!rtl}}
+var FP=[[2,3],[2,4],[3,6],[2,6],[4,6],[3,4],[5,10],[2,5],[3,5],[4,8],[6,8]];
+function mkFrac(l){
+  var kind=l===1?pick(['sameAdd','part']):l===2?pick(['diffAdd','diffSub','mul']):pick(['div','diffSub','mul']);
+  var a,b,c,d,d1,d2,L,p,r;
+  if(kind==='sameAdd'){d=ri(4,12);a=ri(1,d-2);b=ri(1,d-a-1);r=fopts(a+b,d,[frs(a+b,2*d)]);return{op:'frac',t:a+'/'+d+' + '+b+'/'+d+' = ?',ans:r.ans,mode:'opt',wrongDen:frs(a+b,2*d),opts:r.opts}}
+  if(kind==='part'){d=ri(2,8);a=ri(1,d-1);var n=d*ri(2,9),an=n/d*a;return{op:'frac',t:a+'/'+d+' از '+n+' چند است؟',ans:an,mode:'opt',rtl:true,opts:uniqOpts(an,[n/d,an+n/d,n-a,an+1])}}
+  if(kind==='diffAdd'){p=pick(FP);d1=p[0];d2=p[1];a=ri(1,d1-1);b=ri(1,d2-1);L=d1*d2/gcd(d1,d2);var num2=a*(L/d1)+b*(L/d2),wd=frs(a+b,d1+d2);r=fopts(num2,L,[wd]);return{op:'frac',t:a+'/'+d1+' + '+b+'/'+d2+' = ?',ans:r.ans,mode:'opt',wrongDen:wd,opts:r.opts}}
+  if(kind==='diffSub'){
+    var tries=0;do{p=pick(FP);d1=p[0];d2=p[1];a=ri(1,d1-1);b=ri(1,d2-1);L=d1*d2/gcd(d1,d2);tries++}while(a*(L/d1)<=b*(L/d2)&&tries<60);
+    if(a*(L/d1)<=b*(L/d2)){d1=4;d2=3;a=3;b=2;L=12}
+    var nm=a*(L/d1)-b*(L/d2),wd2=frs(Math.abs(a-b)||1,Math.abs(d1-d2)||1);r=fopts(nm,L,[wd2]);return{op:'frac',t:a+'/'+d1+' − '+b+'/'+d2+' = ?',ans:r.ans,mode:'opt',wrongDen:wd2,opts:r.opts};
+  }
+  b=ri(2,9);a=ri(1,b-1);d=ri(2,9);c=ri(1,d-1);
+  if(kind==='mul'){var wm=frs(a*c,b+d);r=fopts(a*c,b*d,[wm,frs(a*d,b*c)]);return{op:'frac',t:a+'/'+b+' × '+c+'/'+d+' = ?',ans:r.ans,mode:'opt',wrongDen:wm,opts:r.opts}}
+  r=fopts(a*d,b*c,[frs(a*c,b*d),frs(b*c,a*d)]);return{op:'frac',t:a+'/'+b+' ÷ '+c+'/'+d+' = ?',ans:r.ans,mode:'opt',opts:r.opts};
+}
+function mkBakh(l){
+  var kinds=l===1?['divisible','prime']:l===2?['divisible','gcd','lcm','prime']:['gcd','lcm','gcd','lcm'];
+  var kind=pick(kinds),a,b,g,d,x,o,t;
+  if(kind==='divisible'){
+    d=pick([2,3,4,5,9,10]);var cor=d*ri(Math.ceil(12/d),Math.floor(999/d)),w=[];
+    while(w.length<3){x=ri(12,999);if(x%d!==0&&w.indexOf(x)<0)w.push(x)}
+    return{op:'bakh',t:'کدام عدد بر '+d+' بخش‌پذیر است؟',ans:String(cor),mode:'opt',rtl:true,opts:shuf([String(cor)].concat(w.map(String)))};
+  }
+  if(kind==='prime'){
+    var PR=[11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97],CO=[21,27,33,39,49,51,57,63,69,77,81,87,91,93,99,25,35,45,55,65,75,85,95];
+    var pc=pick(PR),wc=shuf(CO.slice()).slice(0,3);
+    return{op:'bakh',t:'کدام عدد اول است؟',ans:String(pc),mode:'opt',rtl:true,opts:shuf([String(pc)].concat(wc.map(String)))};
+  }
+  if(kind==='gcd'){
+    g=l===2?ri(2,9):ri(3,15);do{a=g*ri(2,9);b=g*ri(2,9)}while(a===b);
+    return N('bakh',a,b,'ب.م.م '+a+' و '+b+' چند است؟',gcd(a,b),true);
+  }
+  if(l===2){a=ri(2,12);b=ri(2,12)}else{a=ri(6,24);b=ri(6,24)}
+  if(a===b)b=a+1;
+  return N('bakh',a,b,'ک.م.م '+a+' و '+b+' چند است؟',a*b/gcd(a,b),true);
+}
+function mkWord(l){
+  var nm=pick(['علی','سارا','رضا','مریم','امیر','نگار','حسین','زهرا']);
+  if(l===1){var k=ri(2,9),q=ri(2,20)*500;return N('word',k,q,nm+' برای '+k+' دفتر، هر دفتر '+q+' تومان، چقدر پرداخت کرد؟',k*q,true)}
+  if(l===2){
+    if(Math.random()<0.5){var P,k2,q2;do{P=ri(5,20)*10000;k2=ri(2,6);q2=ri(2,15)*1000}while(P<=k2*q2);return N('word',P,q2,nm+' '+P+' تومان داشت. '+k2+' بسته '+q2+' تومانی خرید. چند تومان باقی ماند؟',P-k2*q2,true)}
+    var v=ri(4,9)*10,t1=ri(2,5),t2=ri(2,5);return N('word',v,t1,'اتومبیلی با سرعت '+v+' کیلومتر در ساعت، '+t1+' ساعت و بعد '+t2+' ساعت دیگر می‌رود. در کل چند کیلومتر رفته است؟',v*(t1+t2),true);
+  }
+  if(Math.random()<0.5){var n=ri(2,9),p=ri(5,20)*1000,pr=pick([10,20,25,30,40,50]);return N('word',n,p,'مغازه‌داری '+n+' کیلو برنج، هر کیلو '+p+' تومان خرید و با '+pr+'٪ سود فروخت. فروش کل چند تومان شد؟',n*p*(100+pr)/100,true)}
+  var c=ri(2,10)*20,pc=pick([20,25,40,45,60]);return N('word',c,pc,'در کلاسی '+c+' دانش‌آموز هست. '+pc+'٪ آن‌ها دختر هستند. چند پسر در کلاس هست؟',c-c*pc/100,true);
+}
+function mkPat(l){
+  var a,d,n,seq;
+  if(l===1){a=ri(1,20);d=ri(2,9);seq=[0,1,2,3].map(function(i){return a+i*d});return N('pat',a,d,seq.join('، ')+'، … جمله بعدی چیست؟',a+4*d,true)}
+  if(l===2){a=ri(2,15);d=ri(2,9);n=ri(8,15);seq=[0,1,2,3].map(function(i){return a+i*d});return N('pat',a,d,'در الگوی '+seq.join('، ')+'، … جمله '+n+'ام چیست؟',a+(n-1)*d,true)}
+  if(Math.random()<0.5){a=ri(1,4);d=ri(2,3);seq=[0,1,2,3].map(function(i){return a*Math.pow(d,i)});return N('pat',a,d,seq.join('، ')+'، … جمله بعدی چیست؟',a*Math.pow(d,4),true)}
+  a=ri(2,6);d=ri(1,9);n=ri(12,30);return N('pat',a,d,'قاعده یک الگو «'+a+' × شماره جمله + '+d+'» است. جمله '+n+'ام چیست؟',a*n+d,true);
+}
+function ptS(x,y){return '('+x+'، '+y+')'}
+function optsStr(ans,wr){var o=[ans];wr.forEach(function(x){if(o.length<4&&o.indexOf(x)<0)o.push(x)});var k=1;while(o.length<4){var z=ptS(ri(1,12),ri(1,12));if(o.indexOf(z)<0)o.push(z);k++;if(k>50)break}return shuf(o)}
+function mkCoord(l){
+  var x,y,a,b,c,d;
+  if(l===1){x=ri(1,9);y=ri(1,9);if(Math.random()<0.5)return N('coord',x,y,'فاصله نقطه '+ptS(x,y)+' تا محور xها چند واحد است؟',y,true);return N('coord',x,y,'فاصله نقطه '+ptS(x,y)+' تا محور yها چند واحد است؟',x,true)}
+  if(l===2){x=ri(1,8);y=ri(1,8);var s2=ri(2,6),right=Math.random()<0.5,nx=right?x+s2:x,ny=right?y:y+s2,an=ptS(nx,ny);
+    return{op:'coord',t:'نقطه '+ptS(x,y)+' را '+s2+' واحد به '+(right?'راست':'بالا')+' می‌بریم. مختصات نقطه جدید کدام است؟',ans:an,mode:'opt',rtl:true,opts:optsStr(an,[ptS(ny,nx),right?ptS(x,y+s2):ptS(x+s2,y),ptS(x+s2,y+s2)])};
+  }
+  if(Math.random()<0.5){c=ri(3,8);d=ri(3,8);a=ri(1,2*c-1);b=ri(1,2*d-1);var an2=ptS(2*c-a,2*d-b);
+    return{op:'coord',t:'قرینه نقطه '+ptS(a,b)+' نسبت به نقطه '+ptS(c,d)+' (تقارن مرکزی) کدام است؟',ans:an2,mode:'opt',rtl:true,opts:optsStr(an2,[ptS(2*d-b,2*c-a),ptS(c+a,d+b),ptS(Math.abs(c-a),Math.abs(d-b))])};}
+  var x1=ri(1,5),y1=ri(1,5),x2=x1+ri(2,6),y2=y1+ri(2,6),an3=ptS(x1,y2);
+  return{op:'coord',t:'سه رأس یک مستطیل '+ptS(x1,y1)+' و '+ptS(x2,y1)+' و '+ptS(x2,y2)+' است. رأس چهارم کدام است؟',ans:an3,mode:'opt',rtl:true,opts:optsStr(an3,[ptS(y2,x1),ptS(x2,y1+1),ptS(x1,y1+ (y2-y1)+1)])};
+}
+function mkMeas(l){
+  var w,h,k;
+  if(l===1){
+    k=pick(['rect','rectP','cm','g','L']);
+    if(k==='rect'){w=ri(3,30);h=ri(3,30);return N('meas',w,h,'مساحت مستطیلی به طول '+w+' و عرض '+h+' سانتی‌متر، چند سانتی‌متر مربع است؟',w*h,true)}
+    if(k==='rectP'){w=ri(3,30);h=ri(3,30);return N('meas',w,h,'محیط مستطیلی به طول '+w+' و عرض '+h+' سانتی‌متر، چند سانتی‌متر است؟',2*(w+h),true)}
+    if(k==='cm'){w=ri(1,9)*100+ri(0,9)*10;return N('meas',w,0,w+' سانتی‌متر چند متر است؟',r2(w/100),true)}
+    if(k==='g'){w=ri(1,9)*1000+ri(0,9)*100;return N('meas',w,0,w+' گرم چند کیلوگرم است؟',r2(w/1000),true)}
+    w=ri(1,12)/2;return N('meas',w,0,dstr(w)+' لیتر چند میلی‌لیتر است؟',r2(w*1000),true);
+  }
+  var r=ri(2,12);
+  if(l===2){
+    k=pick(['area','circ','tri','supp']);
+    if(k==='area')return N('meas',r,0,'مساحت دایره‌ای به شعاع '+r+' سانتی‌متر چند سانتی‌متر مربع است؟ (π = 3.14)',r2(3.14*r*r),true);
+    if(k==='circ')return N('meas',r,0,'محیط دایره‌ای به شعاع '+r+' سانتی‌متر چند سانتی‌متر است؟ (π = 3.14)',r2(2*3.14*r),true);
+    if(k==='tri'){w=ri(30,80);h=ri(30,80);return N('meas',w,h,'دو زاویه یک مثلث '+w+' و '+h+' درجه است. زاویه سوم چند درجه است؟',180-w-h,true)}
+    w=ri(20,160);return N('meas',w,0,'مکمل زاویه '+w+' درجه چند درجه است؟',180-w,true);
+  }
+  k=pick(['diam','half','box','quad']);
+  if(k==='diam'){w=ri(2,12)*2;return N('meas',w,0,'مساحت دایره‌ای به قطر '+w+' سانتی‌متر چند سانتی‌متر مربع است؟ (π = 3.14)',r2(3.14*(w/2)*(w/2)),true)}
+  if(k==='half'){w=ri(2,12)*2;return N('meas',w,0,'مساحت نیم‌دایره‌ای به شعاع '+w+' سانتی‌متر چند سانتی‌متر مربع است؟ (π = 3.14)',r2(3.14*w*w/2),true)}
+  if(k==='box'){w=ri(2,12);h=ri(2,9);var z=ri(2,9);return N('meas',w,h,'حجم یک مکعب مستطیل به ابعاد '+w+' و '+h+' و '+z+' سانتی‌متر چند سانتی‌متر مکعب است؟',w*h*z,true)}
+  w=ri(60,120);h=ri(60,120);var u=ri(40,100);return N('meas',w,h,'سه زاویه یک چهارضلعی '+w+' و '+h+' و '+u+' درجه است. زاویه چهارم چند درجه است؟ (مجموع زاویه‌ها ۳۶۰ درجه)',360-w-h-u,true);
+}
+function mkQ(op,l){
+  if(op==='mix')op=pick(['add','sub','mul','divi','frac','dec','pct','ratio','int','bakh','round','meas','word']);
+  var a,b,qt,x,h,u;
+  if(op==='add'){if(l===1){a=ri(10,99);b=ri(10,99)}else if(l===2){a=ri(100,9999);b=ri(100,9999)}else{a=ri(1000,99999);b=ri(1000,99999)}return N(op,a,b,a+' + '+b,a+b)}
+  if(op==='sub'){if(l===1){a=ri(20,99);b=ri(10,a)}else if(l===2){a=ri(1000,9999);b=ri(100,a)}else{a=ri(10000,99999);b=ri(1000,a)}return N(op,a,b,a+' − '+b,a-b)}
+  if(op==='mul'){if(l===1){a=ri(12,99);b=ri(2,9)}else if(l===2){if(Math.random()<0.5){a=ri(100,999);b=ri(2,9)}else{a=ri(12,99);b=ri(11,99)}}else{a=ri(100,999);b=ri(11,99)}return N(op,a,b,a+' × '+b,a*b)}
+  if(op==='divi'){if(l===1){b=ri(2,9);qt=ri(12,99)}else if(l===2){b=ri(11,30);qt=ri(12,99)}else{b=ri(11,99);qt=ri(101,999)}a=b*qt;return N(op,a,b,a+' ÷ '+b,qt)}
+  if(op==='frac')return mkFrac(l);
+  if(op==='dec'){
+    var k=l===1?'add':l===2?pick(['mulInt','mulDec','divNat']):pick(['divByDec','mulDec2']);
+    if(k==='add'){a=ri(11,999)/10;b=ri(11,999)/10;if(Math.random()<0.5)return N(op,a,b,dstr(a)+' + '+dstr(b),r2(a+b));if(b>a){x=a;a=b;b=x}return N(op,a,b,dstr(a)+' − '+dstr(b),r2(a-b))}
+    if(k==='mulInt'){a=ri(11,99)/10;b=ri(2,9);return N(op,a,b,dstr(a)+' × '+b,r2(a*b))}
+    if(k==='mulDec'){a=ri(11,99)/10;b=ri(11,99)/10;return N(op,a,b,dstr(a)+' × '+dstr(b),r2(a*b))}
+    if(k==='divNat'){b=ri(2,9);qt=ri(11,99)/10;a=r2(b*qt);return N(op,a,b,dstr(a)+' ÷ '+b,qt)}
+    if(k==='divByDec'){b=pick([0.2,0.5,0.25,1.5,0.4,2.5,0.05,0.8]);qt=ri(3,40);a=r2(b*qt);return N(op,a,b,dstr(a)+' ÷ '+dstr(b),qt)}
+    a=ri(101,999)/100;b=ri(2,9);return N(op,a,b,dstr(a)+' × '+b,r2(a*b));
+  }
+  if(op==='pct'){
+    if(l===1){var p=pick([10,20,25,50,75]),n=ri(2,50)*20;return N(op,p,n,p+'٪ از '+n+' چند است؟',p*n/100,true)}
+    var kk=l===2?pick(['disc','ofNum']):pick(['whatPct','reverse']);
+    if(kk==='disc'){var pr=ri(5,50)*10000,d=pick([5,10,15,20,25,30]);return N(op,pr,d,'قیمت یک کالا '+pr+' تومان است. با '+d+'٪ تخفیف، قیمت جدید چند تومان می‌شود؟',pr/100*(100-d),true)}
+    if(kk==='ofNum'){var p2=pick([5,15,30,35,40,45,60,65,80,90]),n2=ri(2,50)*20;return N(op,p2,n2,p2+'٪ از '+n2+' چند است؟',p2*n2/100,true)}
+    if(kk==='whatPct'){var bb=pick([20,25,40,50,80,200,250,500]),aa,t=0;do{aa=ri(1,bb-1);t++}while((aa*100)%bb!==0&&t<200);if((aa*100)%bb!==0)aa=bb/4;return N(op,aa,bb,aa+' چند درصد '+bb+' است؟',aa*100/bb,true)}
+    var p3=pick([10,20,25,40,50]),w=ri(2,50)*20,part=p3*w/100;return N(op,p3,part,p3+'٪ یک عدد برابر '+part+' است. آن عدد چند است؟',w,true);
+  }
+  if(op==='ratio'){
+    if(l===1){var n1=ri(2,9),un=ri(2,20)*500,k1=ri(2,12);return N(op,n1,k1,n1+' دفتر '+(n1*un)+' تومان است. '+k1+' دفتر چند تومان است؟',k1*un,true)}
+    if(l===2){var v=ri(4,9)*10,h1=ri(2,6),h2=ri(2,9);return N(op,h1,h2,'اتومبیلی در '+h1+' ساعت '+(h1*v)+' کیلومتر می‌رود. در '+h2+' ساعت چند کیلومتر می‌رود؟',h2*v,true)}
+    var ra=ri(2,7),rb=ri(2,7),m=ri(2,9);if(ra===rb)rb=ra+1;
+    return N(op,ra,rb,'نسبت تعداد دختران به پسران '+ra+' به '+rb+' است. اگر '+((ra+rb)*m)+' دانش‌آموز باشند، تعداد دختران چند نفر است؟',ra*m,true);
+  }
+  if(op==='int'){
+    var r=l===1?10:l===2?30:25;a=ri(-r,r);b=ri(-r,r);
+    if(l<3){var plus=Math.random()<0.5;return N(op,a,b,sg(a)+(plus?' + ':' − ')+sg(b),plus?a+b:a-b)}
+    var c=ri(-r,r),o1=Math.random()<0.5,o2=Math.random()<0.5;
+    return N(op,a,b,sg(a)+(o1?' + ':' − ')+sg(b)+(o2?' + ':' − ')+sg(c),a+(o1?b:-b)+(o2?c:-c));
+  }
+  if(op==='bakh')return mkBakh(l);
+  if(op==='round'){
+    if(l===1){x=ri(100,9999);u=pick([10,100]);return N(op,x,u,x+' را به نزدیک‌ترین '+(u===10?'دهگان':'صدگان')+' گرد کن.',Math.round(x/u)*u,true)}
+    if(l===2){if(Math.random()<0.5){x=ri(1000,99999);u=pick([100,1000]);return N(op,x,u,x+' را به نزدیک‌ترین '+(u===100?'صدگان':'هزارگان')+' گرد کن.',Math.round(x/u)*u,true)}
+      do{h=ri(101,999)}while(h%10===0);return N(op,h,1,dstr(h/100)+' را تا یک رقم اعشار گرد کن.',Math.floor((h+5)/10)/10,true)}
+    if(Math.random()<0.5){x=ri(10000,999999);u=pick([1000,10000]);return N(op,x,u,x+' را به نزدیک‌ترین '+(u===1000?'هزارگان':'ده‌هزارگان')+' گرد کن.',Math.round(x/u)*u,true)}
+    do{h=ri(1001,9999)}while(h%10===0);return N(op,h,2,(h/1000).toFixed(3)+' را تا دو رقم اعشار گرد کن.',Math.floor((h+5)/10)/100,true);
+  }
+  if(op==='meas')return mkMeas(l);
+  if(op==='pat')return mkPat(l);
+  if(op==='coord')return mkCoord(l);
+  if(op==='word')return mkWord(l);
+  return mkQ('add',l);
+}
+
 function detect(q,w){
   var c=q.ans,d=Math.abs(w-c);
-  if(q.op==='add'&&(d===10||d===100||d===1000))return 'carry';
+  if(q.op==='add'&&(d===10||d===100||d===1000||d===10000))return 'carry';
   if(q.op==='sub'){
-    var A=String(q.a),B=String(q.b),s='',i;while(B.length<A.length)B='0'+B;
-    for(i=0;i<A.length;i++)s+=Math.abs(Number(A[i])-Number(B[i]));
-    if(Number(s)===w||d===10||d===100)return 'borrow';
+    var A=String(q.a),B=String(q.b),s2='',i;while(B.length<A.length)B='0'+B;
+    for(i=0;i<A.length;i++)s2+=Math.abs(Number(A[i])-Number(B[i]));
+    if(Number(s2)===w||d===10||d===100||d===1000)return 'borrow';
   }
   if(q.op==='mul'&&d>0&&(d%q.a===0||d%q.b===0))return 'table';
+  if(q.op==='dec'&&c!==0&&w!==0){var rt=w/c;if(Math.abs(rt-10)<1e-9||Math.abs(rt-0.1)<1e-9||Math.abs(rt-100)<1e-9||Math.abs(rt-0.01)<1e-9)return 'decPoint'}
+  if(['dec','pct','ratio','int','bakh','round','meas','word','divi'].indexOf(q.op)>=0)return q.op;
   return 'other';
 }
-function tagFrac(q,sel){return (q.wrongDen&&String(sel)===q.wrongDen)?'fracDen':'frac'}
+function tagFrac(q,sel){return q.op!=='frac'?q.op:(q.wrongDen&&String(sel)===q.wrongDen)?'fracDen':'frac'}
 function nextQ(){
-  var q,tries=0,seen=pr.log.map(function(x){return x.t});
-  do{q=mkQ(pr.op,pr.lvl);tries++}while(seen.indexOf(q.t)>=0&&tries<12);
-  pr.q=q;pr.fb=null;
+  var q,tries=0,seen=pr.log.map(function(x){return x.t}),ops=chInfo(pr.ch).ops;
+  do{q=mkQ(pick(ops),pr.lvl);tries++}while(seen.indexOf(q.t)>=0&&tries<15);
+  pr.q=q;pr.fb=null;pr.shown=false;
+}
+
+
+
+
+function chStats(c,sid,ch){
+  var o={1:{n:0,ok:0,k:0},2:{n:0,ok:0,k:0},3:{n:0,ok:0,k:0}};
+  (c.practice||[]).forEach(function(r){
+    if(r.sid!==sid)return;
+    if((r.ch||opCh(r.op))!==ch)return;
+    var L=Math.min(3,Math.max(1,r.lvl||2));o[L].n+=r.n;o[L].ok+=r.ok;o[L].k++;
+  });
+  return o;
+}
+function suggestLevel(st){
+  var lv=1,L;
+  for(L=1;L<=3;L++){var x=st[L];if(x.n>=5&&x.ok/x.n>=0.8)lv=Math.min(3,L+1);else break}
+  return lv;
+}
+function lvText(st){
+  var out=[],L;
+  for(L=1;L<=3;L++)if(st[L].k)out.push(LVN[L]+': '+fa(Math.round(st[L].ok/Math.max(1,st[L].n)*100))+'٪ ('+fa(st[L].k)+' بار)');
+  return out.length?out.join(' - '):'هنوز تمرینی ثبت نشده';
 }
 function pMenu(c){
-  var h='<div class="card"><p class="muted">تمرین کوتاه و بازی‌گونه. نتیجه فقط برای تمرین بیشتر است، نه تشخیص یا قضاوت.</p>';
-  h+='<label for="pstu">دانش‌آموز (برای ثبت نتیجه)</label><select id="pstu" class="fs"><option value="">بدون ثبت نتیجه (فقط تمرین)</option>'+(c?c.students.map(function(s){return '<option value="'+s.id+'">'+esc(s.name)+'</option>'}).join(''):'')+'</select>';
-  h+='<label for="pop">نوع تمرین</label><select id="pop" class="fs">'+Object.keys(OPS).map(function(k){return '<option value="'+k+'">'+OPS[k]+'</option>'}).join('')+'</select>';
-  h+='<label for="plv">سطح</label><select id="plv" class="fs"><option value="1">آسان</option><option value="2">متوسط</option><option value="3">سخت</option></select>';
-  h+='<label for="pn">تعداد سؤال</label><select id="pn" class="fs"><option value="5">۵</option><option value="10" selected>۱۰</option><option value="15">۱۵</option></select>';
-  h+='<button class="btn" data-act="pstart">شروع بازی 🎮</button></div>';
-  if(c){
-    var by={};
-    (c.practice||[]).forEach(function(r){var o=by[r.sid]||(by[r.sid]={n:0,ok:0,k:0,tags:{}});o.k++;o.n+=r.n;o.ok+=r.ok;Object.keys(r.tags||{}).forEach(function(t){o.tags[t]=(o.tags[t]||0)+r.tags[t]})});
-    var ids=Object.keys(by).filter(function(id){return c.students.some(function(s){return s.id===id})});
-    h+='<h2>نتیجه تمرین‌های '+esc(c.name)+'</h2><div class="card">';
-    if(!ids.length)h+='<p class="muted">هنوز نتیجه‌ای ثبت نشده است.</p>';
-    ids.forEach(function(id){
-      var o=by[id],st=c.students.filter(function(s){return s.id===id})[0],top=null,tc=0;
-      Object.keys(o.tags).forEach(function(t){if(t!=='other'&&o.tags[t]>tc){tc=o.tags[t];top=t}});
-      h+='<div class="st"><span>'+esc(st.name)+'<br><span class="muted">'+fa(o.k)+' بار تمرین - '+fa(Math.round(o.ok/Math.max(1,o.n)*100))+'٪ درست'+(top&&tc>=2?'<br>پیشنهاد تمرین بیشتر: '+TG[top]:'')+'</span></span></div>';
+  var h='<div class="card"><p class="muted">تمرین ریاضی ششم بر اساس فصل‌های کتاب. هر فصل سه سطح دارد: ساده، متوسط و سخت. نتیجه فقط برای تمرین بیشتر است، نه قضاوت یا تشخیص.</p>';
+  h+='<label for="pstu">دانش‌آموز (برای ثبت نتیجه و پیشنهاد سطح)</label><select id="pstu" class="fs"><option value="">بدون ثبت نتیجه (فقط تمرین)</option>'+(c?c.students.map(function(s){return '<option value="'+s.id+'"'+(PS.sid===s.id?' selected':'')+'>'+esc(s.name)+'</option>'}).join(''):'')+'</select>';
+  h+='<label for="pmode">شیوه تمرین</label><select id="pmode" class="fs"><option value="self"'+(PS.mode==='self'?' selected':'')+'>خود دانش‌آموز تمرین می‌کند</option><option value="oral"'+(PS.mode==='oral'?' selected':'')+'>معلم می‌پرسد (پرسش شفاهی)</option></select>';
+  h+='<label for="pcnt">تعداد سؤال</label><select id="pcnt" class="fs">'+[5,10,15,20].map(function(n){return '<option value="'+n+'"'+(PS.n===n?' selected':'')+'>'+fa(n)+'</option>'}).join('')+'</select></div>';
+  h+='<h2>فصل‌های کتاب ریاضی ششم</h2><div class="grid">'+CHAP.map(function(x){return '<button class="tile" data-act="pchapter" data-id="'+x.k+'"><span class="ic" aria-hidden="true">'+x.ic+'</span><b>'+x.t.split(':')[0]+'</b><span class="muted">'+x.s+'</span></button>'}).join('')+'</div>';
+  return h+'<div style="margin-top:14px"><button class="btn ghost" data-act="preport">گزارش عملکرد دانش‌آموزان</button></div>';
+}
+function pChapter(c){
+  var ci=chInfo(pr.ch),h='<button class="back" data-act="pmenu">بازگشت به فصل‌ها</button><h2>'+ci.t+'</h2><p class="muted">'+ci.topics+'</p>';
+  var sug=0,stu=c&&PS.sid?c.students.filter(function(s){return s.id===PS.sid})[0]:null;
+  if(stu){var st=chStats(c,stu.id,pr.ch);sug=suggestLevel(st);h+='<div class="card"><b>'+esc(stu.name)+'</b><div class="muted">'+lvText(st)+'</div><div>سطح پیشنهادی: <b>'+LVN[sug]+'</b></div></div>'}
+  h+='<div class="card"><p class="muted">'+(PS.mode==='oral'?'پرسش شفاهی توسط معلم':'تمرین دانش‌آموز')+' - '+fa(PS.n)+' سؤال'+(stu?'':' - بدون ثبت نتیجه')+'</p><div class="grid">';
+  [1,2,3].forEach(function(L){h+='<button class="tile" data-act="pstartlv" data-id="'+L+'"><b>'+LVN[L]+'</b>'+(sug===L?'<span class="badge">پیشنهادی</span>':'')+'</button>'});
+  return h+'</div></div>';
+}
+function pReport(c){
+  var h='<button class="back" data-act="pmenu">بازگشت به فصل‌ها</button><h2>گزارش عملکرد'+(c?' '+esc(c.name):'')+'</h2>';
+  if(!c)return h+'<div class="empty"><p>اول یک کلاس انتخاب کنید.</p></div>';
+  var any=false;
+  c.students.forEach(function(s){
+    var rows='',tags={};
+    CHAP.forEach(function(ch){
+      var st=chStats(c,s.id,ch.k),tot=st[1].k+st[2].k+st[3].k;
+      if(!tot)return;
+      rows+='<div class="st"><span><b>'+ch.s+'</b><br><span class="muted">'+lvText(st)+'</span></span><span class="badge">'+LVN[suggestLevel(st)]+'</span></div>';
     });
-    h+='<p class="muted">این فقط راهنمایی برای انتخاب تمرین است و تشخیص نیست. اگر نگرانی ادامه‌دار بود، با مشاور مدرسه صحبت کنید.</p></div>';
-  }
-  return h;
+    (c.practice||[]).forEach(function(r){if(r.sid===s.id)Object.keys(r.tags||{}).forEach(function(t){tags[t]=(tags[t]||0)+r.tags[t]})});
+    if(!rows)return;
+    any=true;
+    var top=null,tc=0;Object.keys(tags).forEach(function(t){if(t!=='other'&&tags[t]>tc){tc=tags[t];top=t}});
+    h+='<div class="card"><b>'+esc(s.name)+'</b>'+rows+(top&&tc>=2?'<p class="muted">پیشنهاد تمرین بیشتر: '+TG[top]+'</p>':'')+'</div>';
+  });
+  if(!any)h+='<div class="empty"><p>هنوز نتیجه‌ای ثبت نشده است.</p></div>';
+  return h+'<p class="muted">نشان کنار هر فصل، سطح پیشنهادی برای سؤال بعدی است (وقتی در یک سطح حداقل ۵ سؤال و ۸۰٪ درست بوده، سطح بالاتر پیشنهاد می‌شود). این فقط راهنمای تمرین است و تشخیص نیست. اگر نگرانی ادامه‌دار بود، با مشاور مدرسه صحبت کنید.</p>';
 }
 function pPlay(){
-  var q=pr.q,h='<div class="card"><div class="row"><span class="muted">سؤال '+fa(pr.i+1)+' از '+fa(pr.n)+'</span><b>درست: '+fa(pr.ok)+'</b></div>';
-  h+='<div dir="ltr" style="text-align:center;font-size:2rem;font-weight:800;margin:18px 0">'+pf(q.t)+'</div>';
-  if(pr.fb===null){
-    if(q.mode==='num')h+='<input id="pa" inputmode="numeric" autocomplete="off" placeholder="جواب" style="text-align:center;font-size:1.4rem"><button class="btn" data-act="pcheck">بررسی</button>';
-    else h+='<div class="grid">'+q.opts.map(function(o,i){return '<button class="tile" data-act="ppick" data-id="'+i+'"><b dir="ltr" style="font-size:1.3rem">'+pf(o)+'</b></button>'}).join('')+'</div>';
+  var q=pr.q,h='<div class="card"><div class="row"><span class="muted">سؤال '+fa(pr.i+1)+' از '+fa(pr.n)+' - '+LVN[pr.lvl]+'</span><b>درست: '+fa(pr.ok)+'</b></div>';
+  h+=q.rtl?'<div dir="rtl" style="text-align:center;font-size:1.25rem;font-weight:700;margin:18px 0;line-height:2">'+pf(q.t)+'</div>':'<div dir="ltr" style="text-align:center;font-size:2rem;font-weight:800;margin:18px 0">'+pf(q.t)+'</div>';
+  if(pr.mode==='oral'){
+    if(q.mode==='opt')h+='<p class="muted" style="text-align:center">گزینه‌ها: <span dir="ltr">'+q.opts.map(pf).join('  |  ')+'</span></p>';
+    if(!pr.shown)h+='<button class="btn" data-act="pshow">نمایش پاسخ</button>';
+    else h+='<div class="msg" role="status">پاسخ: <b dir="ltr">'+pf(q.ans)+'</b></div><div class="row" style="margin-top:12px"><button class="btn" data-act="pgood">✅ درست گفت</button><button class="btn danger" data-act="pbad">❌ نادرست</button></div>';
+  }else if(pr.fb===null){
+    if(q.mode==='num')h+='<input id="pa" inputmode="'+(q.op==='int'?'text':'decimal')+'" autocomplete="off" placeholder="جواب" style="text-align:center;font-size:1.4rem"><button class="btn" data-act="pcheck">بررسی</button>';
+    else h+='<div class="grid">'+q.opts.map(function(o,i){return '<button class="tile" data-act="ppick" data-id="'+i+'"><b dir="ltr" style="font-size:1.2rem">'+pf(o)+'</b></button>'}).join('')+'</div>';
   }else{
     var last=pr.log[pr.log.length-1];
     h+='<div class="msg" role="status"><b>'+(last.ok?'آفرین! درست بود ✅':'این بار درست نبود. جواب درست: ')+'</b>'+(last.ok?'':'<span dir="ltr"> '+pf(q.ans)+'</span>')+'</div><div style="margin-top:12px"><button class="btn" data-act="pnext">'+(pr.i+1>=pr.n?'دیدن نتیجه':'سؤال بعدی')+'</button></div>';
@@ -548,26 +744,33 @@ function pPlay(){
 }
 function pDone(){
   var r=pr.ok/pr.n,stars=r>=0.9?'⭐⭐⭐':r>=0.7?'⭐⭐':'⭐';
-  var h='<div class="card" style="text-align:center"><div style="font-size:2rem">'+stars+'</div><b>'+fa(pr.ok)+' از '+fa(pr.n)+' درست</b><p class="muted">'+(r>=0.9?'عالی بود! 🎉':r>=0.7?'خیلی خوب بود! با تمرین بیشتر بهتر هم می‌شود.':'تلاش خوبی بود! با تمرین بیشتر پیشرفت می‌کنی.')+'</p></div>';
+  var h='<div class="card" style="text-align:center"><div style="font-size:2rem">'+stars+'</div><b>'+fa(pr.ok)+' از '+fa(pr.n)+' درست</b><p class="muted">'+(r>=0.9?'عالی بود! 🎉':r>=0.7?'خیلی خوب بود! با تمرین بیشتر بهتر هم می‌شود.':'تلاش خوبی بود! با تمرین بیشتر پیشرفت می‌کنی.')+'</p>'+(pr.sid?'<p class="muted">نتیجه ذخیره شد.</p>':'')+'</div>';
   var wr=pr.log.filter(function(x){return !x.ok});
-  if(wr.length){h+='<div class="card"><b>سؤال‌هایی که می‌شود دوباره مرور کرد</b>';wr.forEach(function(x){h+='<div class="st"><span dir="ltr">'+pf(x.t.replace(' = ?',''))+'</span><b dir="ltr">'+pf(x.ans)+'</b></div>'});h+='</div>'}
-  return h+'<div class="row"><button class="btn" data-act="pagain">یک بار دیگر</button><button class="btn ghost" data-act="pquit">بازگشت به تمرین‌ها</button></div>';
+  if(wr.length){h+='<div class="card"><b>سؤال‌هایی که می‌شود دوباره مرور کرد</b>';wr.forEach(function(x){h+='<div class="st"><span dir="'+(x.rtl?'rtl':'ltr')+'">'+pf(x.t.replace(' = ?',''))+'</span><b dir="ltr">'+pf(x.ans)+'</b></div>'});h+='</div>'}
+  return h+'<div class="row"><button class="btn" data-act="pagain">یک بار دیگر</button><button class="btn ghost" data-act="pquit">بازگشت به فصل</button></div>';
 }
 function vPractice(){
   var c=active(),h=back()+'<h2>تمرین و بازی ریاضی</h2><div id="live">'+msgBox()+'</div>';
   if(!pr||pr.stage==='menu')return h+pMenu(c);
+  if(pr.stage==='chapter')return h+pChapter(c);
+  if(pr.stage==='report')return h+pReport(c);
   return h+(pr.stage==='play'?pPlay():pDone());
-}
-function pAnswer(ok,given,tag){
-  pr.log.push({t:pr.q.t,ans:pr.q.ans,given:given,ok:ok,tag:tag});
-  if(ok)pr.ok++;else pr.tags[tag]=(pr.tags[tag]||0)+1;
-  pr.fb=ok;
 }
 function pFinish(){
   pr.stage='done';
   var c=active();
-  if(pr.sid&&c){if(!c.practice)c.practice=[];c.practice.push({sid:pr.sid,op:pr.op,lvl:pr.lvl,ts:new Date().toISOString(),n:pr.n,ok:pr.ok,tags:pr.tags});save()}
+  if(pr.sid&&c){if(!c.practice)c.practice=[];c.practice.push({sid:pr.sid,ch:pr.ch,lvl:pr.lvl,mode:pr.mode,ts:new Date().toISOString(),n:pr.n,ok:pr.ok,tags:pr.tags});save()}
 }
+function pStart(ch,lvl){
+  pr={stage:'play',ch:ch,mode:PS.mode,sid:PS.sid,lvl:lvl,n:PS.n,i:0,ok:0,log:[],tags:{},fb:null,q:null,shown:false};nextQ();
+}
+function pAdvance(){pr.i++;if(pr.i>=pr.n)pFinish();else nextQ()}
+function pAnswer(ok,given,tag){
+  pr.log.push({t:pr.q.t,ans:pr.q.ans,rtl:!!pr.q.rtl,given:given,ok:ok,tag:tag});
+  if(ok)pr.ok++;else pr.tags[tag]=(pr.tags[tag]||0)+1;
+  pr.fb=ok;
+}
+
 function vPh(t){return back()+'<div class="empty"><h2>'+esc(t)+'</h2><p>این بخش در مرحله‌های بعدی ساخته می‌شود.</p></div>'}
 function render(keep){var y=window.scrollY;
   var h=view==='home'?vHome():view==='classes'?vClasses():view==='students'?vStudents():view==='groups'?vGroups():view==='backup'?vBackup():view==='exams'?vExams():view==='leagueInd'?vLeagueInd():view==='leagueGrp'?vLeagueGrp():view==='honors'?vHonors():view==='settings'?vSettings():view==='practice'?vPractice():vPh(view.slice(3));
@@ -708,29 +911,31 @@ document.addEventListener('click',function(e){
     parentText=parentCards(c,po).map(function(x){return 'نام: '+x.name+'\nلینک کارنامه:\n'+base+'#'+x.code+'\nکد (اگر لینک کامل باز نشد):\n'+x.code}).join('\n\n');
     msg='کدها ساخته شد: '+fa(c.students.length)+' دانش‌آموز.';render(true);
   }
-  else if(a==='pstart'){
-    pr={stage:'play',op:document.getElementById('pop').value,lvl:Number(document.getElementById('plv').value),n:Number(document.getElementById('pn').value),i:0,ok:0,log:[],tags:{},sid:document.getElementById('pstu').value||'',fb:null,q:null};
-    nextQ();render();
+  else if(a==='pchapter'){
+    PS.sid=document.getElementById('pstu').value||'';PS.mode=document.getElementById('pmode').value;PS.n=Number(document.getElementById('pcnt').value);
+    pr={stage:'chapter',ch:id};render();
   }
+  else if(a==='pmenu'){pr=null;render()}
+  else if(a==='preport'){pr={stage:'report'};render()}
+  else if(a==='pstartlv'&&pr){pStart(pr.ch,Number(id));render()}
   else if(a==='pcheck'&&pr){
-    var v=num(document.getElementById('pa').value);
+    var v=numS(document.getElementById('pa').value);
     if(v===null||isNaN(v)){note('جواب را به‌صورت عدد بنویسید.');return}
-    var okk=v===pr.q.ans;pAnswer(okk,v,okk?'':detect(pr.q,v));render();
+    var okk=Math.abs(v-pr.q.ans)<1e-6;pAnswer(okk,v,okk?'':detect(pr.q,v));render();
   }
   else if(a==='ppick'&&pr){
     var sel=pr.q.opts[Number(id)],ok2=String(sel)===String(pr.q.ans);
     pAnswer(ok2,sel,ok2?'':tagFrac(pr.q,sel));render();
   }
-  else if(a==='pnext'&&pr){
-    pr.i++;
-    if(pr.i>=pr.n){pFinish();render()}else{nextQ();render()}
-  }
-  else if(a==='pagain'&&pr){
-    pr={stage:'play',op:pr.op,lvl:pr.lvl,n:pr.n,i:0,ok:0,log:[],tags:{},sid:pr.sid,fb:null,q:null};nextQ();render();
-  }
+  else if(a==='pnext'&&pr){pAdvance();render()}
+  else if(a==='pshow'&&pr){pr.shown=true;render(true)}
+  else if(a==='pgood'&&pr){pAnswer(true,null,'');pAdvance();render()}
+  else if(a==='pbad'&&pr){pAnswer(false,null,pr.q.op==='frac'?'frac':(['add','sub','mul'].indexOf(pr.q.op)>=0?'other':pr.q.op));pAdvance();render()}
+  else if(a==='pagain'&&pr){var ch0=pr.ch,lv0=pr.lvl;pStart(ch0,lv0);render()}
   else if(a==='pquit'){
+    var ch1=pr&&pr.ch;
     if(pr&&pr.stage==='play'&&pr.log.length>0){pr.n=pr.log.length;pFinish()}
-    pr=null;render();
+    pr=ch1?{stage:'chapter',ch:ch1}:null;render();
   }
   else if(a==='export'){doExport()}
   else if(a==='showText'){showText=encodeBackup();msg='متن پشتیبان در کادر پایین است.';render(true)}
