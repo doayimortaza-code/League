@@ -61,7 +61,7 @@ ol{padding:0;margin:0;list-style:none}
 <body>
 <div class="wrap" id="app"></div>
 <script>
-var parentText='',VER='۱٫۰۰',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
+var parentText='',VER='۱٫۰۱',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
 function load(){try{var s=localStorage.getItem(KEY);if(s){var d=JSON.parse(s);if(d&&d.classes)return d}}catch(e){}return{v:1,classes:[],activeId:null}}
 var db=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){msg='ذخیره‌سازی در این مرورگر ممکن نشد.'}}
@@ -71,7 +71,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp
 function norm(s){return String(s||'').replace(/\s+/g,' ').trim()}
 function active(){return db.classes.filter(function(c){return c.id===db.activeId&&!c.archived})[0]||null}
 function val(id){var e=document.getElementById(id);return e?norm(e.value):''}
-var menu=[['classes','کلاس‌ها','🏫'],['students','دانش‌آموزان','👧'],['groups','گروه‌ها','👥'],['exams','ثبت آزمون','📝'],['leagueInd','لیگ فردی','🥇'],['leagueGrp','لیگ گروهی','🏅'],['honors','افتخارات','⭐'],['backup','پشتیبان‌گیری','💾'],['practice','تمرین و بازی','🎮'],['settings','تنظیمات','⚙️']];
+var menu=[['classes','کلاس‌ها','🏫'],['students','دانش‌آموزان','👧'],['groups','گروه‌ها','👥'],['exams','ثبت آزمون','📝'],['leagueInd','لیگ فردی','🥇'],['leagueGrp','لیگ گروهی','🏅'],['honors','افتخارات','⭐'],['backup','پشتیبان‌گیری','💾'],['lottery','قرعه‌کشی شانسی','🎲'],['practice','تمرین و بازی','🎮'],['settings','تنظیمات','⚙️']];
 function msgBox(){var m=msg?'<div class="msg" role="status">'+esc(msg)+'</div>':'';msg='';return m}
 function vHome(){
   var c=active(),h='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>لیگ موفقیت<br>کلاس ششم&nbsp;۵</h1><p>دبستان سیدالشهدا<br>آموزگار: مرتضی دعائی</p></div></header>';
@@ -981,9 +981,61 @@ function pAnswer(ok,given,tag){
   pr.fb=ok;
 }
 
+var LT={from:1,to:0,count:1,norep:true,names:true,excl:'',list:'',used:[],last:[],msg:''};
+function rndInt(n){
+  var a=new Uint32Array(1),lim=Math.floor(4294967296/n)*n,x;
+  do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);
+  return x%n;
+}
+function parseNums(t){
+  t=String(t||'').replace(/[۰-۹]/g,function(d){return d.charCodeAt(0)-1776}).replace(/[٠-٩]/g,function(d){return d.charCodeAt(0)-1632});
+  var m=t.match(/\d+/g)||[],out=[];
+  m.forEach(function(x){x=Number(x);if(isFinite(x)&&out.indexOf(x)<0)out.push(x)});
+  return out;
+}
+function ltPool(){
+  var arr=[],i,ex=parseNums(LT.excl),custom=parseNums(LT.list);
+  if(custom.length)arr=custom.slice();else{for(i=LT.from;i<=LT.to&&arr.length<5000;i++)arr.push(i)}
+  arr=arr.filter(function(x){return ex.indexOf(x)<0});
+  if(LT.norep)arr=arr.filter(function(x){return LT.used.indexOf(x)<0});
+  return arr;
+}
+function ltPick(pool,k){
+  var a=pool.slice(),out=[],i,j,t;
+  k=Math.min(k,a.length);
+  for(i=0;i<k;i++){j=i+rndInt(a.length-i);t=a[i];a[i]=a[j];a[j]=t;out.push(a[i])}
+  return out;
+}
+function ltRead(){
+  function g(id){var e=document.getElementById(id);return e?e.value:''}
+  var f=parseNums(g('lf')),t=parseNums(g('lt')),n=parseNums(g('ln'));
+  LT.from=f.length?f[0]:1;LT.to=t.length?t[0]:LT.to;LT.count=n.length?Math.max(1,n[0]):1;
+  LT.excl=g('lx');LT.list=g('ll');
+  var a=document.getElementById('lr'),b=document.getElementById('lm');
+  LT.norep=a?a.checked:true;LT.names=b?b.checked:true;
+}
+function vLottery(){
+  var c=active(),cnt=c?c.students.length:0;
+  if(!LT.to)LT.to=cnt||36;
+  var h=back()+'<h2>قرعه‌کشی شانسی 🎲</h2><div id="live">'+msgBox()+'</div>';
+  h+='<div class="card"><p class="muted">شماره‌ها را خودتان تعیین می‌کنید و برنامه به‌صورت کاملاً تصادفی و بدون نیاز به اینترنت یک یا چند شماره انتخاب می‌کند. اگر کلاس فعال دارید، شماره هر دانش‌آموز همان ردیف او در فهرست دانش‌آموزان است.</p>';
+  h+='<label for="lf">از شماره</label><input id="lf" inputmode="numeric" value="'+LT.from+'"><label for="lt">تا شماره</label><input id="lt" inputmode="numeric" value="'+LT.to+'"><label for="ln">چند شماره انتخاب شود؟</label><input id="ln" inputmode="numeric" value="'+LT.count+'">';
+  h+='<label for="lx">شماره‌هایی که شرکت نکنند (مثلاً غایب‌ها؛ با ویرگول یا فاصله جدا کنید)</label><input id="lx" value="'+esc(LT.excl)+'" placeholder="مثلاً: ۳، ۱۲، ۲۰">';
+  h+='<label for="ll">یا فهرست دلخواه شماره‌ها (اگر پر شود، به‌جای «از تا» استفاده می‌شود)</label><textarea id="ll" rows="2" placeholder="مثلاً: ۵ ۸ ۱۳ ۲۱ ۳۰">'+esc(LT.list)+'</textarea>';
+  h+='<label><input type="checkbox" id="lr"'+(LT.norep?' checked':'')+' style="width:auto;margin:0 6px"> شماره‌های قبلاً انتخاب‌شده دوباره نیایند</label><br><label><input type="checkbox" id="lm"'+(LT.names?' checked':'')+' style="width:auto;margin:0 6px"> نام دانش‌آموز هم نشان داده شود</label>';
+  h+='<div class="row" style="margin-top:12px"><button class="btn" data-act="ldraw">قرعه‌کشی 🎲</button><button class="btn ghost" data-act="lreset">پاک کردن سابقه</button></div></div>';
+  if(LT.msg){h+='<div class="msg" role="status">'+esc(LT.msg)+'</div>';LT.msg=''}
+  if(LT.last.length){
+    h+='<div class="card" style="text-align:center"><b>شماره‌های انتخاب‌شده</b><div class="grid" style="margin-top:10px">';
+    LT.last.forEach(function(x){var st=(LT.names&&c&&x>=1&&x<=cnt)?c.students[x-1].name:'';h+='<div class="tile"><b style="font-size:2rem">'+fa(x)+'</b>'+(st?'<span class="muted">'+esc(st)+'</span>':'')+'</div>'});
+    h+='</div></div>';
+  }
+  if(LT.used.length)h+='<p class="muted">تا الان انتخاب شده‌اند: '+LT.used.map(fa).join('، ')+'</p>';
+  return h;
+}
 function vPh(t){return back()+'<div class="empty"><h2>'+esc(t)+'</h2><p>این بخش در مرحله‌های بعدی ساخته می‌شود.</p></div>'}
 function render(keep){var y=window.scrollY;
-  var h=view==='home'?vHome():view==='classes'?vClasses():view==='students'?vStudents():view==='groups'?vGroups():view==='backup'?vBackup():view==='exams'?vExams():view==='leagueInd'?vLeagueInd():view==='leagueGrp'?vLeagueGrp():view==='honors'?vHonors():view==='settings'?vSettings():view==='practice'?vPractice():vPh(view.slice(3));
+  var h=view==='home'?vHome():view==='classes'?vClasses():view==='students'?vStudents():view==='groups'?vGroups():view==='backup'?vBackup():view==='exams'?vExams():view==='leagueInd'?vLeagueInd():view==='leagueGrp'?vLeagueGrp():view==='honors'?vHonors():view==='settings'?vSettings():view==='practice'?vPractice():view==='lottery'?vLottery():vPh(view.slice(3));
   document.getElementById('app').innerHTML=h;window.scrollTo(0,keep?y:0);
   if(focusId){var f=document.getElementById(focusId);if(f)f.focus();focusId=null}
 }
@@ -1147,6 +1199,15 @@ document.addEventListener('click',function(e){
     if(pr&&pr.stage==='play'&&pr.log.length>0){pr.n=pr.log.length;pFinish()}
     pr=ch1?{stage:'chapter',ch:ch1}:null;render();
   }
+  else if(a==='ldraw'){
+    ltRead();
+    var pool=ltPool(),k=LT.count;
+    if(!pool.length){LT.msg=LT.norep&&LT.used.length?'همه شماره‌ها قبلاً انتخاب شده‌اند. «پاک کردن سابقه» را بزنید.':'شماره‌ای برای انتخاب وجود ندارد. «از» و «تا» را بررسی کنید.';LT.last=[];render(true);return}
+    var got=ltPick(pool,k);
+    if(got.length<k)LT.msg='فقط '+fa(got.length)+' شماره باقی مانده بود و همه آن‌ها انتخاب شدند.';
+    LT.last=got;got.forEach(function(x){if(LT.used.indexOf(x)<0)LT.used.push(x)});render(true);
+  }
+  else if(a==='lreset'){ltRead();LT.used=[];LT.last=[];LT.msg='سابقه پاک شد. همه شماره‌ها دوباره شرکت می‌کنند.';render(true)}
   else if(a==='export'){doExport()}
   else if(a==='showText'){showText=encodeBackup();msg='متن پشتیبان در کادر پایین است.';render(true)}
   else if(a==='checkText'){takeText((document.getElementById('pt').value||'').trim())}
