@@ -61,7 +61,7 @@ ol{padding:0;margin:0;list-style:none}
 <body>
 <div class="wrap" id="app"></div>
 <script>
-var parentText='',VER='۰٫۹۹',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
+var parentText='',VER='۱٫۰۰',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
 function load(){try{var s=localStorage.getItem(KEY);if(s){var d=JSON.parse(s);if(d&&d.classes)return d}}catch(e){}return{v:1,classes:[],activeId:null}}
 var db=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){msg='ذخیره‌سازی در این مرورگر ممکن نشد.'}}
@@ -462,19 +462,19 @@ function vSettings(){
 var pr=null;
 var PS={sid:'',mode:'self',n:10},LVN={1:'ساده',2:'متوسط',3:'سخت'};
 var CHAP=[
-{k:'c1',t:'فصل ۱: عدد و الگوهای عددی',s:'عدد و الگو',ic:'🔢',topics:'الگوهای عددی، بخش‌پذیری، ب.م.م و ک.م.م، اعداد صحیح',ops:['pat','bakh','int']},
-{k:'c2',t:'فصل ۲: کسر',s:'کسر',ic:'🍕',topics:'جمع، تفریق، ضرب و تقسیم کسرها',ops:['frac']},
-{k:'c3',t:'فصل ۳: اعداد اعشاری',s:'اعشار',ic:'🔟',topics:'جمع، تفریق، ضرب و تقسیم اعداد اعشاری',ops:['dec']},
-{k:'c4',t:'فصل ۴: تقارن و مختصات',s:'تقارن و مختصات',ic:'📍',topics:'محورهای مختصات، تقارن مرکزی',ops:['coord']},
-{k:'c5',t:'فصل ۵: اندازه‌گیری',s:'اندازه‌گیری',ic:'📏',topics:'تبدیل یکاها، مساحت و محیط، دایره، زاویه، حجم',ops:['meas']},
-{k:'c6',t:'فصل ۶: تناسب و درصد',s:'تناسب و درصد',ic:'💯',topics:'نسبت و تناسب، درصد، تخفیف',ops:['ratio','pct']},
-{k:'c7',t:'فصل ۷: تقریب',s:'تقریب',ic:'🎯',topics:'گرد کردن عددهای طبیعی و اعشاری',ops:['round']},
-{k:'x1',t:'مرور محاسبه‌ها',s:'مرور محاسبه',ic:'➕',topics:'جمع، تفریق، ضرب و تقسیم عددهای بزرگ',ops:['add','sub','mul','divi']},
-{k:'x2',t:'مسئله‌های کلامی',s:'مسئله کلامی',ic:'🧩',topics:'حل مسئله چندمرحله‌ای',ops:['word']}
+{k:'c1',t:'فصل ۱: عدد و الگوهای عددی',s:'عدد و الگو',ic:'🔢',topics:'الگوهای عددی، یادآوری عددنویسی، بخش‌پذیری، معرفی اعداد صحیح',lessons:[{k:'pat',t:'الگوهای عددی'},{k:'numw',t:'یادآوری عددنویسی'},{k:'divis',t:'بخش‌پذیری'},{k:'int',t:'معرفی اعداد صحیح'}]},
+{k:'c2',t:'فصل ۲: کسر',s:'کسر',ic:'🍕',topics:'جمع و تفریق، ضرب، تقسیم و محاسبات با کسر',lessons:[{k:'fadd',t:'جمع و تفریق کسرها'},{k:'fmul',t:'ضرب کسرها'},{k:'fdiv',t:'تقسیم کسرها'},{k:'fcalc',t:'محاسبات با کسر'}]},
+{k:'c3',t:'فصل ۳: اعداد اعشاری',s:'اعشار',ic:'🔟',topics:'یادآوری، ضرب و تقسیم، تقسیم اعشار بر طبیعی، تقسیم بر اعشار',lessons:[{k:'dplace',t:'یادآوری اعداد اعشاری'},{k:'dmuldiv',t:'جمع، تفریق و ضرب اعشاری'},{k:'ddivn',t:'تقسیم عدد اعشاری بر عدد طبیعی'},{k:'ddivd',t:'تقسیم یک عدد بر عدد اعشاری'}]},
+{k:'c4',t:'فصل ۴: تقارن و مختصات',s:'تقارن و مختصات',ic:'📍',topics:'مرکز تقارن، دوران، محورهای مختصات، تقارن و مختصات',lessons:[{k:'sym',t:'مرکز تقارن'},{k:'rot',t:'دوران'},{k:'axes',t:'محورهای مختصات'},{k:'scoord',t:'تقارن و مختصات'}]},
+{k:'c5',t:'فصل ۵: اندازه‌گیری',s:'اندازه‌گیری',ic:'📏',topics:'طول و سطح، حجم و جرم، مساحت دایره، خط و زاویه',lessons:[{k:'len',t:'طول و سطح'},{k:'vol',t:'حجم و جرم'},{k:'circ',t:'مساحت دایره'},{k:'line',t:'خط و زاویه'}]},
+{k:'c6',t:'فصل ۶: تناسب و درصد',s:'تناسب و درصد',ic:'💯',topics:'نسبت و تناسب، درصد، محاسبات مالی، آمار',lessons:[{k:'ratio',t:'کسر، نسبت و تناسب'},{k:'pct',t:'درصد'},{k:'fin',t:'کاربرد درصد در محاسبات مالی'},{k:'stat',t:'کاربرد درصد در آمار'}]},
+{k:'c7',t:'فصل ۷: تقریب',s:'تقریب',ic:'🎯',topics:'تقریب، اندازه‌گیری و محاسبات تقریبی',lessons:[{k:'trunc',t:'تقریب'},{k:'approx',t:'اندازه‌گیری و محاسبات تقریبی'}]},
+{k:'x1',t:'مرور محاسبه‌ها',s:'مرور محاسبه',ic:'➕',topics:'جمع، تفریق، ضرب و تقسیم',lessons:[{k:'calc',t:'مرور محاسبه‌ها'}]},
+{k:'x2',t:'مسئله‌های کلامی',s:'مسئله کلامی',ic:'🧩',topics:'حل مسئله چندمرحله‌ای',lessons:[{k:'word',t:'مسئله‌های کلامی'}]}
 ];
 function chInfo(k){return CHAP.filter(function(x){return x.k===k})[0]||CHAP[0]}
 function opCh(op){var m={add:'x1',sub:'x1',mul:'x1',divi:'x1',mix:'x1',frac:'c2',dec:'c3',pct:'c6',ratio:'c6',int:'c1',bakh:'c1',pat:'c1',coord:'c4',round:'c7',meas:'c5',word:'x2'};return m[op]||'x1'}
-var TG={pat:'الگوهای عددی',coord:'مختصات و تقارن',carry:'جمع با نقلی',borrow:'تفریق با قرض گرفتن',table:'جدول ضرب',divi:'تقسیم',fracDen:'جمع کسرها (مخرج مشترک)',frac:'کسرها',decPoint:'جای ممیز در اعداد اعشاری',dec:'محاسبات اعشاری',pct:'درصد',ratio:'نسبت و تناسب',int:'اعداد صحیح',bakh:'بخش‌پذیری، ب.م.م و ک.م.م',round:'تقریب و گرد کردن',meas:'مساحت و محیط',word:'مسئله‌های کلامی',other:'دقت در محاسبه'};
+var TG={carry:'جمع با نقلی',borrow:'تفریق با قرض گرفتن',table:'جدول ضرب',fracDen:'جمع کسرها (مخرج مشترک)',decPoint:'جای ممیز در اعداد اعشاری',other:'دقت در محاسبه',add:'جمع',sub:'تفریق',mul:'ضرب',divi:'تقسیم',word:'مسئله‌های کلامی',pat:'الگوهای عددی',numw:'عددنویسی و ارزش مکانی',divis:'بخش‌پذیری',int:'اعداد صحیح',fadd:'جمع و تفریق کسرها',fmul:'ضرب کسرها',fdiv:'تقسیم کسرها',fcalc:'محاسبات با کسر',dplace:'اعداد اعشاری و کسر',dmuldiv:'جمع، تفریق و ضرب اعشاری',ddivn:'تقسیم اعشار بر عدد طبیعی',ddivd:'تقسیم بر عدد اعشاری',sym:'مرکز تقارن',rot:'دوران',axes:'محورهای مختصات',scoord:'تقارن و مختصات',len:'طول و سطح (یکاها)',vol:'حجم و جرم',circ:'محیط و مساحت دایره',line:'خط، عمود و مثلث',ratio:'نسبت و تناسب',pct:'درصد',fin:'درصد در محاسبات مالی',stat:'درصد و نمودار دایره‌ای',trunc:'تقریب (قطع و گرد کردن)',approx:'محاسبات تقریبی',frac:'کسرها',dec:'اعشار',bakh:'بخش‌پذیری',round:'گرد کردن',meas:'اندازه‌گیری',coord:'مختصات',ratio_:'نسبت'};
 function ri(a,b){return a+Math.floor(Math.random()*(b-a+1))}
 function gcd(a,b){return b?gcd(b,a%b):a}
 function frs(n,d){var g=gcd(Math.abs(n),d);n=n/g;d=d/g;return d===1?String(n):n+'/'+d}
@@ -497,51 +497,10 @@ function numS(t){
 function pick(a){return a[ri(0,a.length-1)]}
 function dstr(x){return String(r2(x))}
 function sg(x){return x<0?'(−'+Math.abs(x)+')':String(x)}
-function fopts(n,d,wr){
-  var g=gcd(Math.abs(n),d);n=n/g;d=d/g;
-  var ans=frs(n,d),o=[ans];
-  wr.concat([frs(n+1,d),frs(Math.max(1,n-1),d),frs(n,d+1),frs(n,Math.max(1,d-1)),frs(d,n),frs(n+d,d),frs(n*2,d)]).forEach(function(x){if(o.length<4&&o.indexOf(x)<0)o.push(x)});
-  var k=1;while(o.length<4&&k<80){var x2=frs(n+k,d);if(o.indexOf(x2)<0)o.push(x2);k++}
-  return {ans:ans,opts:shuf(o)};
-}
+
 function N(op,a,b,t,ans,rtl){return{op:op,a:a,b:b,t:rtl?t:t+' = ?',ans:ans,mode:'num',rtl:!!rtl}}
-var FP=[[2,3],[2,4],[3,6],[2,6],[4,6],[3,4],[5,10],[2,5],[3,5],[4,8],[6,8]];
-function mkFrac(l){
-  var kind=l===1?pick(['sameAdd','part']):l===2?pick(['diffAdd','diffSub','mul']):pick(['div','diffSub','mul']);
-  var a,b,c,d,d1,d2,L,p,r;
-  if(kind==='sameAdd'){d=ri(4,12);a=ri(1,d-2);b=ri(1,d-a-1);r=fopts(a+b,d,[frs(a+b,2*d)]);return{op:'frac',t:a+'/'+d+' + '+b+'/'+d+' = ?',ans:r.ans,mode:'opt',wrongDen:frs(a+b,2*d),opts:r.opts}}
-  if(kind==='part'){d=ri(2,8);a=ri(1,d-1);var n=d*ri(2,9),an=n/d*a;return{op:'frac',t:a+'/'+d+' از '+n+' چند است؟',ans:an,mode:'opt',rtl:true,opts:uniqOpts(an,[n/d,an+n/d,n-a,an+1])}}
-  if(kind==='diffAdd'){p=pick(FP);d1=p[0];d2=p[1];a=ri(1,d1-1);b=ri(1,d2-1);L=d1*d2/gcd(d1,d2);var num2=a*(L/d1)+b*(L/d2),wd=frs(a+b,d1+d2);r=fopts(num2,L,[wd]);return{op:'frac',t:a+'/'+d1+' + '+b+'/'+d2+' = ?',ans:r.ans,mode:'opt',wrongDen:wd,opts:r.opts}}
-  if(kind==='diffSub'){
-    var tries=0;do{p=pick(FP);d1=p[0];d2=p[1];a=ri(1,d1-1);b=ri(1,d2-1);L=d1*d2/gcd(d1,d2);tries++}while(a*(L/d1)<=b*(L/d2)&&tries<60);
-    if(a*(L/d1)<=b*(L/d2)){d1=4;d2=3;a=3;b=2;L=12}
-    var nm=a*(L/d1)-b*(L/d2),wd2=frs(Math.abs(a-b)||1,Math.abs(d1-d2)||1);r=fopts(nm,L,[wd2]);return{op:'frac',t:a+'/'+d1+' − '+b+'/'+d2+' = ?',ans:r.ans,mode:'opt',wrongDen:wd2,opts:r.opts};
-  }
-  b=ri(2,9);a=ri(1,b-1);d=ri(2,9);c=ri(1,d-1);
-  if(kind==='mul'){var wm=frs(a*c,b+d);r=fopts(a*c,b*d,[wm,frs(a*d,b*c)]);return{op:'frac',t:a+'/'+b+' × '+c+'/'+d+' = ?',ans:r.ans,mode:'opt',wrongDen:wm,opts:r.opts}}
-  r=fopts(a*d,b*c,[frs(a*c,b*d),frs(b*c,a*d)]);return{op:'frac',t:a+'/'+b+' ÷ '+c+'/'+d+' = ?',ans:r.ans,mode:'opt',opts:r.opts};
-}
-function mkBakh(l){
-  var kinds=l===1?['divisible','prime']:l===2?['divisible','gcd','lcm','prime']:['gcd','lcm','gcd','lcm'];
-  var kind=pick(kinds),a,b,g,d,x,o,t;
-  if(kind==='divisible'){
-    d=pick([2,3,4,5,9,10]);var cor=d*ri(Math.ceil(12/d),Math.floor(999/d)),w=[];
-    while(w.length<3){x=ri(12,999);if(x%d!==0&&w.indexOf(x)<0)w.push(x)}
-    return{op:'bakh',t:'کدام عدد بر '+d+' بخش‌پذیر است؟',ans:String(cor),mode:'opt',rtl:true,opts:shuf([String(cor)].concat(w.map(String)))};
-  }
-  if(kind==='prime'){
-    var PR=[11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97],CO=[21,27,33,39,49,51,57,63,69,77,81,87,91,93,99,25,35,45,55,65,75,85,95];
-    var pc=pick(PR),wc=shuf(CO.slice()).slice(0,3);
-    return{op:'bakh',t:'کدام عدد اول است؟',ans:String(pc),mode:'opt',rtl:true,opts:shuf([String(pc)].concat(wc.map(String)))};
-  }
-  if(kind==='gcd'){
-    g=l===2?ri(2,9):ri(3,15);do{a=g*ri(2,9);b=g*ri(2,9)}while(a===b);
-    return N('bakh',a,b,'ب.م.م '+a+' و '+b+' چند است؟',gcd(a,b),true);
-  }
-  if(l===2){a=ri(2,12);b=ri(2,12)}else{a=ri(6,24);b=ri(6,24)}
-  if(a===b)b=a+1;
-  return N('bakh',a,b,'ک.م.م '+a+' و '+b+' چند است؟',a*b/gcd(a,b),true);
-}
+
+
 function mkWord(l){
   var nm=pick(['علی','سارا','رضا','مریم','امیر','نگار','حسین','زهرا']);
   if(l===1){var k=ri(2,9),q=ri(2,20)*500;return N('word',k,q,nm+' برای '+k+' دفتر، هر دفتر '+q+' تومان، چقدر پرداخت کرد؟',k*q,true)}
@@ -552,101 +511,352 @@ function mkWord(l){
   if(Math.random()<0.5){var n=ri(2,9),p=ri(5,20)*1000,pr=pick([10,20,25,30,40,50]);return N('word',n,p,'مغازه‌داری '+n+' کیلو برنج، هر کیلو '+p+' تومان خرید و با '+pr+'٪ سود فروخت. فروش کل چند تومان شد؟',n*p*(100+pr)/100,true)}
   var c=ri(2,10)*20,pc=pick([20,25,40,45,60]);return N('word',c,pc,'در کلاسی '+c+' دانش‌آموز هست. '+pc+'٪ آن‌ها دختر هستند. چند پسر در کلاس هست؟',c-c*pc/100,true);
 }
-function mkPat(l){
-  var a,d,n,seq;
-  if(l===1){a=ri(1,20);d=ri(2,9);seq=[0,1,2,3].map(function(i){return a+i*d});return N('pat',a,d,seq.join('، ')+'، … جمله بعدی چیست؟',a+4*d,true)}
-  if(l===2){a=ri(2,15);d=ri(2,9);n=ri(8,15);seq=[0,1,2,3].map(function(i){return a+i*d});return N('pat',a,d,'در الگوی '+seq.join('، ')+'، … جمله '+n+'ام چیست؟',a+(n-1)*d,true)}
-  if(Math.random()<0.5){a=ri(1,4);d=ri(2,3);seq=[0,1,2,3].map(function(i){return a*Math.pow(d,i)});return N('pat',a,d,seq.join('، ')+'، … جمله بعدی چیست؟',a*Math.pow(d,4),true)}
-  a=ri(2,6);d=ri(1,9);n=ri(12,30);return N('pat',a,d,'قاعده یک الگو «'+a+' × شماره جمله + '+d+'» است. جمله '+n+'ام چیست؟',a*n+d,true);
+
+
+
+
+
+var PIV=3,SGN='−';
+function cm(x){return String(x).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function ord(n){return n+'\u200cام'}
+function MQ(op,t,ans,wr,kind,p){var o=[String(ans)];wr.forEach(function(x){x=String(x);if(o.indexOf(x)<0&&o.length<4)o.push(x)});return{op:op,kind:kind||'',p:p||null,t:t,ans:String(ans),mode:'opt',rtl:true,opts:shuf(o)}}
+function NQ(op,t,ans,kind,p){return{op:op,kind:kind||'',p:p||null,t:t,ans:ans,mode:'num',rtl:true}}
+function nO(ans,cands){var o=[ans];cands.forEach(function(c){if(o.indexOf(c)<0&&o.length<4)o.push(c)});var k=1;while(o.length<4&&k<80){var c2=ans+(k%2?1:-1)*Math.ceil(k/2);k++;if(c2!==ans&&o.indexOf(c2)<0)o.push(c2)}return o}
+function mixS(n,d){var g=gcd(Math.abs(n),d);n/=g;d/=g;if(d===1)return String(n);var w=Math.floor(n/d),r=n-w*d;return w?(r?w+' و '+r+'/'+d:String(w)):r+'/'+d}
+function pfS(n,d){return d===1?String(n):n+'/'+d}
+function fO(n,d,wr){var ans=mixS(n,d),o=[ans];
+  wr.concat([[n+1,d],[Math.max(1,n-1),d],[n,d+1],[d,n],[n+d,d],[n*2,d]]).forEach(function(c){var s=mixS(c[0],c[1]);if(o.length<4&&o.indexOf(s)<0)o.push(s)});
+  var k=1;while(o.length<4&&k<80){var s2=mixS(n+k,d);if(o.indexOf(s2)<0)o.push(s2);k++}
+  return{ans:ans,opts:shuf(o)}}
+function FQ(op,t,n,d,wr,kind,p,wd){var r=fO(n,d,wr);return{op:op,kind:kind,p:p,t:t,ans:r.ans,mode:'opt',rtl:true,wrongDen:wd?mixS(wd[0],wd[1]):null,opts:r.opts}}
+function dist(k){var d=[0,1,2,3,4,5,6,7,8,9];shuf(d);return d.slice(0,k)}
+function perms(a,k){var out=[];(function rec(cur,rest){if(cur.length===k){out.push(cur.slice());return}for(var i=0;i<rest.length;i++){cur.push(rest[i]);rec(cur,rest.slice(0,i).concat(rest.slice(i+1)));cur.pop()}})([],a);return out}
+function cardNum(digs,k,pred){var best=null,worst=null;perms(digs,k).forEach(function(p){if(p[0]===0)return;var v=Number(p.join(''));if(pred&&!pred(v))return;if(best===null||v<best)best=v;if(worst===null||v>worst)worst=v});return{min:best,max:worst}}
+function sI(x){return x<0?SGN+Math.abs(x):(x>0?'+'+x:'0')}
+var POSN=['یکان','دهگان','صدگان','یکان هزار','دهگان هزار','صدگان هزار','یکان میلیون','دهگان میلیون','صدگان میلیون','یکان میلیارد'];
+
+function gPat(l){
+  var k=pick(l===1?['par','mult','nxt']:l===2?['rel','inv','poss']:['lin','which','sump']),a,d,n,x,w;
+  if(k==='par'){var ev=Math.random()<0.5;x=ri(5,60)*2+(ev?0:1);w=[];while(w.length<3){var y=ri(10,120);if((y%2===0)!==ev&&w.indexOf(y)<0)w.push(y)}return MQ('pat',ev?'کدام عدد زوج است؟':'کدام عدد فرد است؟',x,w,'par',{ev:ev})}
+  if(k==='mult'){d=ri(3,9);n=ri(3,12);if(Math.random()<0.5)return NQ('pat','مضرب '+ord(n)+' عدد '+d+' چه عددی است؟ (مضرب‌ها: '+d+'، '+(2*d)+'، '+(3*d)+'، ...)',n*d,'mult',{d:d,n:n});return NQ('pat',d*n+' چندمین مضرب عدد '+d+' است؟',n,'multinv',{d:d,n:n})}
+  if(k==='nxt'){a=ri(1,20);d=ri(2,9);var sq=[0,1,2,3].map(function(i){return a+i*d});return NQ('pat','عدد بعدی در الگوی '+sq.join('، ')+'، … چیست؟',a+4*d,'nxt',{a:a,d:d})}
+  if(k==='rel'){d=ri(2,9);n=ri(8,20);return NQ('pat','در یک الگو، تعداد چوب‌کبریت‌های هر شکل برابر است با '+d+' × شماره شکل. شکل '+ord(n)+' چند چوب‌کبریت دارد؟',d*n,'rel',{d:d,n:n})}
+  if(k==='inv'){var it=pick([['چرخ','دوچرخه',2],['پایه','میز',4],['چوب‌کبریت','شکل',3],['انگشت','دست',5]]);n=ri(5,20);return NQ('pat','برای ساختن هر '+it[1]+' به '+it[2]+' '+it[0]+' نیاز است. با '+(it[2]*n)+' '+it[0]+' چند '+it[1]+' می‌توان ساخت؟',n,'inv',{n:n})}
+  if(k==='poss'){var it2=pick([['چرخ','دوچرخه',2],['پایه','میز',4],['چوب‌کبریت','شکل',3]]),T=Math.random()<0.5?it2[2]*ri(3,15):ri(10,60),yes=T%it2[2]===0;return MQ('pat','هر '+it2[1]+' به '+it2[2]+' '+it2[0]+' نیاز دارد. آیا ممکن است برای ساختن چند '+it2[1]+' دقیقاً '+T+' '+it2[0]+' لازم باشد؟',yes?'بله':'خیر',[yes?'خیر':'بله'],'poss',{T:T,u:it2[2]})}
+  if(k==='lin'){a=ri(2,5);n=ri(6,20);return NQ('pat','در یک الگو، تعداد مربع‌ها در هر شکل برابر است با '+a+' × شماره شکل − ۱. شکل '+ord(n)+' چند مربع دارد؟',a*n-1,'lin',{a:a,n:n})}
+  if(k==='which'){a=ri(2,5);n=ri(5,20);return NQ('pat','در یک الگو، تعداد مربع‌ها در هر شکل برابر است با '+a+' × شماره شکل − ۱. چندمین شکل '+(a*n-1)+' مربع دارد؟',n,'which',{a:a,n:n})}
+  var pq=pick([['فرد','فرد','زوج'],['زوج','زوج','زوج'],['زوج','فرد','فرد'],['فرد','زوج','فرد']]);
+  return MQ('pat','حاصل جمع یک عدد '+pq[0]+' و یک عدد '+pq[1]+' چه نوع عددی است؟',pq[2],[pq[2]==='زوج'?'فرد':'زوج'],'sump',pq);
 }
-function ptS(x,y){return '('+x+'، '+y+')'}
-function optsStr(ans,wr){var o=[ans];wr.forEach(function(x){if(o.length<4&&o.indexOf(x)<0)o.push(x)});var k=1;while(o.length<4){var z=ptS(ri(1,12),ri(1,12));if(o.indexOf(z)<0)o.push(z);k++;if(k>50)break}return shuf(o)}
-function mkCoord(l){
-  var x,y,a,b,c,d;
-  if(l===1){x=ri(1,9);y=ri(1,9);if(Math.random()<0.5)return N('coord',x,y,'فاصله نقطه '+ptS(x,y)+' تا محور xها چند واحد است؟',y,true);return N('coord',x,y,'فاصله نقطه '+ptS(x,y)+' تا محور yها چند واحد است؟',x,true)}
-  if(l===2){x=ri(1,8);y=ri(1,8);var s2=ri(2,6),right=Math.random()<0.5,nx=right?x+s2:x,ny=right?y:y+s2,an=ptS(nx,ny);
-    return{op:'coord',t:'نقطه '+ptS(x,y)+' را '+s2+' واحد به '+(right?'راست':'بالا')+' می‌بریم. مختصات نقطه جدید کدام است؟',ans:an,mode:'opt',rtl:true,opts:optsStr(an,[ptS(ny,nx),right?ptS(x,y+s2):ptS(x+s2,y),ptS(x+s2,y+s2)])};
-  }
-  if(Math.random()<0.5){c=ri(3,8);d=ri(3,8);a=ri(1,2*c-1);b=ri(1,2*d-1);var an2=ptS(2*c-a,2*d-b);
-    return{op:'coord',t:'قرینه نقطه '+ptS(a,b)+' نسبت به نقطه '+ptS(c,d)+' (تقارن مرکزی) کدام است؟',ans:an2,mode:'opt',rtl:true,opts:optsStr(an2,[ptS(2*d-b,2*c-a),ptS(c+a,d+b),ptS(Math.abs(c-a),Math.abs(d-b))])};}
-  var x1=ri(1,5),y1=ri(1,5),x2=x1+ri(2,6),y2=y1+ri(2,6),an3=ptS(x1,y2);
-  return{op:'coord',t:'سه رأس یک مستطیل '+ptS(x1,y1)+' و '+ptS(x2,y1)+' و '+ptS(x2,y2)+' است. رأس چهارم کدام است؟',ans:an3,mode:'opt',rtl:true,opts:optsStr(an3,[ptS(y2,x1),ptS(x2,y1+1),ptS(x1,y1+ (y2-y1)+1)])};
-}
-function mkMeas(l){
-  var w,h,k;
+function gNumw(l){
+  var ds,i,N;
   if(l===1){
-    k=pick(['rect','rectP','cm','g','L']);
-    if(k==='rect'){w=ri(3,30);h=ri(3,30);return N('meas',w,h,'مساحت مستطیلی به طول '+w+' و عرض '+h+' سانتی‌متر، چند سانتی‌متر مربع است؟',w*h,true)}
-    if(k==='rectP'){w=ri(3,30);h=ri(3,30);return N('meas',w,h,'محیط مستطیلی به طول '+w+' و عرض '+h+' سانتی‌متر، چند سانتی‌متر است؟',2*(w+h),true)}
-    if(k==='cm'){w=ri(1,9)*100+ri(0,9)*10;return N('meas',w,0,w+' سانتی‌متر چند متر است؟',r2(w/100),true)}
-    if(k==='g'){w=ri(1,9)*1000+ri(0,9)*100;return N('meas',w,0,w+' گرم چند کیلوگرم است؟',r2(w/1000),true)}
-    w=ri(1,12)/2;return N('meas',w,0,dstr(w)+' لیتر چند میلی‌لیتر است؟',r2(w*1000),true);
+    if(Math.random()<0.5){do{ds=dist(7)}while(ds[0]===0);N=Number(ds.join(''));do{i=ri(0,6)}while(ds[i]===0);var val=ds[i]*Math.pow(10,6-i);return NQ('numw','ارزش رقم '+ds[i]+' در عدد '+cm(N)+' چقدر است؟',val,'val',{N:N,i:i})}
+    var ps=shuf([0,1,2,3,4,5,6]).slice(0,3).sort(function(a,b){return b-a}),parts=ps.map(function(p){return ri(1,9)*Math.pow(10,p)}),tot=parts.reduce(function(a,b){return a+b},0);
+    return NQ('numw',parts.map(cm).join(' + ')+' = ؟',tot,'exp',{parts:parts});
   }
-  var r=ri(2,12);
   if(l===2){
-    k=pick(['area','circ','tri','supp']);
-    if(k==='area')return N('meas',r,0,'مساحت دایره‌ای به شعاع '+r+' سانتی‌متر چند سانتی‌متر مربع است؟ (π = 3.14)',r2(3.14*r*r),true);
-    if(k==='circ')return N('meas',r,0,'محیط دایره‌ای به شعاع '+r+' سانتی‌متر چند سانتی‌متر است؟ (π = 3.14)',r2(2*3.14*r),true);
-    if(k==='tri'){w=ri(30,80);h=ri(30,80);return N('meas',w,h,'دو زاویه یک مثلث '+w+' و '+h+' درجه است. زاویه سوم چند درجه است؟',180-w-h,true)}
-    w=ri(20,160);return N('meas',w,0,'مکمل زاویه '+w+' درجه چند درجه است؟',180-w,true);
+    if(Math.random()<0.5){do{ds=dist(10)}while(ds[0]===0);N=Number(ds.join(''));var pos=ri(0,9);return NQ('numw','در عدد '+cm(N)+' کدام رقم، رقم «'+POSN[pos]+'» است؟',ds[9-pos],'digit',{N:N,pos:pos})}
+    var nums=[];while(nums.length<4){var dg=ri(6,10),v=ri(Math.pow(10,dg-1),Math.pow(10,dg)-1);if(nums.indexOf(v)<0)nums.push(v)}
+    var mx=Math.max.apply(null,nums);return MQ('numw','کدام عدد بزرگ‌تر است؟',cm(mx),nums.filter(function(x){return x!==mx}).map(cm),'big',{nums:nums});
   }
-  k=pick(['diam','half','box','quad']);
-  if(k==='diam'){w=ri(2,12)*2;return N('meas',w,0,'مساحت دایره‌ای به قطر '+w+' سانتی‌متر چند سانتی‌متر مربع است؟ (π = 3.14)',r2(3.14*(w/2)*(w/2)),true)}
-  if(k==='half'){w=ri(2,12)*2;return N('meas',w,0,'مساحت نیم‌دایره‌ای به شعاع '+w+' سانتی‌متر چند سانتی‌متر مربع است؟ (π = 3.14)',r2(3.14*w*w/2),true)}
-  if(k==='box'){w=ri(2,12);h=ri(2,9);var z=ri(2,9);return N('meas',w,h,'حجم یک مکعب مستطیل به ابعاد '+w+' و '+h+' و '+z+' سانتی‌متر چند سانتی‌متر مکعب است؟',w*h*z,true)}
-  w=ri(60,120);h=ri(60,120);var u=ri(40,100);return N('meas',w,h,'سه زاویه یک چهارضلعی '+w+' و '+h+' و '+u+' درجه است. زاویه چهارم چند درجه است؟ (مجموع زاویه‌ها ۳۶۰ درجه)',360-w-h-u,true);
+  var tries=0,res,digs,kk,kind,len;
+  do{len=pick([5,6,7]);digs=dist(len);if(digs.indexOf(0)<0)digs[0]=0;digs=digs.filter(function(v,i,a){return a.indexOf(v)===i});kk=len>6?6:len-0;kind=pick(['min','maxOdd','minEven','maxEven']);
+     res=cardNum(digs,kk,kind==='min'?null:(kind.indexOf('Odd')>0?function(v){return v%2===1}:function(v){return v%2===0}));tries++}
+  while(((kind==='min'||kind==='minEven')?res.min:res.max)===null&&tries<30);
+  var want=(kind==='min'||kind==='minEven')?res.min:res.max,sorted=digs.slice().sort(function(a,b){return a-b});
+  var nm={min:'کوچک‌ترین عدد',maxOdd:'بزرگ‌ترین عدد فرد',minEven:'کوچک‌ترین عدد زوج',maxEven:'بزرگ‌ترین عدد زوج'}[kind];
+  return NQ('numw','با کارت‌های '+sorted.join('، ')+' (هر کارت حداکثر یک بار) '+nm+' '+kk+' رقمی را بسازید.',want,'cards',{digs:digs,kk:kk,kind:kind});
 }
+function gDivis(l){
+  var d,x,k,w,cor,a,b,c;
+  function mcq(ds){d=pick(ds);cor=d*ri(Math.ceil(12/d),Math.floor(999/d));w=[];while(w.length<3){x=ri(12,999);if(x%d!==0&&w.indexOf(x)<0)w.push(x)}return MQ('divis','کدام عدد بر '+d+' بخش‌پذیر است؟',cor,w,'mcq',{d:d})}
+  if(l===1){k=pick(['mcq','mcq','rem']);if(k==='mcq')return mcq([2,5,10]);d=pick([2,5]);x=ri(120,999);return NQ('divis','باقیمانده تقسیم '+x+' بر '+d+' چند است؟',x%d,'rem',{x:x,d:d})}
+  if(l===2){k=pick(['mcq','sum','miss']);if(k==='mcq')return mcq([3,9]);
+    if(k==='sum'){x=ri(1000,99999);return NQ('divis','مجموع رقم‌های عدد '+x+' چند است؟',String(x).split('').reduce(function(s,v){return s+Number(v)},0),'sum',{x:x})}
+    d=pick([3,9]);a=ri(1,9);c=ri(0,9);var md=0;while((a+md+c)%d!==0)md++;return NQ('divis','کوچک‌ترین رقمی که به جای ؟ در عدد '+a+'؟'+c+' بگذاریم تا بر '+d+' بخش‌پذیر شود، کدام است؟',md,'miss',{a:a,c:c,d:d})}
+  if(Math.random()<0.5){var conds=pick([[2],[5],[2,5],[3],[9],[2,3]]),res,digs,tries=0,big=Math.random()<0.5;
+    do{digs=dist(3);res=cardNum(digs,3,function(v){return conds.every(function(q){return v%q===0})});tries++}while(((big?res.max:res.min)===null)&&tries<200);
+    if((big?res.max:res.min)===null){digs=[5,0,9];res=cardNum(digs,3,function(v){return conds.every(function(q){return v%q===0})})}
+    var ans=big?res.max:res.min;if(ans===null)return gDivis(3);
+    return NQ('divis','با کارت‌های '+digs.slice().sort(function(a,b){return a-b}).join('، ')+' ('+'هر کارت یک بار) '+(big?'بزرگ‌ترین':'کوچک‌ترین')+' عدد سه‌رقمی بخش‌پذیر بر '+conds.join(' و ')+' کدام است؟',ans,'cards',{digs:digs,conds:conds,big:big});}
+  d=pick([2,3,5,9,10]);var bg=Math.random()<0.5;return NQ('divis',(bg?'بزرگ‌ترین':'کوچک‌ترین')+' عدد سه‌رقمی بخش‌پذیر بر '+d+' کدام است؟',bg?Math.floor(999/d)*d:Math.ceil(100/d)*d,'range',{d:d,big:bg});
+}
+function gInt(l){
+  var k,a,b,n,x;
+  if(l===1){k=pick(['sign','opp','sign']);
+    if(k==='sign'){var ctx=pick([['درجه زیر صفر','درجه بالای صفر'],['طبقه پایین‌تر از همکف','طبقه بالاتر از همکف'],['گل خورده','گل زده'],['متر زیر سطح دریا','متر بالای سطح دریا']]),neg=Math.random()<0.5;n=ri(2,25);var ans=neg?-n:n;return MQ('int',n+' '+(neg?ctx[0]:ctx[1])+' با کدام عدد صحیح نمایش داده می‌شود؟',sI(ans),[sI(-ans),'0',sI(ans>0?ans+1:ans-1)],'sign',{v:ans})}
+    x=ri(2,20)*(Math.random()<0.5?1:-1);return NQ('int','قرینه عدد '+sI(x)+' نسبت به صفر روی محور اعداد چه عددی است؟',-x,'opp',{x:x})}
+  if(l===2){k=pick(['cmp2','min4','between','max4']);
+    if(k==='cmp2'){do{a=ri(-20,20);b=ri(-20,20)}while(a===b);return MQ('int','کدام عدد بزرگ‌تر است؟',sI(Math.max(a,b)),[sI(Math.min(a,b))],'cmp2',{a:a,b:b})}
+    if(k==='min4'||k==='max4'){var s=[];while(s.length<4){var v=ri(-30,30);if(s.indexOf(v)<0)s.push(v)}var m=k==='min4'?Math.min.apply(null,s):Math.max.apply(null,s);return MQ('int',k==='min4'?'کدام عدد کوچک‌ترین است؟':'کدام عدد بزرگ‌ترین است؟',sI(m),s.filter(function(v){return v!==m}).map(sI),k,{s:s})}
+    var lo=ri(-12,6),hi=lo+ri(3,12);return NQ('int','بین '+sI(lo)+' و '+sI(hi)+' چند عدد صحیح وجود دارد؟',hi-lo-1,'between',{lo:lo,hi:hi})}
+  k=pick(['pat','floor','ord']);
+  if(k==='pat'){var st=ri(-30,-5),d=ri(2,10),sq=[0,1,2,3].map(function(i){return st+i*d});return NQ('int','الگو را ادامه دهید. عدد بعدی چیست؟ '+sq.map(sI).join(' ، ')+' ، …',st+4*d,'pat',{st:st,d:d})}
+  if(k==='floor'){var m1=ri(1,5),m2=ri(1,8),m3=ri(1,5);return NQ('int','از طبقه همکف ('+'صفر) '+m1+' طبقه پایین می‌روید، بعد '+m2+' طبقه بالا و سپس '+m3+' طبقه پایین. در کدام طبقه هستید؟ (طبقه‌های زیر همکف را با عدد صحیح منفی بنویسید)',-m1+m2-m3,'floor',{m:[m1,m2,m3]})}
+  var s5=[];while(s5.length<5){var v5=ri(-15,15);if(s5.indexOf(v5)<0)s5.push(v5)}
+  var asc=s5.slice().sort(function(a,b){return a-b}),opts=[asc.map(sI).join(' ، ')],cand=[asc.slice().reverse(),s5.slice().sort(function(a,b){return Math.abs(a)-Math.abs(b)}),shuf(s5.slice())];
+  cand.forEach(function(c){var t=c.map(sI).join(' ، ');if(opts.indexOf(t)<0&&opts.length<4)opts.push(t)});
+  return MQ('int','اعداد '+shuf(s5.slice()).map(sI).join(' ، ')+' را از کوچک به بزرگ مرتب کنید. کدام ترتیب درست است؟',opts[0],opts.slice(1),'ord',{s:s5});
+}
+function gFadd(l){
+  var k=pick(l===1?['toMixed','toImp','same']:l===2?['diffAdd','diffSub','diffAdd']:['mixAdd','mixSub','word']),a,b,d,d1,d2,p,L,w,w2,r;
+  if(k==='toMixed'){do{d=ri(2,9);a=ri(d+1,5*d)}while(gcd(a,d)!==1);return FQ('fadd',a+'/'+d+' را به صورت عدد مخلوط بنویسید.',a,d,[],'toMixed',{n:a,d:d})}
+  if(k==='toImp'){do{d=ri(2,9);w=ri(1,6);r=ri(1,d-1)}while(gcd(r,d)!==1);var ans=(w*d+r)+'/'+d,wr=[(w+r)+'/'+d,(w*d)+'/'+r,(w*d+r+1)+'/'+d,(w*d+r-1)+'/'+d];return MQ('fadd',w+' و '+r+'/'+d+' را به صورت کسر بنویسید.',ans,wr,'toImp',{w:w,r:r,d:d})}
+  if(k==='same'){d=ri(4,12);a=ri(2,d-1);b=ri(2,d-1);var plus=Math.random()<0.5;if(!plus&&a<b){var t0=a;a=b;b=t0}if(!plus&&a===b)a=Math.min(d-1,b+1);var n0=plus?a+b:a-b;if(n0<=0){plus=true;n0=a+b}return FQ('fadd',a+'/'+d+(plus?' + ':' − ')+b+'/'+d+' = ؟',n0,d,[],'same',{x:[a,d],y:[b,d],op:plus?'+':'-'},[n0,2*d])}
+  if(k==='diffAdd'||k==='diffSub'){
+    var tries=0;do{p=pick(FP);d1=p[0];d2=p[1];a=ri(1,d1-1);b=ri(1,d2-1);L=d1*d2/gcd(d1,d2);tries++}while(k==='diffSub'&&a*(L/d1)<=b*(L/d2)&&tries<80);
+    if(k==='diffSub'&&a*(L/d1)<=b*(L/d2)){d1=4;d2=3;a=3;b=2;L=12}
+    var num=k==='diffAdd'?a*(L/d1)+b*(L/d2):a*(L/d1)-b*(L/d2);
+    return FQ('fadd',a+'/'+d1+(k==='diffAdd'?' + ':' − ')+b+'/'+d2+' = ؟',num,L,[],k,{x:[a,d1],y:[b,d2],op:k==='diffAdd'?'+':'-'},k==='diffAdd'?[a+b,d1+d2]:[Math.abs(a-b)||1,Math.abs(d1-d2)||1]);
+  }
+  if(k==='mixAdd'||k==='mixSub'){
+    do{p=pick(FP);d1=p[0];d2=p[1];w=ri(1,4);w2=ri(1,3);a=ri(1,d1-1);b=ri(1,d2-1);L=d1*d2/gcd(d1,d2);
+       var n1=(w*d1+a)*(L/d1),n2=(w2*d2+b)*(L/d2)}while(k==='mixSub'&&n1<=n2);
+    return FQ('fadd',w+' و '+a+'/'+d1+(k==='mixAdd'?' + ':' − ')+w2+' و '+b+'/'+d2+' = ؟',k==='mixAdd'?n1+n2:n1-n2,L,[],k,{x:[w*d1+a,d1],y:[w2*d2+b,d2],op:k==='mixAdd'?'+':'-'});
+  }
+  p=pick(FP);d1=p[0];d2=p[1];a=ri(1,d1-1);b=ri(1,d2-1);L=d1*d2/gcd(d1,d2);var nm=pick(['ناهید','سارا','مریم','رضا']),sub=Math.random()<0.5;
+  if(!sub)return FQ('fadd',nm+' دیروز '+a+'/'+d1+' لیتر و امروز '+b+'/'+d2+' لیتر شیر نوشید. روی هم چند لیتر شیر نوشیده است؟',a*(L/d1)+b*(L/d2),L,[],'word',{x:[a,d1],y:[b,d2],op:'+'},[a+b,d1+d2]);
+  var whole=ri(2,5);return FQ('fadd','از '+whole+' لیتر شیر، '+a+'/'+d1+' لیتر مصرف شد. چند لیتر شیر باقی ماند؟',whole*d1-a,d1,[],'wordSub',{x:[whole,1],y:[a,d1],op:'-'});
+}
+function gFmul(l){
+  var k=pick(l===1?['natfrac','part']:l===2?['ff','recip','ff']:['mixfrac','word']),a,b,c,d,n;
+  if(l===1){d=ri(2,9);a=ri(1,d-1);n=d*ri(2,9);if(k==='natfrac')return NQ('fmul',n+' × '+a+'/'+d+' = ؟',n/d*a,'natfrac',{x:[n,1],y:[a,d],op:'*'});return NQ('fmul',a+'/'+d+' از '+n+' چند است؟',n/d*a,'part',{x:[a,d],y:[n,1],op:'*'})}
+  if(k==='ff'){b=ri(2,9);a=ri(1,b-1);d=ri(2,9);c=ri(1,d-1);return FQ('fmul',a+'/'+b+' × '+c+'/'+d+' = ؟',a*c,b*d,[[a*d,b*c],[a*c,b+d]],'ff',{x:[a,b],y:[c,d],op:'*'},[a*c,b+d])}
+  if(k==='recip'){do{a=ri(1,9);b=ri(2,9)}while(a===b||gcd(a,b)!==1);var ans=pfS(b,a);return MQ('fmul','معکوس کسر '+a+'/'+b+' کدام است؟',ans,[pfS(a,b),pfS(b,a+1),pfS(a*b,1),pfS(b+1,a)],'recip',{a:a,b:b})}
+  if(k==='mixfrac'){var w=ri(1,3);b=ri(2,5);a=ri(1,b-1);d=ri(2,6);c=ri(1,d-1);return FQ('fmul',w+' و '+a+'/'+b+' × '+c+'/'+d+' = ؟',(w*b+a)*c,b*d,[],'mixfrac',{x:[w*b+a,b],y:[c,d],op:'*'})}
+  b=ri(2,8);a=ri(1,b-1);n=ri(2,9);return FQ('fmul','برای پختن یک کیک '+a+'/'+b+' کیلوگرم آرد لازم است. برای پختن '+n+' کیک از همان نوع چند کیلوگرم آرد لازم است؟',a*n,b,[],'word',{x:[a,b],y:[n,1],op:'*'});
+}
+function gFdiv(l){
+  var k=pick(l===1?['same','howmany']:l===2?['diff','fracnat','diff']:['pack','natfrac']),a,b,c,d,m,n;
+  if(k==='same'){d=ri(3,9);c=ri(1,d-1);m=ri(2,9);return NQ('fdiv',(m*c)+'/'+d+' ÷ '+c+'/'+d+' = ؟',m,'same',{x:[m*c,d],y:[c,d],op:'/'})}
+  if(k==='howmany'){a=pick([1,1,2,3]);b=ri(a+1,a+5);if(gcd(a,b)!==1)b=a+1;m=ri(1,6);n=a*m;return NQ('fdiv','در '+n+' چند تا '+a+'/'+b+' وجود دارد؟',n*b/a,'howmany',{x:[n,1],y:[a,b],op:'/'})}
+  if(k==='diff'){b=ri(2,9);a=ri(1,b-1);d=ri(2,9);c=ri(1,d-1);return FQ('fdiv',a+'/'+b+' ÷ '+c+'/'+d+' = ؟',a*d,b*c,[[a*c,b*d],[b*c,a*d]],'diff',{x:[a,b],y:[c,d],op:'/'})}
+  if(k==='fracnat'){b=ri(2,9);a=ri(1,b-1);n=ri(2,6);return FQ('fdiv',a+'/'+b+' ÷ '+n+' = ؟',a,b*n,[[a*n,b]],'fracnat',{x:[a,b],y:[n,1],op:'/'})}
+  if(k==='pack'){var pp=pick([[3,4],[1,2],[2,3],[3,2],[5,2],[3,8]]);m=ri(3,9);var tot=mixS(m*pp[0],pp[1]);return NQ('fdiv',tot+' کیلوگرم پسته را در بسته‌های '+pp[0]+'/'+pp[1]+' کیلوگرمی بسته‌بندی می‌کنیم. تعداد بسته‌ها چقدر است؟',m,'pack',{p:pp,m:m})}
+  a=pick([2,3,4,5]);b=ri(1,a-1);if(gcd(a,b)!==1)b=1;n=b*ri(1,8);return NQ('fdiv',n+' ÷ '+b+'/'+a+' = ؟',n*a/b,'natfrac',{x:[n,1],y:[b,a],op:'/'});
+}
+function gFcalc(l){
+  var k=pick(l===1?['big1','equiv']:l===2?['prec','cmp']:['ord4','word']),a,b,c,d,e,f,w,i;
+  if(k==='big1'){var s=[],ans;do{s=[];while(s.length<4){b=ri(2,9);a=ri(1,2*b);if(a!==b&&gcd(a,b)===1&&s.map(function(z){return z[0]/z[1]}).indexOf(a/b)<0)s.push([a,b])}}while(s.filter(function(z){return z[0]>z[1]}).length!==1);var cor=s.filter(function(z){return z[0]>z[1]})[0];return MQ('fcalc','کدام کسر از ۱ بزرگ‌تر است؟',pfS(cor[0],cor[1]),s.filter(function(z){return z!==cor}).map(function(z){return pfS(z[0],z[1])}),'big1',{s:s})}
+  if(k==='equiv'){do{b=ri(2,9);a=ri(1,b-1)}while(gcd(a,b)!==1);var m=ri(2,6);return MQ('fcalc','کدام کسر با '+a+'/'+b+' مساوی است؟',pfS(a*m,b*m),[pfS(a*m+1,b*m),pfS(a*m,b*m+1),pfS(a+m,b+m)],'equiv',{a:a,b:b,m:m})}
+  if(k==='prec'){b=ri(2,6);a=ri(1,b-1);d=ri(2,6);c=ri(1,d-1);f=ri(2,6);e=ri(1,f-1);var n1=c*e,d1=d*f,L=b*d1/gcd(b,d1),num=a*(L/b)+n1*(L/d1);return FQ('fcalc',a+'/'+b+' + '+c+'/'+d+' × '+e+'/'+f+' = ؟',num,L,[[a*d*f+c*e*b,b*d*f*1],[(a*d+c)*e,b*d*f]],'prec',{a:[a,b],c:[c,d],e:[e,f]})}
+  if(k==='cmp'){var x,y;do{b=ri(2,12);a=ri(1,b-1);d=ri(2,12);c=ri(1,d-1);x=a/b;y=c/d}while(Math.abs(x-y)<1e-9);var big=x>y?[a,b]:[c,d],small=x>y?[c,d]:[a,b];return MQ('fcalc','کدام کسر بزرگ‌تر است؟',pfS(big[0],big[1]),[pfS(small[0],small[1])],'cmp',{x:[a,b],y:[c,d]})}
+  if(k==='ord4'){var arr=[],vals=[];while(arr.length<4){b=ri(2,8);a=ri(1,3*b);var v=a/b;if(vals.some(function(q){return Math.abs(q-v)<1e-9}))continue;vals.push(v);arr.push([a,b])}var mn=Math.random()<0.5,idx=0;arr.forEach(function(z,j){if(mn?z[0]/z[1]<arr[idx][0]/arr[idx][1]:z[0]/z[1]>arr[idx][0]/arr[idx][1])idx=j});
+    return MQ('fcalc',mn?'کوچک‌ترین عدد کدام است؟':'بزرگ‌ترین عدد کدام است؟',mixS(arr[idx][0],arr[idx][1]),arr.filter(function(z,j){return j!==idx}).map(function(z){return mixS(z[0],z[1])}),'ord4',{arr:arr,mn:mn})}
+  var aw=ri(1,3),mm=ri(1,4),cnt=10*aw+5+2*mm;return NQ('fcalc','در تهیه یک شربت، '+aw+' کیلوگرم آب، 1/2 کیلوگرم شکر و '+mm+'/5 کیلوگرم آبلیمو مصرف شده است. این مقدار شربت برای پر کردن چند لیوان 1/10 کیلوگرمی کافی است؟',cnt,'word',{aw:aw,mm:mm});
+}
+function dS(x){return String(Math.round(x*1000)/1000)}
+function gDplace(l){
+  var k,i;
+  var PR=[['1/4',0.25],['3/4',0.75],['1/2',0.5],['1/5',0.2],['2/5',0.4],['3/5',0.6],['4/5',0.8],['1/8',0.125],['7/20',0.35],['3/20',0.15],['9/20',0.45],['3/25',0.12],['7/50',0.14]];
+  if(l===1){k=pick(['place','tofrac10','place']);
+    if(k==='place'){var di;do{di=dist(4)}while(di[0]===0||di[2]===0||di[3]===0);var X=di[0]*10+di[1]+di[2]/10+di[3]/100;i=pick([2,3]);return NQ('dplace','ارزش مکانی رقم '+di[i]+' در عدد '+dS(X)+' چقدر است؟',i===2?di[2]/10:di[3]/100,'place',{X:dS(X),i:i,di:di})}
+    var den=pick([10,100]),nu=den===10?ri(1,9):ri(1,99);return NQ('dplace',nu+'/'+den+' را به صورت عدد اعشاری بنویسید.',nu/den,'tofrac10',{nu:nu,den:den})}
+  if(l===2){k=pick(['tofrac','todec']);
+    var pr=pick(PR);
+    if(k==='todec')return NQ('dplace',pr[0]+' را به صورت عدد اعشاری بنویسید.',pr[1],'todec',{f:pr[0],v:pr[1]});
+    var wr=shuf(PR.filter(function(z){return z[0]!==pr[0]})).slice(0,3).map(function(z){return z[0]});
+    return MQ('dplace',dStr(pr[1])+' را به صورت کسر ساده‌شده بنویسید.',pr[0],wr,'tofrac',{dec:pr[1],ans:pr[0]})}
+  k=pick(['cmp','eq']);
+  if(k==='cmp'){var vals=[];while(vals.length<4){var q=ri(100,999)/pick([100,1000]);if(vals.indexOf(q)<0)vals.push(q)}var mn=Math.random()<0.5,m=mn?Math.min.apply(null,vals):Math.max.apply(null,vals);return MQ('dplace',mn?'کدام عدد کوچک‌ترین است؟':'کدام عدد بزرگ‌ترین است؟',dStr(m),vals.filter(function(z){return z!==m}).map(dStr),'cmp',{vals:vals,mn:mn})}
+  var b=pick([0.4,0.5,0.2,0.6,0.8]),b10=Math.round(b*10);
+  return MQ('dplace','کدام عدد با '+dStr(b)+' برابر نیست؟',dStr(b/10),[dStr(b)+'0',b10+'/10',(b10*10)+'/100'],'eq',{b:b});
+}
+function dStr(x){var s=String(Math.round(x*100000)/100000);return s}
+function gDmuldiv(l){
+  var a,b,k;
+  if(l===1){a=ri(11,999)/10;b=ri(11,999)/10;if(Math.random()<0.5)return NQ('dmuldiv',dStr(a)+' + '+dStr(b)+' = ؟',Math.round((a+b)*1000)/1000,'add',{a:a,b:b});if(b>a){var t=a;a=b;b=t}return NQ('dmuldiv',dStr(a)+' − '+dStr(b)+' = ؟',Math.round((a-b)*1000)/1000,'sub',{a:a,b:b})}
+  if(l===2){k=pick(['pow','mulNat','mulDec']);
+    if(k==='pow'){var f=pick([10,100,1000,0.1,0.01]),x=ri(101,9999)/100;return NQ('dmuldiv',dStr(x)+' × '+dStr(f)+' = ؟',Math.round(x*f*100000)/100000,'pow',{x:x,f:f})}
+    if(k==='mulNat'){a=ri(11,99)/10;b=ri(2,9);return NQ('dmuldiv',dStr(a)+' × '+b+' = ؟',Math.round(a*b*100)/100,'mulNat',{a:a,b:b})}
+    a=ri(11,99)/10;b=ri(11,99)/10;return NQ('dmuldiv',dStr(a)+' × '+dStr(b)+' = ؟',Math.round(a*b*100)/100,'mulDec',{a:a,b:b})}
+  k=pick(['paren1','paren2','mental']);
+  if(k==='paren1'){a=ri(11,99)/10;b=ri(11,99)/10;var f2=pick([10,100]);return NQ('dmuldiv','('+dStr(a)+' + '+dStr(b)+') × '+f2+' = ؟',Math.round((a+b)*f2*1000)/1000,'paren1',{a:a,b:b,f:f2})}
+  if(k==='paren2'){a=ri(51,99)/10;b=ri(11,50)/10;var c=pick([0.4,0.5,0.2,30,10]);return NQ('dmuldiv','('+dStr(a)+' − '+dStr(b)+') × '+dStr(c)+' = ؟',Math.round((a-b)*c*1000)/1000,'paren2',{a:a,b:b,c:c})}
+  a=ri(2,9)/10;b=ri(2,9)/100;return NQ('dmuldiv',dStr(a)+' × '+dStr(b)+' = ؟',Math.round(a*b*10000)/10000,'mental',{a:a,b:b});
+}
+function gDdivn(l){
+  var k,a,b,q;
+  if(l===1){b=ri(2,9);a=ri(100,999);return NQ('ddivn',a+' ÷ '+b+' : خارج قسمت چند است؟ (باقیمانده را در نظر نگیرید)',Math.floor(a/b),'q',{a:a,b:b})}
+  if(l===2){b=ri(2,9);q=ri(11,299)/10;a=Math.round(b*q*100)/100;return NQ('ddivn',dStr(a)+' ÷ '+b+' = ؟',q,'decnat',{a:a,b:b,q:q})}
+  k=pick(['fuel','fuelRem','water']);
+  if(k==='fuel'||k==='fuelRem'){var p=ri(8,20),T=ri(100,400);if(k==='fuel')return NQ('ddivn','یک موتور آب در هر ساعت '+p+' لیتر گازوئیل مصرف می‌کند. منبع آن '+T+' لیتر دارد. چند ساعت کامل می‌تواند کار کند؟',Math.floor(T/p),'fuel',{p:p,T:T});return NQ('ddivn','یک موتور آب در هر ساعت '+p+' لیتر گازوئیل مصرف می‌کند. اگر منبع آن '+T+' لیتر باشد، پس از کار کامل چند ساعت، چند لیتر گازوئیل باقی می‌ماند؟',T%p,'fuelRem',{p:p,T:T})}
+  var per=ri(2,6)*4,ha=ri(5,20);return NQ('ddivn','برای آبیاری هر هکتار زمین '+per+' مترمکعب آب لازم است. برای '+ha+' هکتار چند مترمکعب آب لازم است؟',per*ha,'water',{per:per,ha:ha});
+}
+function gDdivd(l){
+  var d,qt,a,k;
+  if(l===1){d=pick([0.1,0.2,0.25,0.5,1.5,2.5]);qt=ri(3,40);a=Math.round(d*qt*100)/100;return NQ('ddivd',dStr(a)+' ÷ '+dStr(d)+' = ؟',qt,'basic',{a:a,d:d,qt:qt})}
+  if(l===2){var dv=pick([[0.2,10],[0.5,10],[1.5,10],[0.21,100],[0.25,100],[0.07,100],[0.125,1000],[2.5,10]]);return NQ('ddivd','برای اینکه مقسوم‌علیه در تقسیم '+dStr(ri(3,99)/ (dv[1]===10?10:100))+' ÷ '+dStr(dv[0])+' عدد صحیح شود، مقسوم و مقسوم‌علیه را در چه عددی ضرب می‌کنیم؟',dv[1],'scale',{dv:dv})}
+  d=pick([0.25,0.5,0.2,0.75,1.5]);qt=ri(4,30);var tot=Math.round(d*qt*100)/100;k=pick(['cup','rope']);
+  if(k==='cup')return NQ('ddivd',dStr(tot)+' لیتر آب را در ظرف‌هایی با گنجایش '+dStr(d)+' لیتر می‌ریزیم. چند ظرف پر می‌شود؟',qt,'cup',{tot:tot,d:d,qt:qt});
+  return NQ('ddivd','از یک طناب به طول '+dStr(tot)+' متر، تکه‌های '+dStr(d)+' متری می‌بریم. چند تکه به دست می‌آید؟',qt,'rope',{tot:tot,d:d,qt:qt});
+}
+var SHP_C=['مربع','مستطیل','دایره','متوازی‌الاضلاع','لوزی'],SHP_N=['مثلث متساوی‌الاضلاع','ذوزنقه متساوی‌الساقین','پنج‌ضلعی منتظم','مثلث قائم‌الزاویه'];
+function pts(x,y){return '('+x+'، '+y+')'}
+function oPts(ans,wr){var o=[ans];wr.forEach(function(x){if(o.indexOf(x)<0&&o.length<4)o.push(x)});var k=0;while(o.length<4&&k<60){var z=pts(ri(1,12),ri(1,12));if(o.indexOf(z)<0)o.push(z);k++}return o}
+function PQ(op,t,ans,wr,kind,p){return{op:op,kind:kind,p:p,t:t,ans:ans,mode:'opt',rtl:true,opts:shuf(oPts(ans,wr))}}
+function gSym(l){
+  var a,b,c,d,k;
+  if(l===1){k=pick(['which','half']);if(k==='which'){var cor=pick(SHP_C);return MQ('sym','کدام شکل مرکز تقارن دارد؟',cor,shuf(SHP_N.slice()).slice(0,3),'which',{cor:cor})}return NQ('sym','وقتی شکلی را «نیم‌دور» می‌چرخانیم، چند درجه می‌چرخد؟',180,'half')}
+  if(l===2){c=ri(3,8);d=ri(3,8);a=ri(1,2*c-1);b=ri(1,2*d-1);var ans=pts(2*c-a,2*d-b);return PQ('sym','قرینه نقطه '+pts(a,b)+' نسبت به نقطه '+pts(c,d)+' (تقارن مرکزی) کدام است؟',ans,[pts(2*d-b,2*c-a),pts(c+a,d+b),pts(Math.abs(c-a),Math.abs(d-b))],'central',{a:a,b:b,c:c,d:d})}
+  if(Math.random()<0.5){var x1=ri(1,5),y1=ri(1,5),x2=x1+2*ri(1,4),y2=y1+2*ri(1,3);return PQ('sym','مرکز تقارن مستطیلی که دو رأس روبه‌روی آن '+pts(x1,y1)+' و '+pts(x2,y2)+' است، کدام نقطه است؟',pts((x1+x2)/2,(y1+y2)/2),[pts(x2-x1,y2-y1),pts(x1+x2,y1+y2),pts((x1+x2)/2,y2)],'center',{x1:x1,y1:y1,x2:x2,y2:y2})}
+  c=ri(2,6);d=ri(2,6);a=ri(1,2*c-1);b=ri(1,2*d-1);var ans2=pts(2*c-a,2*d-b);return PQ('sym','قرینه نقطه '+pts(a,b)+' نسبت به مرکز '+pts(c,d)+' را پیدا کنید و بنویسید.',ans2,[pts(a+c,b+d),pts(2*c-b,2*d-a),pts(c,d)],'central2',{a:a,b:b,c:c,d:d});
+}
+function gRot(l){
+  var k;
+  if(l===1){k=pick(['full','quarter']);if(k==='full')return MQ('rot','اگر شکلی را ۳۶۰ درجه حول مرکز دوران بچرخانیم، چه می‌شود؟','به حالت اول برمی‌گردد',['قرینه می‌شود','وارونه می‌شود','کوچک‌تر می‌شود'],'full');return NQ('rot','یک دوران ۱۸۰ درجه چند برابر دوران ۹۰ درجه است؟',2,'quarter')}
+  if(l===2){var sh=pick([['مربع',90],['مستطیل',180],['مثلث متساوی‌الاضلاع',120],['شش‌ضلعی منتظم',60],['پنج‌ضلعی منتظم',72],['لوزی',180]]);return NQ('rot','کمترین زاویه دوران که یک '+sh[0]+' حول مرکزش بچرخد و دوباره دقیقاً روی خودش بیفتد، چند درجه است؟',sh[1],'min',{sh:sh})}
+  k=pick(['count','sum','mul']);
+  if(k==='count'){var s=pick([90,60,120,45,72]);return NQ('rot','با دوران‌های '+s+' درجه‌ای پشت سر هم، چند دوران لازم است تا شکل برای اولین بار به حالت اول برگردد؟',360/s,'count',{s:s})}
+  if(k==='sum'){var a=pick([90,180,270]),b=pick([90,180,270]);return NQ('rot','شکلی را ابتدا '+a+' درجه و بعد '+b+' درجه در یک جهت می‌چرخانیم. وضعیت نهایی معادل چرخش چند درجه (کمتر از ۳۶۰ درجه یا صفر) است؟',(a+b)%360,'sum',{a:a,b:b})}
+  var m=ri(2,7);return NQ('rot',m+' دوران ۹۰ درجه‌ای متوالی در مجموع چند درجه است؟',m*90,'mul',{m:m});
+}
+function gAxes(l){
+  var x,y,a,b;
+  if(l===1){x=ri(1,9);y=ri(1,9);if(Math.random()<0.5)return NQ('axes','فاصله نقطه '+pts(x,y)+' از محور افقی (محور xها) چند واحد است؟',y,'dx',{x:x,y:y});return NQ('axes','فاصله نقطه '+pts(x,y)+' از محور عمودی (محور yها) چند واحد است؟',x,'dy',{x:x,y:y})}
+  if(l===2){x=ri(1,8);y=ri(1,8);var s=ri(2,6),right=Math.random()<0.5,nx=right?x+s:x,ny=right?y:y+s,ans=pts(nx,ny);return PQ('axes','نقطه '+pts(x,y)+' را '+s+' واحد به '+(right?'راست':'بالا')+' می‌بریم. مختصات نقطه جدید کدام است؟',ans,[pts(ny,nx),right?pts(x,y+s):pts(x+s,y),pts(x+s,y+s)],'move',{x:x,y:y,s:s,right:right})}
+  var k=pick(['hdist','vdist','area','peri']);
+  var x1=ri(1,5),y1=ri(1,5),dx=ri(2,7),dy=ri(2,6);
+  if(k==='hdist')return NQ('axes','فاصله دو نقطه '+pts(x1,y1)+' و '+pts(x1+dx,y1)+' چند واحد است؟',dx,'hdist',{x1:x1,y1:y1,dx:dx});
+  if(k==='vdist')return NQ('axes','فاصله دو نقطه '+pts(x1,y1)+' و '+pts(x1,y1+dy)+' چند واحد است؟',dy,'vdist',{x1:x1,y1:y1,dy:dy});
+  if(k==='area')return NQ('axes','دو رأس روبه‌روی یک مستطیل (با اضلاع موازی محورها) نقطه‌های '+pts(x1,y1)+' و '+pts(x1+dx,y1+dy)+' هستند. مساحت مستطیل چند واحد مربع است؟',dx*dy,'area',{x1:x1,y1:y1,dx:dx,dy:dy});
+  return NQ('axes','دو رأس روبه‌روی یک مستطیل (با اضلاع موازی محورها) نقطه‌های '+pts(x1,y1)+' و '+pts(x1+dx,y1+dy)+' هستند. محیط مستطیل چند واحد است؟',2*(dx+dy),'peri',{x1:x1,y1:y1,dx:dx,dy:dy});
+}
+function gScoord(l){
+  var a,b,k,ans,k2;
+  if(l===1){k=ri(3,9);a=ri(1,2*k-1);if(a===k)a--;if(a<1)a=1;b=ri(1,9);return PQ('scoord','قرینه نقطه '+pts(a,b)+' نسبت به خط عمودی x = '+k+' کدام است؟',pts(2*k-a,b),[pts(a,2*k-b),pts(b,a),pts(2*k+a,b)],'vert',{a:a,b:b,k:k})}
+  if(l===2){k=ri(3,9);b=ri(1,2*k-1);if(b===k)b--;if(b<1)b=1;a=ri(1,9);return PQ('scoord','قرینه نقطه '+pts(a,b)+' نسبت به خط افقی y = '+k+' کدام است؟',pts(a,2*k-b),[pts(2*k-a,b),pts(b,a),pts(a,2*k+b)],'horiz',{a:a,b:b,k:k})}
+  k2=pick(['which','dist']);
+  if(k2==='which')return MQ('scoord','نقطه‌ای را نسبت به یک خط عمودی (موازی محور yها) قرینه می‌کنیم. کدام مختصه نقطه تغییر نمی‌کند؟','عرض (y)',['طول (x)','هر دو مختصه','هیچ‌کدام'],'which');
+  k=ri(3,9);a=ri(1,k-1);b=ri(1,9);return NQ('scoord','فاصله نقطه '+pts(a,b)+' و قرینه‌اش نسبت به خط عمودی x = '+k+' چند واحد است؟',2*(k-a),'dist',{a:a,b:b,k:k});
+}
+function gLen(l){
+  var k;
+  if(l===1){var P=[['سنگینی یک میوه','جرم'],['مدت بارش باران','زمان'],['دور کمر','طول'],['زیربنای یک ساختمان','سطح'],['گنجایش یک بطری','حجم'],['ارتفاع یک کوه','طول'],['اندازه یک گوشه','زاویه']],it=pick(P),all=['طول','سطح','حجم','جرم','زمان','زاویه'];return MQ('len','در اندازه‌گیری «'+it[0]+'» کدام کمیت را اندازه می‌گیریم؟',it[1],shuf(all.filter(function(z){return z!==it[1]})).slice(0,3),'which',{it:it})}
+  if(l===2){k=pick(['m_cm','dm_m','km_m','m_dm','m2_ha','ha_m2','cm_m']);var x;
+    if(k==='m_cm'){x=ri(2,90)/ pick([1,2,10]);return NQ('len',dStr(x)+' متر چند سانتی‌متر است؟',Math.round(x*100*1000)/1000,k,{x:x})}
+    if(k==='dm_m'){x=ri(11,990);return NQ('len',x+' دسی‌متر چند متر است؟',x/10,k,{x:x})}
+    if(k==='km_m'){x=ri(2,90)/pick([1,2,10]);return NQ('len',dStr(x)+' کیلومتر چند متر است؟',Math.round(x*1000*1000)/1000,k,{x:x})}
+    if(k==='m_dm'){x=ri(2,90)/pick([1,10]);return NQ('len',dStr(x)+' متر چند دسی‌متر است؟',Math.round(x*10*1000)/1000,k,{x:x})}
+    if(k==='cm_m'){x=ri(1,9)*100+ri(0,9)*10;return NQ('len',x+' سانتی‌متر چند متر است؟',x/100,k,{x:x})}
+    if(k==='m2_ha'){x=ri(1,9)*5000;return NQ('len',cm(x)+' مترمربع چند هکتار است؟ (۱ هکتار = ۱۰٬۰۰۰ مترمربع)',x/10000,k,{x:x})}
+    x=ri(2,40)/ pick([1,2,4]);return NQ('len',dStr(x)+' هکتار چند مترمربع است؟ (۱ هکتار = ۱۰٬۰۰۰ مترمربع)',Math.round(x*10000*1000)/1000,k,{x:x})}
+  k=pick(['step','ha','hect']);
+  if(k==='step'){var st=pick([0.5,0.4,0.8,0.25]),km=ri(1,5);return NQ('len','طول هر قدم یک نفر تقریباً '+dStr(st)+' متر است. او برای رفتن '+km+' کیلومتر چند قدم باید بردارد؟',Math.round(km*1000/st),'step',{st:st,km:km})}
+  if(k==='ha'){var w=pick([40,50,80,100,200,250]),h=pick([25,40,50,100,200]);return NQ('len','مساحت یک زمین مستطیل شکل به ابعاد '+w+' و '+h+' متر چند هکتار است؟',w*h/10000,'ha',{w:w,h:h})}
+  var m=ri(2,20);return NQ('len','یک مزرعه '+m+' هکتار مساحت دارد. اگر هر هکتار '+ri(2,9)*10+' بوته داشته باشد... (فقط مساحت را به مترمربع تبدیل کنید) مساحت مزرعه چند مترمربع است؟',m*10000,'hect',{m:m});
+}
+function gVol(l){
+  var k,a,b,c;
+  if(l===1){k=pick(['f','e','v','pyr','cyl']);
+    if(k==='f')return NQ('vol','یک مکعب چند وجه دارد؟',6,'cubeF');
+    if(k==='e')return NQ('vol','یک مکعب مستطیل چند یال دارد؟',12,'cubeE');
+    if(k==='v')return NQ('vol','یک مکعب مستطیل چند رأس دارد؟',8,'cubeV');
+    if(k==='pyr'){var q=pick([['وجه',5],['رأس',5],['یال',8]]);return NQ('vol','یک هرم با قاعده مربع چند '+q[0]+' دارد؟',q[1],'pyr',{q:q})}
+    return MQ('vol','کدام جسم دو قاعده دایره‌ای دارد؟','استوانه',['مخروط','کره','هرم'],'cyl')}
+  if(l===2){k=pick(['vol','area','cube','cubeA']);a=ri(2,12);b=ri(2,9);c=ri(2,9);
+    if(k==='vol')return NQ('vol','حجم یک مکعب مستطیل به ابعاد '+a+' و '+b+' و '+c+' سانتی‌متر چند سانتی‌متر مکعب است؟',a*b*c,'vol',{a:a,b:b,c:c});
+    if(k==='area')return NQ('vol','مساحت کل رویه‌های یک مکعب مستطیل به ابعاد '+a+' و '+b+' و '+c+' سانتی‌متر چند سانتی‌متر مربع است؟',2*(a*b+a*c+b*c),'area',{a:a,b:b,c:c});
+    if(k==='cube')return NQ('vol','حجم مکعبی که طول هر ضلع آن '+b+' سانتی‌متر است، چند سانتی‌متر مکعب است؟',b*b*b,'cube',{b:b});
+    return NQ('vol','مساحت کل رویه‌های مکعبی که طول هر ضلع آن '+b+' سانتی‌متر است، چند سانتی‌متر مربع است؟',6*b*b,'cubeA',{b:b})}
+  k=pick(['l_cc','m3_l','g_kg','t_kg','pool']);var x;
+  if(k==='l_cc'){x=ri(2,40)/pick([1,2]);return NQ('vol',dStr(x)+' لیتر چند سی‌سی (میلی‌لیتر) است؟',Math.round(x*1000),k,{x:x})}
+  if(k==='m3_l'){x=ri(2,20)/pick([1,2]);return NQ('vol',dStr(x)+' مترمکعب چند لیتر است؟ (۱ مترمکعب = ۱۰۰۰ لیتر)',Math.round(x*1000),k,{x:x})}
+  if(k==='g_kg'){x=ri(11,99)*100;return NQ('vol',cm(x)+' گرم چند کیلوگرم است؟',x/1000,k,{x:x})}
+  if(k==='t_kg'){x=ri(2,20)/pick([1,2]);return NQ('vol',dStr(x)+' تن چند کیلوگرم است؟ (۱ تن = ۱۰۰۰ کیلوگرم)',Math.round(x*1000),k,{x:x})}
+  a=ri(2,6);b=ri(2,5);c=ri(1,3);return NQ('vol','یک حوض به شکل مکعب مستطیل با ابعاد '+a+' و '+b+' و '+c+' متر چند لیتر آب گنجایش دارد؟ (۱ مترمکعب = ۱۰۰۰ لیتر)',a*b*c*1000,'pool',{a:a,b:b,c:c});
+}
+function gCirc(l){
+  var r,k;
+  var NT='(عدد پی را '+PIV+' بگیرید)';
+  if(l===1){r=ri(2,20);if(Math.random()<0.5)return NQ('circ','محیط دایره‌ای به شعاع '+r+' سانتی‌متر چند سانتی‌متر است؟ '+NT,2*r*PIV,'c',{r:r});return NQ('circ','محیط دایره‌ای به قطر '+(2*r)+' سانتی‌متر چند سانتی‌متر است؟ '+NT,2*r*PIV,'cd',{r:r})}
+  if(l===2){r=ri(2,15);if(Math.random()<0.6)return NQ('circ','مساحت دایره‌ای به شعاع '+r+' سانتی‌متر چند سانتی‌متر مربع است؟ '+NT,r*r*PIV,'a',{r:r});return NQ('circ','مساحت دایره‌ای به قطر '+(2*r)+' سانتی‌متر چند سانتی‌متر مربع است؟ '+NT,r*r*PIV,'ad',{r:r})}
+  k=pick(['sq','half','ring']);r=ri(2,10);
+  if(k==='sq')return NQ('circ','دایره‌ای به شعاع '+r+' سانتی‌متر درون مربعی به ضلع '+(2*r)+' سانتی‌متر قرار دارد. مساحت قسمت رنگی (بیرون دایره و درون مربع) چند سانتی‌متر مربع است؟ '+NT,4*r*r-PIV*r*r,'sq',{r:r});
+  if(k==='half')return NQ('circ','مساحت نیم‌دایره‌ای به شعاع '+(2*r)+' سانتی‌متر چند سانتی‌متر مربع است؟ '+NT,PIV*(2*r)*(2*r)/2,'half',{r:2*r});
+  var R=r+ri(1,5);return NQ('circ','از دایره‌ای به شعاع '+R+' سانتی‌متر، دایره‌ای هم‌مرکز به شعاع '+r+' سانتی‌متر را جدا می‌کنیم. مساحت باقی‌مانده چند سانتی‌متر مربع است؟ '+NT,PIV*(R*R-r*r),'ring',{R:R,r:r});
+}
+function gLine(l){
+  var k,b,h;
+  if(l===1){k=pick(['short','mid']);if(k==='short')return MQ('line','کوتاه‌ترین فاصله یک نقطه تا یک خط، طول پاره‌خطی است که از نقطه بر خط:','عمود می‌شود',['مایل می‌شود','موازی می‌شود','منحنی می‌شود'],'short');b=ri(2,20)*2;return NQ('line','وسط پاره‌خطی به طول '+b+' سانتی‌متر از هر دو سر آن چند سانتی‌متر فاصله دارد؟',b/2,'mid',{b:b})}
+  if(l===2){b=ri(3,20);h=ri(2,14);return NQ('line','مساحت مثلثی که قاعده‌اش '+b+' سانتی‌متر و ارتفاع نظیر آن '+h+' سانتی‌متر است، چند سانتی‌متر مربع است؟',b*h/2,'tri',{b:b,h:h})}
+  k=pick(['height','base','mid']);
+  if(k==='height'){b=ri(2,10)*2;h=ri(2,12);return NQ('line','مساحت یک مثلث '+(b*h/2)+' سانتی‌متر مربع و قاعده‌اش '+b+' سانتی‌متر است. ارتفاع نظیر این قاعده چند سانتی‌متر است؟',h,'height',{b:b,h:h})}
+  if(k==='base'){b=ri(2,12);h=ri(2,10)*2;return NQ('line','مساحت یک مثلث '+(b*h/2)+' سانتی‌متر مربع و ارتفاعش '+h+' سانتی‌متر است. قاعده نظیر این ارتفاع چند سانتی‌متر است؟',b,'base',{b:b,h:h})}
+  return MQ('line','خطی که از وسط یک پاره‌خط بگذرد و بر آن عمود باشد چه نام دارد؟','عمودمنصف',['نیم‌ساز','قطر','موازی'],'mid');
+}
+function gRatio(l){
+  var k,a,b;
+  if(l===1){var P=[[7,10],[3,4],[1,2],[3,5],[9,20],[1,4],[2,5],[17,20],[7,25],[3,50]],pp=pick(P);return NQ('ratio','نسبت '+pp[0]+' به '+pp[1]+' را به صورت عدد اعشاری بنویسید.',pp[0]/pp[1],'dec',{p:pp})}
+  if(l===2){k=pick(['simp','eq']);
+    if(k==='simp'){var g=ri(2,9);do{a=ri(1,9);b=ri(2,10)}while(a===b||gcd(a,b)!==1);return MQ('ratio','نسبت '+(a*g)+' به '+(b*g)+' را به ساده‌ترین شکل بنویسید.',a+' به '+b,[(a*g)+' به '+b,a+' به '+(b*g),b+' به '+a],'simp',{a:a,b:b,g:g})}
+    do{a=ri(1,9);b=ri(2,10)}while(a===b||gcd(a,b)!==1);var m=ri(2,9);return NQ('ratio','اگر '+a+' به '+b+' برابر باشد با ؟ به '+(b*m)+'، عدد ؟ چند است؟',a*m,'eq',{a:a,b:b,m:m})}
+  k=pick(['sq','share','map']);
+  if(k==='sq'){var s=ri(3,30);return NQ('ratio','نسبت طول ضلع یک مربع به محیط آن ۱ به ۴ است. محیط مربعی با ضلع '+s+' سانتی‌متر چند سانتی‌متر است؟',4*s,'sq',{s:s})}
+  if(k==='share'){a=ri(2,7);b=ri(2,7);if(a===b)b=a+1;var m2=ri(2,9);return NQ('ratio','نسبت تعداد دختران به پسران یک کلاس '+a+' به '+b+' است. اگر کلاس '+((a+b)*m2)+' دانش‌آموز داشته باشد، چند دختر دارد؟',a*m2,'share',{a:a,b:b,m:m2})}
+  var q=ri(2,8),u=ri(2,9)*10,n=ri(2,9);return NQ('ratio',q+' کیلوگرم میوه '+(q*u*100)+' تومان قیمت دارد. '+(q*n)+' کیلوگرم از همان میوه چند تومان می‌شود؟',n*u*q*100,'price',{q:q,u:u,n:n});
+}
+function gPct(l){
+  var k,a,b,n;
+  if(l===1){k=pick(['f2p','d2p','p2f']);
+    if(k==='f2p'){var f=pick([[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[7,10],[3,20],[7,20],[9,25],[1,25],[19,50]]);return NQ('pct',f[0]+'/'+f[1]+' برابر چند درصد است؟',f[0]/f[1]*100,'f2p',{f:f})}
+    if(k==='d2p'){var dd=ri(1,99)/100;return NQ('pct',dStr(dd)+' برابر چند درصد است؟',Math.round(dd*100),'d2p',{d:dd})}
+    var pp=ri(1,19)*5;return NQ('pct',pp+'٪ را به صورت عدد اعشاری بنویسید.',pp/100,'p2d',{p:pp})}
+  if(l===2){k=pick(['of','what']);
+    if(k==='of'){var p=pick([5,10,15,20,25,30,35,40,45,50,60,75,80]);n=ri(2,40)*20;return NQ('pct',p+'٪ از '+n+' چند است؟',p*n/100,'of',{p:p,n:n})}
+    var tot=pick([20,25,40,50,80,200,250,500]);do{a=ri(1,tot-1)}while((a*100)%tot!==0);return NQ('pct',a+' چند درصد '+tot+' است؟',a*100/tot,'what',{a:a,tot:tot})}
+  k=pick(['rev','err','twoTier']);
+  if(k==='rev'){var p3=pick([10,20,25,40,50]),w=ri(2,50)*20,part=p3*w/100;return NQ('pct',p3+'٪ یک عدد برابر '+part+' است. آن عدد چند است؟',w,'rev',{p:p3,part:part,w:w})}
+  if(k==='err'){var tot2=pick([20,25,50,40]);do{a=ri(1,tot2-1)}while((a*100)%tot2!==0);var corr=a*100/tot2;return MQ('pct','از '+tot2+' فرفره، '+a+' فرفره آبی است. چند درصد فرفره‌ها آبی است؟',corr+'٪',[a+'٪',(100-corr)+'٪',(corr+10)+'٪'],'err',{a:a,tot:tot2})}
+  var tt=pick([100,200,300,400,500]),pa=pick([10,20,30,40]),pb=pick([5,10,15,20]);if(pa+pb>=100)pb=5;var rest=100-pa-pb;return NQ('pct','در یک مدرسه '+tt+' دانش‌آموز هست. '+pa+'٪ آن‌ها پایه ششم و '+pb+'٪ آن‌ها پایه پنجم هستند. چند نفر در پایه‌های دیگر هستند؟',tt*rest/100,'rest',{tt:tt,pa:pa,pb:pb});
+}
+function gFin(l){
+  var k,pr,p;
+  if(l===1){k=pick(['tax','profit']);if(k==='tax'){var bill=ri(2,20)*10000,tx=pick([5,9,10]);return NQ('fin','به مبلغ فاکتور '+cm(bill)+' تومان، '+tx+' درصد مالیات اضافه می‌شود. مالیات چند تومان است؟',bill*tx/100,'tax',{bill:bill,tx:tx})}var cap=ri(1,10)*1000000,rt=pick([10,15,18,20]);return NQ('fin','به سرمایه '+cm(cap)+' تومانی، سالانه '+rt+' درصد سود تعلق می‌گیرد. سود یک سال چند تومان است؟',cap*rt/100,'profit',{cap:cap,rt:rt})}
+  if(l===2){k=pick(['disc','final']);pr=ri(5,50)*10000;p=pick([5,10,15,20,25,30]);if(k==='disc')return NQ('fin','قیمت یک کالا '+cm(pr)+' تومان است. با '+p+' درصد تخفیف، چند تومان تخفیف می‌گیرید؟',pr*p/100,'disc',{pr:pr,p:p});return NQ('fin','قیمت یک کالا '+cm(pr)+' تومان است. با '+p+' درصد تخفیف، قیمت جدید چند تومان می‌شود؟',pr*(100-p)/100,'final',{pr:pr,p:p})}
+  k=pick(['growth','tax2']);
+  if(k==='growth'){var pop=ri(2,9)*10000000,g=pick([1,2,5,10]);return NQ('fin','جمعیت یک شهر '+cm(pop)+' نفر است. اگر جمعیت در یک سال '+g+' درصد رشد کند، جمعیت پس از یک سال چند نفر می‌شود؟',pop+pop*g/100,'growth',{pop:pop,g:g})}
+  var bill2=ri(2,20)*10000,tx2=pick([5,9,10]);return NQ('fin','مبلغ فاکتور '+cm(bill2)+' تومان است و '+tx2+' درصد مالیات به آن اضافه می‌شود. مبلغ نهایی قابل پرداخت چند تومان است؟',bill2+bill2*tx2/100,'tax2',{bill:bill2,tx:tx2});
+}
+function gStat(l){
+  var k,n,a,p;
+  if(l===1){n=pick([20,25,40,50,100,200]);do{a=ri(1,n-1)}while((a*100)%n!==0);return NQ('stat','از '+n+' دانش‌آموز، '+a+' نفر یک خواهر دارند. چند درصد دانش‌آموزان یک خواهر دارند؟',a*100/n,'pc',{n:n,a:a})}
+  if(l===2){p=ri(1,19)*5;return NQ('stat','در یک نمودار دایره‌ای (کل دایره ۳۶۰ درجه)، سهم یک قسمت '+p+' درصد است. زاویه آن قسمت چند درجه است؟',p*360/100,'p2a',{p:p})}
+  k=pick(['a2p','a2n']);
+  if(k==='a2p'){var ang=pick([18,36,54,72,90,108,144,180,270]);return NQ('stat','در یک نمودار دایره‌ای، زاویه یک قسمت '+ang+' درجه است. این قسمت چند درصد دایره است؟',ang*100/360,'a2p',{ang:ang})}
+  var tot,an;do{tot=pick([20,40,60,120,180,360]);an=pick([36,45,60,72,90,120,180])}while((tot*an)%360!==0);return NQ('stat','از '+tot+' نفر که در یک نظرسنجی شرکت کردند، سهم یک گروه در نمودار دایره‌ای با زاویه '+an+' درجه نشان داده شده است. تعداد افراد این گروه چند نفر است؟',tot*an/360,'a2n',{tot:tot,an:an});
+}
+function fx3(X){var s=String(X),neg='';while(s.length<4)s='0'+s;return s.slice(0,-3)+'.'+s.slice(-3)}
+function gTrunc(l){
+  var k,x,u;
+  if(l===1){x=ri(1000,99999);u=pick([10,100,1000]);return NQ('trunc',x+' را به روش قطع کردن با تقریب کمتر از '+u+' بنویسید.',Math.floor(x/u)*u,'int',{x:x,u:u})}
+  if(l===2){k=pick(['unit','dif']);var X=ri(10000,999999),un=pick([[1,1000],[0.1,100],[0.01,10]]);
+    var val=fx3(X);
+    if(k==='unit')return NQ('trunc',val+' را به روش قطع کردن با تقریب کمتر از '+dStr(un[0])+' بنویسید.',Math.floor(X/un[1])/(1000/un[1]),'dec',{X:X,un:un});
+    return NQ('trunc','اختلاف عدد '+val+' با مقدار تقریبی آن (به روش قطع کردن با تقریب کمتر از '+dStr(un[0])+') چقدر است؟',(X-Math.floor(X/un[1])*un[1])/1000,'dif',{X:X,un:un})}
+  k=pick(['both','near','round']);
+  if(k==='near'){do{x=ri(1000,99999)}while(x%10===0);var tt=pick([10,100]);var tr=Math.floor(x/tt)*tt,rd=Math.round(x/tt)*tt,ans=Math.abs(x-tr)<Math.abs(x-rd)?'قطع کردن':(Math.abs(x-tr)>Math.abs(x-rd)?'گرد کردن':'هر دو یکسان');return MQ('trunc','عدد '+x+' را یک بار با تقریب کمتر از '+tt+' به روش قطع کردن و یک بار به روش گرد کردن تقریب می‌زنیم. کدام روش به عدد واقعی نزدیک‌تر است؟',ans,['قطع کردن','گرد کردن','هر دو یکسان'].filter(function(z){return z!==ans}),'near',{x:x,t:tt})}
+  if(k==='round'){x=ri(1000,99999);var t2=pick([10,100]);return NQ('trunc',x+' را به روش گرد کردن تا نزدیک‌ترین '+(t2===10?'دهگان':'صدگان')+' تقریب بزنید.',Math.round(x/t2)*t2,'round',{x:x,t:t2})}
+  X=ri(10000,999999);var val2=fx3(X);return NQ('trunc',val2+' را یک بار با تقریب کمتر از ۱ به روش قطع کردن بنویسید.',Math.floor(X/1000),'both',{X:X});
+}
+function gApprox(l){
+  var k;
+  if(l===1){var T=[['جرم یک انسان','۱ کیلوگرم'],['دمای بدن یک بیمار','۰٫۱ درجه'],['جرم یک قطعه فلز گران‌بها','۰٫۰۱ گرم'],['طول یک مداد','۱ میلی‌متر'],['جرم یک کیسه برنج','۱ کیلوگرم']],it=pick(T),wr=shuf(['۱ کیلوگرم','۰٫۱ درجه','۰٫۰۱ گرم','۱ میلی‌متر','۱ تن','۱۰ درجه','۱ کیلومتر'].filter(function(z){return z!==it[1]})).slice(0,3);return MQ('approx','برای اندازه‌گیری «'+it[0]+'» کدام دقت (تقریب کمتر از) مناسب‌تر است؟',it[1],wr,'prec',{it:it})}
+  if(l===2){var a=ri(100,999),b=ri(100,999);var u=pick([10,100]);return NQ('approx','هر عدد را با تقریب کمتر از '+u+' (قطع کردن) بنویسید و سپس جمع کنید: '+a+' + '+b+' = ؟',Math.floor(a/u)*u+Math.floor(b/u)*u,'est',{a:a,b:b,u:u})}
+  var money=ri(10000000,99999999),un=pick([1000,10000,100000]);return NQ('approx',cm(money)+' تومان را با تقریب کمتر از '+cm(un)+' تومان به روش قطع کردن بنویسید.',Math.floor(money/un)*un,'money',{money:money,un:un});
+}
+var FP=[[2,3],[2,4],[3,6],[2,6],[4,6],[3,4],[5,10],[2,5],[3,5],[4,8],[6,8]];
+
 function mkQ(op,l){
-  if(op==='mix')op=pick(['add','sub','mul','divi','frac','dec','pct','ratio','int','bakh','round','meas','word']);
-  var a,b,qt,x,h,u;
-  if(op==='add'){if(l===1){a=ri(10,99);b=ri(10,99)}else if(l===2){a=ri(100,9999);b=ri(100,9999)}else{a=ri(1000,99999);b=ri(1000,99999)}return N(op,a,b,a+' + '+b,a+b)}
-  if(op==='sub'){if(l===1){a=ri(20,99);b=ri(10,a)}else if(l===2){a=ri(1000,9999);b=ri(100,a)}else{a=ri(10000,99999);b=ri(1000,a)}return N(op,a,b,a+' − '+b,a-b)}
+  var a,b,qt;
+  if(op==='add'){if(l===1){a=ri(10,99);b=ri(10,99)}else if(l===2){a=ri(100,9999);b=ri(100,9999)}else{a=ri(1000,9999);b=ri(1000,9999)}return N(op,a,b,a+' + '+b,a+b)}
+  if(op==='sub'){if(l===1){a=ri(20,99);b=ri(10,a)}else if(l===2){a=ri(1000,9999);b=ri(100,a)}else{a=ri(5000,9999);b=ri(1000,a)}return N(op,a,b,a+' − '+b,a-b)}
   if(op==='mul'){if(l===1){a=ri(12,99);b=ri(2,9)}else if(l===2){if(Math.random()<0.5){a=ri(100,999);b=ri(2,9)}else{a=ri(12,99);b=ri(11,99)}}else{a=ri(100,999);b=ri(11,99)}return N(op,a,b,a+' × '+b,a*b)}
   if(op==='divi'){if(l===1){b=ri(2,9);qt=ri(12,99)}else if(l===2){b=ri(11,30);qt=ri(12,99)}else{b=ri(11,99);qt=ri(101,999)}a=b*qt;return N(op,a,b,a+' ÷ '+b,qt)}
-  if(op==='frac')return mkFrac(l);
-  if(op==='dec'){
-    var k=l===1?'add':l===2?pick(['mulInt','mulDec','divNat']):pick(['divByDec','mulDec2']);
-    if(k==='add'){a=ri(11,999)/10;b=ri(11,999)/10;if(Math.random()<0.5)return N(op,a,b,dstr(a)+' + '+dstr(b),r2(a+b));if(b>a){x=a;a=b;b=x}return N(op,a,b,dstr(a)+' − '+dstr(b),r2(a-b))}
-    if(k==='mulInt'){a=ri(11,99)/10;b=ri(2,9);return N(op,a,b,dstr(a)+' × '+b,r2(a*b))}
-    if(k==='mulDec'){a=ri(11,99)/10;b=ri(11,99)/10;return N(op,a,b,dstr(a)+' × '+dstr(b),r2(a*b))}
-    if(k==='divNat'){b=ri(2,9);qt=ri(11,99)/10;a=r2(b*qt);return N(op,a,b,dstr(a)+' ÷ '+b,qt)}
-    if(k==='divByDec'){b=pick([0.2,0.5,0.25,1.5,0.4,2.5,0.05,0.8]);qt=ri(3,40);a=r2(b*qt);return N(op,a,b,dstr(a)+' ÷ '+dstr(b),qt)}
-    a=ri(101,999)/100;b=ri(2,9);return N(op,a,b,dstr(a)+' × '+b,r2(a*b));
-  }
-  if(op==='pct'){
-    if(l===1){var p=pick([10,20,25,50,75]),n=ri(2,50)*20;return N(op,p,n,p+'٪ از '+n+' چند است؟',p*n/100,true)}
-    var kk=l===2?pick(['disc','ofNum']):pick(['whatPct','reverse']);
-    if(kk==='disc'){var pr=ri(5,50)*10000,d=pick([5,10,15,20,25,30]);return N(op,pr,d,'قیمت یک کالا '+pr+' تومان است. با '+d+'٪ تخفیف، قیمت جدید چند تومان می‌شود؟',pr/100*(100-d),true)}
-    if(kk==='ofNum'){var p2=pick([5,15,30,35,40,45,60,65,80,90]),n2=ri(2,50)*20;return N(op,p2,n2,p2+'٪ از '+n2+' چند است؟',p2*n2/100,true)}
-    if(kk==='whatPct'){var bb=pick([20,25,40,50,80,200,250,500]),aa,t=0;do{aa=ri(1,bb-1);t++}while((aa*100)%bb!==0&&t<200);if((aa*100)%bb!==0)aa=bb/4;return N(op,aa,bb,aa+' چند درصد '+bb+' است؟',aa*100/bb,true)}
-    var p3=pick([10,20,25,40,50]),w=ri(2,50)*20,part=p3*w/100;return N(op,p3,part,p3+'٪ یک عدد برابر '+part+' است. آن عدد چند است؟',w,true);
-  }
-  if(op==='ratio'){
-    if(l===1){var n1=ri(2,9),un=ri(2,20)*500,k1=ri(2,12);return N(op,n1,k1,n1+' دفتر '+(n1*un)+' تومان است. '+k1+' دفتر چند تومان است؟',k1*un,true)}
-    if(l===2){var v=ri(4,9)*10,h1=ri(2,6),h2=ri(2,9);return N(op,h1,h2,'اتومبیلی در '+h1+' ساعت '+(h1*v)+' کیلومتر می‌رود. در '+h2+' ساعت چند کیلومتر می‌رود؟',h2*v,true)}
-    var ra=ri(2,7),rb=ri(2,7),m=ri(2,9);if(ra===rb)rb=ra+1;
-    return N(op,ra,rb,'نسبت تعداد دختران به پسران '+ra+' به '+rb+' است. اگر '+((ra+rb)*m)+' دانش‌آموز باشند، تعداد دختران چند نفر است؟',ra*m,true);
-  }
-  if(op==='int'){
-    var r=l===1?10:l===2?30:25;a=ri(-r,r);b=ri(-r,r);
-    if(l<3){var plus=Math.random()<0.5;return N(op,a,b,sg(a)+(plus?' + ':' − ')+sg(b),plus?a+b:a-b)}
-    var c=ri(-r,r),o1=Math.random()<0.5,o2=Math.random()<0.5;
-    return N(op,a,b,sg(a)+(o1?' + ':' − ')+sg(b)+(o2?' + ':' − ')+sg(c),a+(o1?b:-b)+(o2?c:-c));
-  }
-  if(op==='bakh')return mkBakh(l);
-  if(op==='round'){
-    if(l===1){x=ri(100,9999);u=pick([10,100]);return N(op,x,u,x+' را به نزدیک‌ترین '+(u===10?'دهگان':'صدگان')+' گرد کن.',Math.round(x/u)*u,true)}
-    if(l===2){if(Math.random()<0.5){x=ri(1000,99999);u=pick([100,1000]);return N(op,x,u,x+' را به نزدیک‌ترین '+(u===100?'صدگان':'هزارگان')+' گرد کن.',Math.round(x/u)*u,true)}
-      do{h=ri(101,999)}while(h%10===0);return N(op,h,1,dstr(h/100)+' را تا یک رقم اعشار گرد کن.',Math.floor((h+5)/10)/10,true)}
-    if(Math.random()<0.5){x=ri(10000,999999);u=pick([1000,10000]);return N(op,x,u,x+' را به نزدیک‌ترین '+(u===1000?'هزارگان':'ده‌هزارگان')+' گرد کن.',Math.round(x/u)*u,true)}
-    do{h=ri(1001,9999)}while(h%10===0);return N(op,h,2,(h/1000).toFixed(3)+' را تا دو رقم اعشار گرد کن.',Math.floor((h+5)/10)/100,true);
-  }
-  if(op==='meas')return mkMeas(l);
-  if(op==='pat')return mkPat(l);
-  if(op==='coord')return mkCoord(l);
-  if(op==='word')return mkWord(l);
-  return mkQ('add',l);
+  return mkWord(l);
 }
+var LG={pat:gPat,numw:gNumw,divis:gDivis,int:gInt,fadd:gFadd,fmul:gFmul,fdiv:gFdiv,fcalc:gFcalc,dplace:gDplace,dmuldiv:gDmuldiv,ddivn:gDdivn,ddivd:gDdivd,sym:gSym,rot:gRot,axes:gAxes,scoord:gScoord,len:gLen,vol:gVol,circ:gCirc,line:gLine,ratio:gRatio,pct:gPct,fin:gFin,stat:gStat,trunc:gTrunc,approx:gApprox,calc:function(l){return mkQ(pick(['add','sub','mul','divi']),l)},word:function(l){return mkWord(l)}};
 
 function detect(q,w){
   var c=q.ans,d=Math.abs(w-c);
@@ -656,15 +866,14 @@ function detect(q,w){
     for(i=0;i<A.length;i++)s2+=Math.abs(Number(A[i])-Number(B[i]));
     if(Number(s2)===w||d===10||d===100||d===1000)return 'borrow';
   }
-  if(q.op==='mul'&&d>0&&(d%q.a===0||d%q.b===0))return 'table';
-  if(q.op==='dec'&&c!==0&&w!==0){var rt=w/c;if(Math.abs(rt-10)<1e-9||Math.abs(rt-0.1)<1e-9||Math.abs(rt-100)<1e-9||Math.abs(rt-0.01)<1e-9)return 'decPoint'}
-  if(['dec','pct','ratio','int','bakh','round','meas','word','divi'].indexOf(q.op)>=0)return q.op;
-  return 'other';
+  if(q.op==='mul'&&d>0&&q.a&&q.b&&(d%q.a===0||d%q.b===0))return 'table';
+  if((q.op==='dmuldiv'||q.op==='ddivn'||q.op==='ddivd')&&c!==0&&w!==0){var rt=w/c;if(Math.abs(rt-10)<1e-9||Math.abs(rt-0.1)<1e-9||Math.abs(rt-100)<1e-9||Math.abs(rt-0.01)<1e-9)return 'decPoint'}
+  return TG[q.op]?q.op:'other';
 }
-function tagFrac(q,sel){return q.op!=='frac'?q.op:(q.wrongDen&&String(sel)===q.wrongDen)?'fracDen':'frac'}
+function tagFrac(q,sel){return (q.wrongDen&&String(sel)===q.wrongDen)?'fracDen':(TG[q.op]?q.op:'other')}
 function nextQ(){
-  var q,tries=0,seen=pr.log.map(function(x){return x.t}),ops=chInfo(pr.ch).ops;
-  do{q=mkQ(pick(ops),pr.lvl);tries++}while(seen.indexOf(q.t)>=0&&tries<15);
+  var ci=chInfo(pr.ch),ls=pr.ls&&pr.ls!=='all'?pr.ls:null,q,tries=0,seen=pr.log.map(function(x){return x.t});
+  do{var key=ls||pick(ci.lessons).k;q=LG[key](pr.lvl);q.ls=key;tries++}while(seen.indexOf(q.t)>=0&&tries<15);
   pr.q=q;pr.fb=null;pr.shown=false;
 }
 
@@ -702,6 +911,7 @@ function pChapter(c){
   var ci=chInfo(pr.ch),h='<button class="back" data-act="pmenu">بازگشت به فصل‌ها</button><h2>'+ci.t+'</h2><p class="muted">'+ci.topics+'</p>';
   var sug=0,stu=c&&PS.sid?c.students.filter(function(s){return s.id===PS.sid})[0]:null;
   if(stu){var st=chStats(c,stu.id,pr.ch);sug=suggestLevel(st);h+='<div class="card"><b>'+esc(stu.name)+'</b><div class="muted">'+lvText(st)+'</div><div>سطح پیشنهادی: <b>'+LVN[sug]+'</b></div></div>'}
+  if(ci.lessons.length>1)h+='<div class="card"><label for="plsn">درس (از کتاب)</label><select id="plsn" class="fs"><option value="all">همه درس‌های این فصل</option>'+ci.lessons.map(function(z){return '<option value="'+z.k+'">'+z.t+'</option>'}).join('')+'</select></div>';
   h+='<div class="card"><p class="muted">'+(PS.mode==='oral'?'پرسش شفاهی توسط معلم':'تمرین دانش‌آموز')+' - '+fa(PS.n)+' سؤال'+(stu?'':' - بدون ثبت نتیجه')+'</p><div class="grid">';
   [1,2,3].forEach(function(L){h+='<button class="tile" data-act="pstartlv" data-id="'+L+'"><b>'+LVN[L]+'</b>'+(sug===L?'<span class="badge">پیشنهادی</span>':'')+'</button>'});
   return h+'</div></div>';
@@ -759,10 +969,10 @@ function vPractice(){
 function pFinish(){
   pr.stage='done';
   var c=active();
-  if(pr.sid&&c){if(!c.practice)c.practice=[];c.practice.push({sid:pr.sid,ch:pr.ch,lvl:pr.lvl,mode:pr.mode,ts:new Date().toISOString(),n:pr.n,ok:pr.ok,tags:pr.tags});save()}
+  if(pr.sid&&c){if(!c.practice)c.practice=[];c.practice.push({sid:pr.sid,ch:pr.ch,ls:pr.ls,lvl:pr.lvl,mode:pr.mode,ts:new Date().toISOString(),n:pr.n,ok:pr.ok,tags:pr.tags});save()}
 }
-function pStart(ch,lvl){
-  pr={stage:'play',ch:ch,mode:PS.mode,sid:PS.sid,lvl:lvl,n:PS.n,i:0,ok:0,log:[],tags:{},fb:null,q:null,shown:false};nextQ();
+function pStart(ch,lvl,ls){
+  pr={stage:'play',ch:ch,ls:ls||'all',mode:PS.mode,sid:PS.sid,lvl:lvl,n:PS.n,i:0,ok:0,log:[],tags:{},fb:null,q:null,shown:false};nextQ();
 }
 function pAdvance(){pr.i++;if(pr.i>=pr.n)pFinish();else nextQ()}
 function pAnswer(ok,given,tag){
@@ -917,7 +1127,7 @@ document.addEventListener('click',function(e){
   }
   else if(a==='pmenu'){pr=null;render()}
   else if(a==='preport'){pr={stage:'report'};render()}
-  else if(a==='pstartlv'&&pr){pStart(pr.ch,Number(id));render()}
+  else if(a==='pstartlv'&&pr){var lsel=document.getElementById('plsn');pStart(pr.ch,Number(id),lsel?lsel.value:'all');render()}
   else if(a==='pcheck'&&pr){
     var v=numS(document.getElementById('pa').value);
     if(v===null||isNaN(v)){note('جواب را به‌صورت عدد بنویسید.');return}
@@ -931,7 +1141,7 @@ document.addEventListener('click',function(e){
   else if(a==='pshow'&&pr){pr.shown=true;render(true)}
   else if(a==='pgood'&&pr){pAnswer(true,null,'');pAdvance();render()}
   else if(a==='pbad'&&pr){pAnswer(false,null,pr.q.op==='frac'?'frac':(['add','sub','mul'].indexOf(pr.q.op)>=0?'other':pr.q.op));pAdvance();render()}
-  else if(a==='pagain'&&pr){var ch0=pr.ch,lv0=pr.lvl;pStart(ch0,lv0);render()}
+  else if(a==='pagain'&&pr){var ch0=pr.ch,lv0=pr.lvl,ls0=pr.ls;pStart(ch0,lv0,ls0);render()}
   else if(a==='pquit'){
     var ch1=pr&&pr.ch;
     if(pr&&pr.stage==='play'&&pr.log.length>0){pr.n=pr.log.length;pFinish()}
