@@ -47,19 +47,43 @@ button:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outlin
 <body>
 <div class="wrap" id="app"></div>
 <script>
-var app=document.getElementById('app');
+var app=document.getElementById('app'),KDF_IT=100000;
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function fa(n){return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:2})}
-function dec(c){
+function normPw(t){return String(t||'').replace(/[۰-۹]/g,function(d){return d.charCodeAt(0)-1776}).replace(/[٠-٩]/g,function(d){return d.charCodeAt(0)-1632}).trim()}
+function normName(t){return String(t||'').replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\u064b-\u0652\u0640\u200c\u200f\u200e]/g,'').replace(/\s+/g,' ').trim().toLowerCase()}
+function nameOk(typed,full){
+  var tt=normName(typed).split(' ').filter(Boolean),ft=normName(full).split(' ').filter(Boolean);
+  if(!tt.length)return false;
+  if(tt.join('')===ft.join(''))return true;
+  return tt.every(function(x){return ft.indexOf(x)>=0});
+}
+function b64u2u8(s){s=String(s).replace(/\s+/g,'').replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var b=atob(s),u=new Uint8Array(b.length),i;for(i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+async function decObj(code,pw){
+  var b=b64u2u8(String(code).replace(/^E1\./,'')),salt=b.slice(0,16),iv=b.slice(16,28),ct=b.slice(28);
+  var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(normPw(pw)),'PBKDF2',false,['deriveKey']);
+  var key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:KDF_IT,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,ct);
+  var d=JSON.parse(new TextDecoder().decode(pt));
+  if(!d||d.v!==1||typeof d.n!=='string'||!Array.isArray(d.ex))throw new Error('bad');
+  return d;
+}
+function decLegacy(c){
   c=String(c).replace(/\s+/g,'').replace(/-/g,'+').replace(/_/g,'/');
   while(c.length%4)c+='=';
   var d=JSON.parse(decodeURIComponent(escape(atob(c))));
   if(!d||d.v!==1||typeof d.n!=='string'||!Array.isArray(d.ex))throw new Error('bad');
   return d;
 }
+function decBoard(c){
+  var u=b64u2u8(String(c).replace(/^B1\./,'')),d=JSON.parse(new TextDecoder().decode(u));
+  if(!d||d.v!==1||!Array.isArray(d.cond)||!Array.isArray(d.study)||!Array.isArray(d.impr))throw new Error('bad');
+  return d;
+}
 var AW={w:'دانش‌آموز نمونه هفته',c:'دانش‌آموز نمونه اخلاق'};
+function hero(t,a,b){return '<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>'+t+'</h1><p>'+a+(b?'<br>'+b:'')+'</p></div></header>'}
 function render(d){
-  var h='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>کارنامه لیگ موفقیت</h1><p>'+esc(d.s)+'<br>'+esc(d.c)+(d.y?' - '+esc(d.y):'')+'</p></div></header>';
+  var h=hero('کارنامه لیگ موفقیت',esc(d.s),esc(d.c)+(d.y?' - '+esc(d.y):''));
   h+='<div class="card"><b class="big">'+esc(d.n)+'</b>'+(d.g?'<div class="muted">گروه: '+esc(d.g)+'</div>':'')+'</div>';
   h+='<div class="tiles"><div class="tile"><span class="muted">مجموع نمره</span><b>'+fa(d.tot)+' از '+fa(d.mx)+'</b></div>';
   if(d.rk)h+='<div class="tile"><span class="muted">رتبه در کلاس</span><b>'+fa(d.rk)+' از '+fa(d.cnt)+'</b></div>';
@@ -75,6 +99,11 @@ function render(d){
     h+='</div>';
   });
   h+='</div>';
+  if(d.pr&&d.pr.length){
+    h+='<h2>تمرین‌های ریاضی</h2><div class="card">';
+    d.pr.forEach(function(r){h+='<div class="row"><div class="top"><span>'+esc(r[0])+'<br><span class="muted">'+fa(r[2])+' بار تمرین - سطح پیشنهادی: '+esc(r[3])+'</span></span><b>'+fa(r[1])+'٪ درست</b></div></div>'});
+    h+='</div>';
+  }
   if(d.aw&&d.aw.length){
     h+='<h2>افتخارات</h2><div class="card">';
     d.aw.forEach(function(a){h+='<div class="row">⭐ '+esc(AW[a[0]]||'')+'<br><span class="muted">'+esc(a[1])+(a[2]?' - '+esc(a[2]):'')+'</span></div>'});
@@ -83,17 +112,48 @@ function render(d){
   h+='<p class="foot">آموزگار: '+esc(d.t)+(d.d?' · تاریخ تهیه: '+esc(d.d):'')+'<br>این صفحه فقط برای مشاهده است و قابل تغییر نیست.</p>';
   app.innerHTML=h;
 }
-function ask(err){
-  app.innerHTML='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>کارنامه لیگ موفقیت</h1><p>دبستان سیدالشهدا</p></div></header>'+(err?'<div class="msg" role="status">'+esc(err)+'</div>':'')+'<div class="card"><label for="code">کد کارنامه را که آموزگار برایتان فرستاده اینجا بچسبانید</label><textarea id="code" rows="5"></textarea><button id="go">نمایش کارنامه</button></div>';
+function renderBoard(d){
+  var h=hero('تابلوی افتخارات '+esc(d.m),esc(d.s),esc(d.c));
+  function sec(t,arr){if(!arr.length)return '';var o='<h2>'+t+'</h2><div class="card">';arr.forEach(function(n){o+='<div class="row">⭐ '+esc(n)+'</div>'});return o+'</div>'}
+  h+=sec('🌟 دانش‌آموزان نمونه اخلاقی',d.cond)+sec('📚 دانش‌آموزان نمونه درسی',d.study)+sec('📈 بیشترین پیشرفت',d.impr);
+  h+='<p class="foot">آموزگار: '+esc(d.t)+(d.d?' · تاریخ: '+esc(d.d):'')+'<br>به همه عزیزان تبریک می‌گوییم 🌹</p>';
+  app.innerHTML=h;
+}
+function askCode(err){
+  app.innerHTML=hero('کارنامه لیگ موفقیت','دبستان سیدالشهدا')+(err?'<div class="msg" role="status">'+esc(err)+'</div>':'')+'<div class="card"><label for="code">لینک یا کد کارنامه را که آموزگار برایتان فرستاده اینجا بچسبانید</label><textarea id="code" rows="4"></textarea><button id="go">ادامه</button></div>';
   document.getElementById('go').onclick=function(){
-    try{render(dec(document.getElementById('code').value))}catch(e){ask('کد درست نیست یا ناقص کپی شده است. همه کد را از اول تا آخر بچسبانید.')}
+    var v=document.getElementById('code').value.trim(),m=v.indexOf('#');if(m>=0)v=v.slice(m+1);
+    if(!v)return askCode('کد را بچسبانید.');
+    start(v);
   };
+}
+function askPw(code,err){
+  var st='width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);margin:8px 0';
+  app.innerHTML=hero('کارنامه لیگ موفقیت','ورود اولیا و دانش‌آموز')+(err?'<div class="msg" role="status">'+esc(err)+'</div>':'')+'<div class="card"><label for="nm">نام دانش‌آموز</label><input id="nm" autocomplete="off" style="'+st+'"><label for="pw">رمز ورود (رمزی که آموزگار به شما داده است)</label><input id="pw" type="password" autocomplete="off" inputmode="text" style="'+st+'"><button id="go">ورود</button></div>';
+  var nm=document.getElementById('nm'),pw=document.getElementById('pw'),btn=document.getElementById('go');
+  function go(){
+    if(!(window.crypto&&crypto.subtle))return askPw(code,'این مرورگر یا آدرس از ورود با رمز پشتیبانی نمی‌کند. لینک را در مرورگر Chrome باز کنید.');
+    if(!nm.value.trim()||!pw.value)return askPw(code,'نام دانش‌آموز و رمز را بنویسید.');
+    btn.disabled=true;btn.textContent='در حال بررسی...';
+    decObj(code,pw.value).then(function(d){
+      if(!nameOk(nm.value,d.n))throw new Error('name');
+      render(d);
+    }).catch(function(){setTimeout(function(){askPw(code,'نام یا رمز درست نیست، یا لینک ناقص است.')},800)});
+  }
+  btn.onclick=go;pw.onkeydown=function(e){if(e.key==='Enter')go()};
+}
+function start(v){
+  try{
+    if(/^E1\./.test(v))return askPw(v);
+    if(/^B1\./.test(v))return renderBoard(decBoard(v));
+    return render(decLegacy(v));
+  }catch(e){askCode('لینک کامل نیست یا کد درست نیست. لینک را از ابتدا تا انتها کپی کنید.')}
 }
 (function(){
   var m=location.hash.replace(/^#/,'');
-  if(m.indexOf('=')>-1)m=m.split('=').slice(1).join('=');
-  if(!m)return ask('');
-  try{render(dec(m))}catch(e){ask('لینک کامل نیست. کد کارنامه را در کادر زیر بچسبانید.')}
+  if(m.indexOf('=')>-1&&!/^(E1|B1)\./.test(m))m=m.split('=').slice(1).join('=');
+  if(!m)return askCode('');
+  start(m);
 })();
 </script>
 <script>
