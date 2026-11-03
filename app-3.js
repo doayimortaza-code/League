@@ -1,3 +1,16 @@
+    var v=ri(4,9)*10,t1=ri(2,5),t2=ri(2,5);return N('word',v,t1,'اتومبیلی با سرعت '+v+' کیلومتر در ساعت، '+t1+' ساعت و بعد '+t2+' ساعت دیگر می‌رود. در کل چند کیلومتر رفته است؟',v*(t1+t2),true);
+  }
+  if(Math.random()<0.5){var n=ri(2,9),p=ri(5,20)*1000,pr=pick([10,20,25,30,40,50]);return N('word',n,p,'مغازه‌داری '+n+' کیلو برنج، هر کیلو '+p+' تومان خرید و با '+pr+'٪ سود فروخت. فروش کل چند تومان شد؟',n*p*(100+pr)/100,true)}
+  var c=ri(2,10)*20,pc=pick([20,25,40,45,60]);return N('word',c,pc,'در کلاسی '+c+' دانش‌آموز هست. '+pc+'٪ آن‌ها دختر هستند. چند پسر در کلاس هست؟',c-c*pc/100,true);
+}
+
+
+
+
+
+var PIV=3,SGN='−';
+function cm(x){return String(x).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function ord(n){return n+'\u200cام'}
 function MQ(op,t,ans,wr,kind,p){var o=[String(ans)];wr.forEach(function(x){x=String(x);if(o.indexOf(x)<0&&o.length<4)o.push(x)});return{op:op,kind:kind||'',p:p||null,t:t,ans:String(ans),mode:'opt',rtl:true,opts:shuf(o)}}
 function NQ(op,t,ans,kind,p){return{op:op,kind:kind||'',p:p||null,t:t,ans:ans,mode:'num',rtl:true}}
 function nO(ans,cands){var o=[ans];cands.forEach(function(c){if(o.indexOf(c)<0&&o.length<4)o.push(c)});var k=1;while(o.length<4&&k<80){var c2=ans+(k%2?1:-1)*Math.ceil(k/2);k++;if(c2!==ans&&o.indexOf(c2)<0)o.push(c2)}return o}
@@ -160,10 +173,3 @@ function gDdivn(l){
   if(l===1){b=ri(2,9);a=ri(100,999);return NQ('ddivn',a+' ÷ '+b+' : خارج قسمت چند است؟ (باقیمانده را در نظر نگیرید)',Math.floor(a/b),'q',{a:a,b:b})}
   if(l===2){b=ri(2,9);q=ri(11,299)/10;a=Math.round(b*q*100)/100;return NQ('ddivn',dStr(a)+' ÷ '+b+' = ؟',q,'decnat',{a:a,b:b,q:q})}
   k=pick(['fuel','fuelRem','water']);
-  if(k==='fuel'||k==='fuelRem'){var p=ri(8,20),T=ri(100,400);if(k==='fuel')return NQ('ddivn','یک موتور آب در هر ساعت '+p+' لیتر گازوئیل مصرف می‌کند. منبع آن '+T+' لیتر دارد. چند ساعت کامل می‌تواند کار کند؟',Math.floor(T/p),'fuel',{p:p,T:T});return NQ('ddivn','یک موتور آب در هر ساعت '+p+' لیتر گازوئیل مصرف می‌کند. اگر منبع آن '+T+' لیتر باشد، پس از کار کامل چند ساعت، چند لیتر گازوئیل باقی می‌ماند؟',T%p,'fuelRem',{p:p,T:T})}
-  var per=ri(2,6)*4,ha=ri(5,20);return NQ('ddivn','برای آبیاری هر هکتار زمین '+per+' مترمکعب آب لازم است. برای '+ha+' هکتار چند مترمکعب آب لازم است؟',per*ha,'water',{per:per,ha:ha});
-}
-function gDdivd(l){
-  var d,qt,a,k;
-  if(l===1){d=pick([0.1,0.2,0.25,0.5,1.5,2.5]);qt=ri(3,40);a=Math.round(d*qt*100)/100;return NQ('ddivd',dStr(a)+' ÷ '+dStr(d)+' = ؟',qt,'basic',{a:a,d:d,qt:qt})}
-  if(l===2){var dv=pick([[0.2,10],[0.5,10],[1.5,10],[0.21,100],[0.25,100],[0.07,100],[0.125,1000],[2.5,10]]);return NQ('ddivd','برای اینکه مقسوم‌علیه در تقسیم '+dStr(ri(3,99)/ (dv[1]===10?10:100))+' ÷ '+dStr(dv[0])+' عدد صحیح شود، مقسوم و مقسوم‌علیه را در چه عددی ضرب می‌کنیم؟',dv[1],'scale',{dv:dv})}

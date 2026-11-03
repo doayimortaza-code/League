@@ -1,3 +1,17 @@
+    var okn=GQ.res.filter(function(r){return r.ok}).length;
+    h+='<p class="muted">'+fa(okn)+' پاسخ درست از '+fa(GQ.res.length)+' سؤال. فقط با زدن دکمه زیر در لیگ گروهی ثبت می‌شود.</p><div class="row"><button class="btn" data-act="gqsave">ثبت امتیاز در لیگ گروهی</button><button class="btn ghost" data-act="gqback">ثبت نشود</button></div></div>';
+  }
+  var hist=(c.gquiz||[]).slice().reverse();
+  if(GQ.stage==='menu'&&hist.length){
+    h+='<h2>سابقه پرسش‌های گروهی</h2><div class="card">';
+    hist.forEach(function(r){
+      var line=Object.keys(r.pts).map(function(gid){var g=grp(c).filter(function(x){return x.id===gid})[0];return esc(g?g.name:'؟')+': '+fa(r.pts[gid])}).join(' - ');
+      h+='<div class="st"><span>'+esc(new Date(r.ts).toLocaleDateString('fa-IR'))+' - '+esc(chInfo(r.ch).s)+'<br><span class="muted">'+line+'</span></span><button class="btn danger" data-act="gqdel" data-id="'+r.id+'">حذف</button></div>';
+    });
+    h+='</div>';
+  }
+  return h;
+}
 function normPw(t){return String(t||'').replace(/[۰-۹]/g,function(d){return d.charCodeAt(0)-1776}).replace(/[٠-٩]/g,function(d){return d.charCodeAt(0)-1632}).trim()}
 function u8b64(u){var s='',i;for(i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 async function encObj(obj,pw){
@@ -40,9 +54,10 @@ function vParentCard(c){
   return h;
 }
 function vBoardCard(c){
-  var imp=improveData(c),top=indTotals(c).filter(function(r){return r.total>0}).slice(0,6),cond=[],seen={};
+  var imp=improveData(c),top=indTotals(c).filter(function(r){return r.total>0}).slice(0,6),cond=[],seen={},ekm=(c.exem||{})[mKey(nowMs())]||[];
+  ekm.forEach(function(id){if(!seen[id]&&c.students.some(function(s){return s.id===id})){seen[id]=1;cond.push(id)}});
   aws(c).slice().reverse().forEach(function(a){if(a.type==='conduct'&&!seen[a.sid]&&c.students.some(function(s){return s.id===a.sid})&&cond.length<8){seen[a.sid]=1;cond.push(a.sid)}});
-  if(BD.init!==c.id){BD.init=c.id;BD.sel={c:{},s:{},i:{}};imp.forEach(function(r){BD.sel.i[r.id]=1});BD.link='';BD.text=''}
+  if(BD.init!==c.id){BD.init=c.id;BD.sel={c:{},s:{},i:{}};imp.forEach(function(r){BD.sel.i[r.id]=1});ekm.forEach(function(id){BD.sel.c[id]=1});BD.link='';BD.text=''}
   if(!BD.month)BD.month=new Date().toLocaleDateString('fa-IR',{month:'long',year:'numeric'});
   var h='<div class="card"><b>تابلوی افتخارات ماه (برای همه)</b><p class="muted">فقط نام‌هایی که شما تأیید کنید (تیک بزنید) در تابلو می‌آید و برای هر کس که لینک را داشته باشد قابل دیدن است. نمره‌ها در تابلو نیست. گزینه‌های پیشنهادی پایین را بررسی و اصلاح کنید.</p><label for="bdm">عنوان ماه</label><input id="bdm" value="'+esc(BD.month)+'">';
   function list(title,items,pref,key,sub){
@@ -85,179 +100,111 @@ function vGExam(){
   });
   return h+'<h2>آزمون گروهی جدید</h2><div class="card"><label for="gt">عنوان آزمون</label><input id="gt" placeholder="مثلاً: مسابقه ریاضی گروه‌ها"><label for="gm">نمره کل آزمون</label><input id="gm" inputmode="decimal" placeholder="مثلاً ۲۰"><label for="gd">تاریخ</label><input id="gd" value="'+new Date().toLocaleDateString('fa-IR')+'"><button class="btn" data-act="gexAdd">ساخت آزمون گروهی</button></div>';
 }
-function vPh(t){return back()+'<div class="empty"><h2>'+esc(t)+'</h2><p>این بخش در مرحله‌های بعدی ساخته می‌شود.</p></div>'}
-function render(keep){var y=window.scrollY;
-  var h=view==='home'?vHome():view==='classes'?vClasses():view==='students'?vStudents():view==='groups'?vGroups():view==='backup'?vBackup():view==='exams'?vExams():view==='leagueInd'?vLeagueInd():view==='leagueGrp'?vLeagueGrp():view==='honors'?vHonors():view==='settings'?vSettings():view==='practice'?vPractice():view==='lottery'?vLottery():view==='gquiz'?vGQuiz():view==='gexam'?vGExam():vPh(view.slice(3));
-  document.getElementById('app').innerHTML=h;window.scrollTo(0,keep?y:0);
-  if(focusId){var f=document.getElementById(focusId);if(f)f.focus();focusId=null}
+var NOWF=function(){return Date.now()};
+var CP={tab:'rec',area:'d',text:'',month:'',open:null,last:null};
+var AREAS={d:'انضباط',h:'حل تکالیف',t:'کار گروهی'},MONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function nowMs(){return NOWF()}
+function mKey(ts){var y='',m='';new Intl.DateTimeFormat('en-u-ca-persian',{year:'numeric',month:'numeric'}).formatToParts(new Date(ts)).forEach(function(x){if(x.type==='year')y=x.value;if(x.type==='month')m=x.value});return y+'-'+('0'+m).slice(-2)}
+function mName(k){var m=Number(String(k).slice(5));return (MONTHS[m-1]||'')+' '+pf(String(k).slice(0,4))}
+function compNeg(c,sid,now){
+  var W=14*86400000;
+  var es=(c.comp||[]).filter(function(e){return e.sid===sid&&e.sign==='-'}).map(function(e){return{e:e,t:Date.parse(e.ts)}}).sort(function(a,b){return a.t-b.t});
+  var out=[],act=0;
+  es.forEach(function(x,i){
+    var rep=es.some(function(y,j){return j!==i&&Math.abs(y.t-x.t)<=W});
+    var until=x.t+W,active=rep||now<=until;
+    if(active)act++;
+    out.push({e:x.e,perm:rep,active:active,until:until});
+  });
+  return{list:out,act:act,pen:Math.floor(act/3)};
 }
-function arm(btn,key,label){
-  if(armed===key)return true;
-  armed=key;var old=btn.textContent;btn.textContent=label;btn.classList.add('armed');
-  setTimeout(function(){if(armed===key){armed=null;if(btn.isConnected){btn.textContent=old;btn.classList.remove('armed')}}},3000);
-  return false;
+function exemCount(c,sid){var n=0,ex=c.exem||{};Object.keys(ex).forEach(function(k){if(ex[k].indexOf(sid)>=0)n++});return n}
+function compIndAdj(c,sid,now){var ng=compNeg(c,sid,now),ex=exemCount(c,sid);return{v:ex-4*ng.pen,pen:ng.pen,exm:ex,act:ng.act}}
+function gcomp(c,gid,now){
+  var pen=0,ex=0,tw=0;
+  c.students.forEach(function(s){if(s.groupId!==gid)return;var a=compIndAdj(c,s.id,now);pen+=a.pen;ex+=a.exm});
+  Object.keys(c.twclose||{}).forEach(function(k){tw+=(c.twclose[k][gid]||0)});
+  return{v:ex-pen+tw,pen:pen,exm:ex,tw:tw};
 }
-function hasName(c,n){return c.students.some(function(s){return s.name===n})}
-document.addEventListener('click',function(e){
-  var t=e.target.closest('[data-act]');if(!t)return;
-  var a=t.dataset.act,id=t.dataset.id,c=active();
-  if(a==='go'){view=t.dataset.v;armed=null;curExam=null;xferId=null;pr=null;GE.cur=null;render()}
-  else if(a==='pick'){db.activeId=id;save();msg='کلاس فعال تغییر کرد.';render()}
-  else if(a==='delClass'){
-    if(!arm(t,'c'+id,'مطمئنید؟ دوباره بزنید'))return;
-    armed=null;db.classes=db.classes.filter(function(x){return x.id!==id});
-    if(db.activeId===id)db.activeId=firstActive();
-    save();msg='کلاس حذف شد.';render();
+function mStats(c,sid,key){var p=0,n=0;(c.comp||[]).forEach(function(e){if(e.sid===sid&&mKey(e.ts)===key){if(e.sign==='+')p++;else n++}});return{p:p,n:n,net:p-n}}
+function twStats(c,gid,key){var p=0,n=0;(c.twork||[]).forEach(function(e){if(e.gid===gid&&mKey(e.ts)===key){if(e.sign==='+')p++;else n++}});return{p:p,n:n,net:p-n}}
+function twDelta(c,gid,key){var s=twStats(c,gid,key);return s.net>0?1:(s.net<0?-1:0)}
+function cpMonths(c){
+  var set={};set[mKey(nowMs())]=1;
+  (c.comp||[]).forEach(function(e){set[mKey(e.ts)]=1});(c.twork||[]).forEach(function(e){set[mKey(e.ts)]=1});
+  Object.keys(c.twclose||{}).forEach(function(k){set[k]=1});Object.keys(c.exem||{}).forEach(function(k){set[k]=1});
+  return Object.keys(set).sort().reverse();
+}
+function cpMonthSel(c){
+  return '<label for="cpm">ماه</label><select id="cpm" class="fs" data-act="cpMonth">'+cpMonths(c).map(function(k){return '<option value="'+k+'"'+(CP.month===k?' selected':'')+'>'+mName(k)+'</option>'}).join('')+'</select>';
+}
+function sgn(n){return n>0?'+'+fa(n):(n<0?'−'+fa(Math.abs(n)):fa(0))}
+function dFa(ts){return new Date(ts).toLocaleDateString('fa-IR')}
+function cpDetail(c,st,now){
+  var h='<button class="back" data-act="cpCloseOpen">بازگشت به فهرست</button><h2>'+esc(st.name)+'</h2>';
+  var ng=compNeg(c,st.id,now),ad=compIndAdj(c,st.id,now);
+  h+='<div class="card"><p class="muted">منفی‌های فعال: '+fa(ng.act)+' (هر ۳ منفی: ۴ نمره از لیگ فردی و ۱ امتیاز از لیگ گروهی کم می‌شود). کسر فعلی شایستگی در لیگ فردی: '+sgn(ad.v)+(ad.exm?' (شامل '+fa(ad.exm)+' بار نمونه ماه)':'')+'</p></div>';
+  var es=(c.comp||[]).filter(function(e){return e.sid===st.id}).slice().sort(function(a,b){return Date.parse(b.ts)-Date.parse(a.ts)});
+  h+='<div class="card">';
+  if(!es.length)h+='<p class="muted">هنوز رفتاری ثبت نشده است.</p>';
+  es.forEach(function(e){
+    var nx=ng.list.filter(function(x){return x.e.id===e.id})[0],stt='';
+    if(e.sign==='-'&&nx)stt=nx.perm?'ماندگار':(nx.active?'موقت تا '+dFa(nx.until):'حذف‌شده خودکار (بعد از ۲ هفته)');
+    h+='<div class="st"><span>'+(e.sign==='+'?'➕':'➖')+' '+esc(AREAS[e.area]||'')+' - '+dFa(e.ts)+'<br><span class="muted">'+esc(e.text||'بدون توضیح')+(stt?' - '+stt:'')+'</span></span><button class="btn danger" data-act="cpDel" data-id="'+e.id+'">حذف</button></div>';
+  });
+  return h+'</div>';
+}
+function cpRec(c){
+  var now=nowMs(),key=mKey(now),h='';
+  if(CP.open){var st=c.students.filter(function(s){return s.id===CP.open})[0];if(st)return cpDetail(c,st,now);CP.open=null}
+  h+='<div class="card"><p class="muted">اول بخش را انتخاب کنید و در صورت نیاز رفتار مشاهده‌شده را بنویسید، بعد جلوی نام دانش‌آموز ➕ یا ➖ را بزنید. منفی تا ۲ هفته می‌ماند و اگر تکرار نشود خودکار حذف می‌شود؛ اگر تکرار شود ماندگار می‌شود. هر ۳ منفی: ۴ نمره از لیگ فردی و ۱ امتیاز از لیگ گروهی کم می‌شود.</p>';
+  h+='<div class="row" style="margin-bottom:8px">'+['d','h','t'].map(function(a){return '<button class="btn'+(CP.area===a?'':' ghost')+'" data-act="cpArea" data-id="'+a+'">'+AREAS[a]+'</button>'}).join('')+'</div>';
+  h+='<label for="cpt">رفتار مشاهده‌شده (اختیاری)</label><input id="cpt" value="'+esc(CP.text)+'" placeholder="مثلاً: بدون اجازه صحبت کرد">';
+  if(CP.last)h+='<button class="btn ghost" data-act="cpUndo">بازگرداندن آخرین ثبت</button>';
+  h+='</div><div class="card"><b>'+AREAS[CP.area]+' - '+mName(key)+'</b>';
+  c.students.forEach(function(s,i){
+    var ms=mStats(c,s.id,key),ng=compNeg(c,s.id,now);
+    h+='<div class="st"><span>'+fa(i+1)+'. '+esc(s.name)+'<br><span class="muted">این ماه: +'+fa(ms.p)+' / −'+fa(ms.n)+(ng.act?' - منفی فعال: '+fa(ng.act)+(ng.pen?' (کسر شده)':''):'')+'</span></span><span class="row" style="gap:6px"><button class="btn" data-act="cpAdd" data-id="'+s.id+'" data-s="+" aria-label="مثبت برای '+esc(s.name)+'">➕</button><button class="btn danger" data-act="cpAdd" data-id="'+s.id+'" data-s="-" aria-label="منفی برای '+esc(s.name)+'">➖</button><button class="btn ghost" data-act="cpOpen" data-id="'+s.id+'">سابقه</button></span></div>';
+  });
+  return h+'</div>';
+}
+function cpTwk(c){
+  var gs=gexGroups(c);
+  if(!gs.length)return '<div class="empty"><p>گروهی که عضو داشته باشد وجود ندارد.</p><button class="btn" data-act="go" data-v="groups">رفتن به گروه‌ها</button></div>';
+  var mk=CP.month,h='<div class="card"><p class="muted">برای هر گروه بر اساس عملکردش ➕ یا ➖ ثبت کنید. در پایان ماه: اگر مثبت‌ها بیشتر از منفی‌ها باشد ۱ امتیاز به گروه اضافه و اگر منفی‌ها بیشتر باشد ۱ امتیاز از گروه کم می‌شود (با دکمه «پایان ماه» ثبت می‌شود).</p>'+cpMonthSel(c)+'<label for="cpt">رفتار مشاهده‌شده (اختیاری)</label><input id="cpt" value="'+esc(CP.text)+'" placeholder="مثلاً: همکاری خوب در کار گروهی"></div>';
+  h+='<div class="card"><b>'+mName(mk)+'</b>';
+  gs.forEach(function(g){
+    var st=twStats(c,g.id,mk),d=twDelta(c,g.id,mk);
+    h+='<div class="st"><span>'+esc(g.name)+'<br><span class="muted">+'+fa(st.p)+' / −'+fa(st.n)+' - نتیجه ماه: '+sgn(d)+'</span></span><span class="row" style="gap:6px"><button class="btn" data-act="twAdd" data-id="'+g.id+'" data-s="+" aria-label="مثبت برای گروه '+esc(g.name)+'">➕</button><button class="btn danger" data-act="twAdd" data-id="'+g.id+'" data-s="-" aria-label="منفی برای گروه '+esc(g.name)+'">➖</button></span></div>';
+  });
+  var closed=(c.twclose||{})[mk];
+  h+='<div style="margin-top:10px">'+(closed?'<p class="muted">این ماه بسته شده است ('+gs.map(function(g){return esc(g.name)+': '+sgn(closed[g.id]||0)}).join('، ')+'). اگر بعد از آن رفتار جدیدی ثبت کردید، دوباره «پایان ماه» را بزنید.</p>':'')+'<button class="btn" data-act="twClose">پایان ماه و ثبت نتیجه در لیگ گروهی</button></div></div>';
+  var es=(c.twork||[]).filter(function(e){return mKey(e.ts)===mk}).slice().sort(function(a,b){return Date.parse(b.ts)-Date.parse(a.ts)});
+  if(es.length){
+    h+='<div class="card"><b>رفتارهای ثبت‌شده این ماه</b>';
+    es.forEach(function(e){var g=grp(c).filter(function(x){return x.id===e.gid})[0];h+='<div class="st"><span>'+(e.sign==='+'?'➕':'➖')+' '+esc(g?g.name:'؟')+' - '+dFa(e.ts)+'<br><span class="muted">'+esc(e.text||'بدون توضیح')+'</span></span><button class="btn danger" data-act="twDel" data-id="'+e.id+'">حذف</button></div>'});
+    h+='</div>';
   }
-  else if(a==='addClass'){
-    var n=val('cn');if(!n){msg='نام کلاس را بنویسید.';render();return}
-    var k={id:uid('c'),name:n,grade:val('cg'),school:val('cs'),year:val('cy'),teacher:val('ct'),students:[],groups:[]};
-    if(db.classes.some(function(x){return x.name===n&&x.year===k.year})){msg='کلاسی با همین نام و سال تحصیلی وجود دارد.';render();return}
-    db.classes.push(k);db.activeId=k.id;save();msg='کلاس «'+n+'» ساخته شد و فعال است.';render();
+  return h;
+}
+function cpExm(c){
+  var mk=CP.month,reg=(c.exem||{})[mk]||null;
+  var rows=c.students.map(function(s){return{s:s,st:mStats(c,s.id,mk)}}).sort(function(a,b){return b.st.net-a.st.net||a.s.name.localeCompare(b.s.name,'fa')});
+  var pre={};
+  if(reg)reg.forEach(function(id){pre[id]=1});else rows.filter(function(r){return r.st.net>0}).slice(0,3).forEach(function(r){pre[r.s.id]=1});
+  var h='<div class="card"><p class="muted">هر ماه حداکثر ۳ دانش‌آموز نمونه اخلاق و شایسته انتخاب می‌شود. هر نفر ۱ نمره در لیگ فردی و ۱ امتیاز برای گروهش می‌گیرد. فهرست بر اساس (مثبت‌ها − منفی‌های) همان ماه مرتب شده است؛ تصمیم نهایی با شماست.</p>'+cpMonthSel(c)+'</div>';
+  h+='<div class="card"><b>انتخاب نمونه‌های '+mName(mk)+'</b>'+(reg?'<p class="muted">برای این ماه قبلاً ثبت شده است. با ثبت دوباره، فهرست قبلی عوض می‌شود.</p>':'');
+  rows.forEach(function(r){h+='<label style="display:block;padding:4px 0"><input type="checkbox" id="ex_'+r.s.id+'"'+(pre[r.s.id]?' checked':'')+' style="width:auto;margin:0 6px">'+esc(r.s.name)+' <span class="muted">(+'+fa(r.st.p)+' / −'+fa(r.st.n)+')</span></label>'});
+  h+='<div style="margin-top:10px"><button class="btn" data-act="exSave">ثبت نمونه‌های ماه</button></div></div>';
+  var keys=Object.keys(c.exem||{}).sort().reverse();
+  if(keys.length){
+    h+='<div class="card"><b>نمونه‌های ثبت‌شده</b>';
+    keys.forEach(function(k){h+='<div class="st"><span>'+mName(k)+'<br><span class="muted">'+c.exem[k].map(function(id){return esc(gqName(c,id))}).join('، ')+'</span></span><span class="row" style="gap:6px"><button class="btn ghost" data-act="exCopy" data-id="'+k+'">کپی متن</button><button class="btn danger" data-act="exDel" data-id="'+k+'">حذف</button></span></div>'});
+    h+='</div>';
   }
-  else if(a==='addStu'&&c){
-    var nm=val('sn');
-    if(!nm)msg='نام را بنویسید.';
-    else if(c.students.length>=MAX)msg='ظرفیت کلاس پر است (حداکثر '+fa(MAX)+' نفر).';
-    else if(hasName(c,nm))msg='این نام قبلاً در این کلاس ثبت شده است.';
-    else{c.students.push({id:uid('s'),name:nm});save();msg='«'+nm+'» اضافه شد.'}
-    focusId='sn';render();
-  }
-  else if(a==='addBulk'&&c){
-    var lines=(document.getElementById('sb').value||'').split(/\n/).map(norm).filter(Boolean),add=0,dup=0,full=0;
-    lines.forEach(function(l){
-      if(c.students.length>=MAX){full++;return}
-      if(hasName(c,l)){dup++;return}
-      c.students.push({id:uid('s'),name:l});add++;
-    });
-    save();msg=fa(add)+' نفر اضافه شد.'+(dup?' '+fa(dup)+' نام تکراری نادیده گرفته شد.':'')+(full?' '+fa(full)+' نام به‌خاطر پر بودن ظرفیت اضافه نشد.':'');render();
-  }
-  else if(a==='addGroup'&&c){
-    var gn=val('gn'),gs=grp(c);
-    if(!gn)msg='نام گروه را بنویسید.';
-    else if(gs.some(function(g){return g.name===gn}))msg='گروهی با این نام در این کلاس وجود دارد.';
-    else{gs.push({id:uid('g'),name:gn});save();msg='گروه «'+gn+'» ساخته شد.'}
-    focusId='gn';render();
-  }
-  else if(a==='delGroup'&&c){
-    if(!arm(t,'g'+id,'مطمئنید؟ دوباره بزنید'))return;
-    armed=null;c.groups=grp(c).filter(function(g){return g.id!==id});
-    c.students.forEach(function(s){if(s.groupId===id)s.groupId=null});
-    save();msg='گروه حذف شد. اعضای آن بدون گروه شدند.';render();
-  }
-  else if(a==='openExam'){curExam=id;render()}
-  else if(a==='closeExam'){curExam=null;render()}
-  else if(a==='addExam'&&c){
-    var xt=val('xt'),xm=num(val('xm')),xd=val('xd');
-    if(!xt)note('عنوان آزمون را بنویسید.');
-    else if(xm===null||isNaN(xm)||xm<=0||xm>1000)note('نمره کل آزمون را درست بنویسید (عددی بزرگ‌تر از صفر).');
-    else if(exs(c).some(function(x){return x.title===xt&&x.date===xd}))note('آزمونی با همین عنوان و تاریخ قبلاً ثبت شده است.');
-    else{var nx={id:uid('x'),title:xt,date:xd,max:xm,scores:{}};exs(c).push(nx);save();curExam=nx.id;msg='آزمون ساخته شد. حالا نمره‌ها را وارد کنید.';render()}
-  }
-  else if(a==='editExam'&&c){
-    var ex=findExam(c,curExam);if(!ex)return;
-    var et=val('et'),em=num(val('em')),ed=val('ed'),hi=0;
-    Object.keys(ex.scores||{}).forEach(function(k){if(ex.scores[k]>hi)hi=ex.scores[k]});
-    if(!et)note('عنوان آزمون را بنویسید.');
-    else if(em===null||isNaN(em)||em<=0||em>1000)note('نمره کل آزمون را درست بنویسید.');
-    else if(em<hi)note('نمره کل نمی‌تواند از بالاترین نمره ثبت‌شده ('+fn(hi)+') کمتر باشد.');
-    else{ex.title=et;ex.max=em;ex.date=ed;save();msg='مشخصات آزمون ذخیره شد.';render(true)}
-  }
-  else if(a==='saveScores'&&c){
-    var se=findExam(c,curExam);if(!se)return;
-    var bad=[],ns={};
-    c.students.forEach(function(s){
-      var el=document.getElementById('sc_'+s.id);if(!el)return;
-      var v=num(el.value);
-      if(v===null)return;
-      if(isNaN(v)||v<0||v>se.max)bad.push(s.name);else ns[s.id]=v;
-    });
-    if(bad.length){note('نمره نامعتبر برای: '+bad.slice(0,5).join('، ')+(bad.length>5?' و '+fa(bad.length-5)+' نفر دیگر':'')+'. نمره باید بین ۰ و '+fn(se.max)+' باشد. چیزی ذخیره نشد.');return}
-    se.scores=ns;save();msg='نمره‌ها ذخیره شد: '+fa(Object.keys(ns).length)+' نفر.';render(true);
-  }
-  else if(a==='delExam'&&c){
-    if(!arm(t,'x'+id,'مطمئنید؟ دوباره بزنید'))return;
-    armed=null;c.exams=exs(c).filter(function(x){return x.id!==id});curExam=null;save();msg='آزمون حذف شد.';render(true);
-  }
-  else if(a==='addAward'&&c){
-    var ty=document.getElementById('at').value,sid=document.getElementById('as').value,ad=val('ad'),an=val('an');
-    var stu=c.students.filter(function(x){return x.id===sid})[0];
-    if(!stu)note('دانش‌آموز را انتخاب کنید.');
-    else if(!ad)note('تاریخ یا هفته را بنویسید.');
-    else if(aws(c).some(function(w){return w.type===ty&&w.sid===sid&&w.date===ad}))note('این جایزه با همین تاریخ قبلاً برای این دانش‌آموز ثبت شده است.');
-    else{aws(c).push({id:uid('w'),type:ty,sid:sid,nm:stu.name,date:ad,note:an,ts:new Date().toISOString()});save();msg='«'+stu.name+'» به‌عنوان '+AW[ty]+' ثبت شد.';render(true)}
-  }
-  else if(a==='awf'){awFilter=id;render(true)}
-  else if(a==='delAward'&&c){
-    if(!arm(t,'w'+id,'مطمئنید؟ دوباره بزنید'))return;
-    armed=null;c.awards=aws(c).filter(function(w){return w.id!==id});save();msg='جایزه حذف شد.';render(true);
-  }
-  else if(a==='editClass'&&c){
-    var kn=val('kn'),ky=val('ky');
-    if(!kn)note('نام کلاس را بنویسید.');
-    else if(db.classes.some(function(x){return x.id!==c.id&&x.name===kn&&x.year===ky}))note('کلاس دیگری با همین نام و سال تحصیلی وجود دارد.');
-    else{c.name=kn;c.grade=val('kg');c.school=val('ks');c.year=ky;c.teacher=val('kt');save();msg='تغییرات کلاس ذخیره شد.';render(true)}
-  }
-  else if(a==='archiveClass'&&c){
-    if(!arm(t,'ac','مطمئنید؟ دوباره بزنید'))return;
-    armed=null;c.archived=true;db.activeId=firstActive();save();msg='کلاس بایگانی شد. هر وقت خواستید از همین‌جا بازیابی کنید.';render(true);
-  }
-  else if(a==='restoreClass'){
-    var rc=db.classes.filter(function(x){return x.id===id})[0];
-    if(rc){rc.archived=false;if(!db.activeId)db.activeId=rc.id;save();msg='کلاس «'+rc.name+'» بازیابی شد.';render(true)}
-  }
-  else if(a==='xfer'&&c){xferId=id;render()}
-  else if(a==='cancelXfer'){xferId=null;render(true)}
-  else if(a==='doXfer'&&c&&xferId){
-    if(!arm(t,'xf','مطمئنید؟ دوباره بزنید'))return;
-    armed=null;
-    var dest=db.classes.filter(function(k){return k.id===document.getElementById('tc').value})[0];
-    var nmx=(c.students.filter(function(x){return x.id===xferId})[0]||{}).name;
-    var er=transferStudent(c,dest,xferId);
-    if(er)msg=er;else{save();msg='«'+nmx+'» به کلاس «'+dest.name+'» منتقل شد.';xferId=null}
-    render(true);
-  }
-  else if(a==='csv'&&c){doCsv(c)}
-  else if(a==='csvText'&&c){csvShow=buildCsv(c).replace('\uFEFF','');msg='متن CSV در کادر پایین است.';render(true)}
-  else if(a==='gqdraw'&&c){if(GQ.stage==='menu')gqRead();gqDraw(c);GQ.stage='pick';render()}
-  else if(a==='gqstart'&&c){gqStart();render()}
-  else if(a==='gqshow'){GQ.shown=true;render(true)}
-  else if(a==='gqgood'){gqJudge(true);render()}
-  else if(a==='gqbad'){gqJudge(false);render()}
-  else if(a==='gqback'){GQ.stage='menu';GQ.sel=[];GQ.q=null;render()}
-  else if(a==='gqsave'&&c){
-    if(!arm(t,'gqs','مطمئنید؟ دوباره بزنید'))return;
-    armed=null;var gp=gqPoints();
-    if(!c.gquiz)c.gquiz=[];
-    c.gquiz.push({id:uid('q'),ts:new Date().toISOString(),ch:GQ.ch,lvl:GQ.lvl,pts:gp,n:GQ.res.length,ok:GQ.res.filter(function(r){return r.ok}).length,res:GQ.res.map(function(r){return{g:r.gid,s:r.sid,ok:r.ok}})});
-    save();GQ.stage='menu';GQ.sel=[];GQ.q=null;msg='امتیاز پرسش گروهی در لیگ گروهی ثبت شد.';render();
-  }
-  else if(a==='gqdel'&&c){if(!arm(t,'gd'+id,'مطمئنید؟ دوباره بزنید'))return;armed=null;c.gquiz=(c.gquiz||[]).filter(function(x){return x.id!==id});save();msg='سابقه حذف شد.';render(true)}
-  else if(a==='pwRand'&&c){c.pwd=c.pwd||{};c.students.forEach(function(s2){var e=document.getElementById('pw_'+s2.id),v=normPw(e?e.value:'');if(!v)v=pwRand();c.pwd[s2.id]=v});save();msg='رمزها ثبت شد.';render(true)}
-  else if(a==='genParent'&&c){
-    c.pwd=c.pwd||{};var badp=[];
-    c.students.forEach(function(s2){var e=document.getElementById('pw_'+s2.id),v=normPw(e?e.value:'');if(v.length<4)badp.push(s2.name);else c.pwd[s2.id]=v});
-    if(badp.length){note('رمز این دانش‌آموزان خالی یا کوتاه‌تر از ۴ حرف یا رقم است: '+badp.slice(0,6).join('، ')+(badp.length>6?' و ...':''));return}
-    save();
-    var po={rank:document.getElementById('pr').checked,avg:document.getElementById('pa').checked,aw:document.getElementById('pw').checked};
-    if(!(window.crypto&&window.crypto.subtle)){note('این مرورگر یا این آدرس از رمزگذاری پشتیبانی نمی‌کند. برنامه را از آدرس https باز کنید.');return}
-    var cards=parentCards(c,po),pbase=siteBase()+'karname.html#';PL={};
-    (async function(){
-      try{
-        for(var ii=0;ii<cards.length;ii++){note('در حال ساخت لینک‌ها: '+fa(ii+1)+' از '+fa(cards.length));var cd=await encObj(cards[ii].obj,c.pwd[cards[ii].id]);PL[cards[ii].id]={name:cards[ii].name,link:pbase+cd,pw:c.pwd[cards[ii].id]}}
-        msg='لینک‌ها ساخته شد: '+fa(cards.length)+' دانش‌آموز.';render(true);
-      }catch(e){note('ساخت لینک‌ها ناموفق بود.')}
-    })();
-  }
-  else if(a==='cpPar'&&c&&PL[id]){copyText(pmsg(c,PL[id])).then(function(ok){note(ok?'پیام کپی شد ✅ حالا در پیام خصوصی بچسبانید.':'کپی خودکار ممکن نشد.')})}
-  else if(a==='bdMake'&&c){
-    BD.month=val('bdm')||BD.month;
-    var bsel={c:{},s:{},i:{}},bn={c:[],s:[],i:[]};
-    c.students.forEach(function(s2){[['c','bc_'],['s','bs_'],['i','bi_']].forEach(function(k2){var e=document.getElementById(k2[1]+s2.id);if(e&&e.checked){bsel[k2[0]][s2.id]=1;bn[k2[0]].push(s2.name)}})});
-    BD.sel=bsel;
-    if(!bn.c.length&&!bn.s.length&&!bn.i.length){note('حداقل یک نفر را برای تابلو تأیید کنید (تیک بزنید).');return}
-    var bdata={v:1,m:BD.month,s:c.school||'',c:c.name,t:c.teacher||'',d:new Date().toLocaleDateString('fa-IR'),cond:bn.c,study:bn.s,impr:bn.i};
-    BD.link=siteBase()+'karname.html#B1.'+u8b64(new TextEncoder().encode(JSON.stringify(bdata)));
-    BD.text=boardText(c,bdata,BD.link);msg='تابلو ساخته شد. متن زیر را کپی کنید.';render(true);
-  }
-  else if(a==='cpBd'){copyText(BD.text).then(function(ok){note(ok?'متن کپی شد ✅':'کپی خودکار ممکن نشد.')})}
+  return h;
+}
+function exText(c,k){return '🌟 دانش‌آموزان نمونه اخلاق و شایسته '+mName(k)+' - '+c.name+' ('+(c.school||'')+')\n\n'+c.exem[k].map(function(id){return '⭐ '+gqName(c,id)}).join('\n')+'\n\nبه این عزیزان تبریک می‌گوییم 🌹'}
+function vComp(){
+  var c=active(),h=back()+'<h2>شایستگی 🌟</h2><div id="live">'+msgBox()+'</div>';
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';

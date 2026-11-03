@@ -86,6 +86,7 @@ function render(d){
   var h=hero('کارنامه لیگ موفقیت',esc(d.s),esc(d.c)+(d.y?' - '+esc(d.y):''));
   h+='<div class="card"><b class="big">'+esc(d.n)+'</b>'+(d.g?'<div class="muted">گروه: '+esc(d.g)+'</div>':'')+'</div>';
   h+='<div class="tiles"><div class="tile"><span class="muted">مجموع نمره</span><b>'+fa(d.tot)+' از '+fa(d.mx)+'</b></div>';
+  if(d.adj)h+='<div class="tile"><span class="muted">تعدیل شایستگی</span><b>'+(d.adj>0?'+':'−')+fa(Math.abs(d.adj))+'</b></div>';
   if(d.rk)h+='<div class="tile"><span class="muted">رتبه در کلاس</span><b>'+fa(d.rk)+' از '+fa(d.cnt)+'</b></div>';
   if(d.avg!=null)h+='<div class="tile"><span class="muted">میانگین مجموع کلاس</span><b>'+fa(d.avg)+'</b></div>';
   if(d.gr)h+='<div class="tile"><span class="muted">رتبه گروه</span><b>'+fa(d.gr)+' از '+fa(d.gc)+'</b></div>';

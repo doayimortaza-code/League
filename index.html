@@ -62,9 +62,9 @@ ol{padding:0;margin:0;list-style:none}
 <div class="wrap" id="app"></div>
 <script>
 (function(){
-  var parts=['app-1.js', 'app-2.js', 'app-3.js', 'app-4.js', 'app-5.js', 'app-6.js', 'app-7.js'],total=129332,box=document.getElementById('app');
+  var parts=['app-1.js', 'app-2.js', 'app-3.js', 'app-4.js', 'app-5.js', 'app-6.js', 'app-7.js', 'app-8.js'],total=144437,box=document.getElementById('app');
   function fail(m){box.innerHTML='<div style="padding:24px;font-family:Tahoma,sans-serif;direction:rtl;line-height:2">'+m+'</div>'}
-  Promise.all(parts.map(function(p){return fetch(p+'?v=104').then(function(r){if(!r.ok)throw new Error(p);return r.text()})})).then(function(t){
+  Promise.all(parts.map(function(p){return fetch(p+'?v=105').then(function(r){if(!r.ok)throw new Error(p);return r.text()})})).then(function(t){
     var all=t.join('\n');
     if(all.length!==total){fail('فایل‌های برنامه کامل نیست. همه فایل‌های app را در GitHub آپلود کنید و صفحه را دوباره باز کنید.');return}
     var s=document.createElement('script');s.textContent=all;document.body.appendChild(s);

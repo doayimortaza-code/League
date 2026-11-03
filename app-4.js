@@ -1,3 +1,10 @@
+  if(k==='fuel'||k==='fuelRem'){var p=ri(8,20),T=ri(100,400);if(k==='fuel')return NQ('ddivn','یک موتور آب در هر ساعت '+p+' لیتر گازوئیل مصرف می‌کند. منبع آن '+T+' لیتر دارد. چند ساعت کامل می‌تواند کار کند؟',Math.floor(T/p),'fuel',{p:p,T:T});return NQ('ddivn','یک موتور آب در هر ساعت '+p+' لیتر گازوئیل مصرف می‌کند. اگر منبع آن '+T+' لیتر باشد، پس از کار کامل چند ساعت، چند لیتر گازوئیل باقی می‌ماند؟',T%p,'fuelRem',{p:p,T:T})}
+  var per=ri(2,6)*4,ha=ri(5,20);return NQ('ddivn','برای آبیاری هر هکتار زمین '+per+' مترمکعب آب لازم است. برای '+ha+' هکتار چند مترمکعب آب لازم است؟',per*ha,'water',{per:per,ha:ha});
+}
+function gDdivd(l){
+  var d,qt,a,k;
+  if(l===1){d=pick([0.1,0.2,0.25,0.5,1.5,2.5]);qt=ri(3,40);a=Math.round(d*qt*100)/100;return NQ('ddivd',dStr(a)+' ÷ '+dStr(d)+' = ؟',qt,'basic',{a:a,d:d,qt:qt})}
+  if(l===2){var dv=pick([[0.2,10],[0.5,10],[1.5,10],[0.21,100],[0.25,100],[0.07,100],[0.125,1000],[2.5,10]]);return NQ('ddivd','برای اینکه مقسوم‌علیه در تقسیم '+dStr(ri(3,99)/ (dv[1]===10?10:100))+' ÷ '+dStr(dv[0])+' عدد صحیح شود، مقسوم و مقسوم‌علیه را در چه عددی ضرب می‌کنیم؟',dv[1],'scale',{dv:dv})}
   d=pick([0.25,0.5,0.2,0.75,1.5]);qt=ri(4,30);var tot=Math.round(d*qt*100)/100;k=pick(['cup','rope']);
   if(k==='cup')return NQ('ddivd',dStr(tot)+' لیتر آب را در ظرف‌هایی با گنجایش '+dStr(d)+' لیتر می‌ریزیم. چند ظرف پر می‌شود؟',qt,'cup',{tot:tot,d:d,qt:qt});
   return NQ('ddivd','از یک طناب به طول '+dStr(tot)+' متر، تکه‌های '+dStr(d)+' متری می‌بریم. چند تکه به دست می‌آید؟',qt,'rope',{tot:tot,d:d,qt:qt});
@@ -146,9 +153,3 @@ function gTrunc(l){
     if(k==='unit')return NQ('trunc',val+' را به روش قطع کردن با تقریب کمتر از '+dStr(un[0])+' بنویسید.',Math.floor(X/un[1])/(1000/un[1]),'dec',{X:X,un:un});
     return NQ('trunc','اختلاف عدد '+val+' با مقدار تقریبی آن (به روش قطع کردن با تقریب کمتر از '+dStr(un[0])+') چقدر است؟',(X-Math.floor(X/un[1])*un[1])/1000,'dif',{X:X,un:un})}
   k=pick(['both','near','round']);
-  if(k==='near'){do{x=ri(1000,99999)}while(x%10===0);var tt=pick([10,100]);var tr=Math.floor(x/tt)*tt,rd=Math.round(x/tt)*tt,ans=Math.abs(x-tr)<Math.abs(x-rd)?'قطع کردن':(Math.abs(x-tr)>Math.abs(x-rd)?'گرد کردن':'هر دو یکسان');return MQ('trunc','عدد '+x+' را یک بار با تقریب کمتر از '+tt+' به روش قطع کردن و یک بار به روش گرد کردن تقریب می‌زنیم. کدام روش به عدد واقعی نزدیک‌تر است؟',ans,['قطع کردن','گرد کردن','هر دو یکسان'].filter(function(z){return z!==ans}),'near',{x:x,t:tt})}
-  if(k==='round'){x=ri(1000,99999);var t2=pick([10,100]);return NQ('trunc',x+' را به روش گرد کردن تا نزدیک‌ترین '+(t2===10?'دهگان':'صدگان')+' تقریب بزنید.',Math.round(x/t2)*t2,'round',{x:x,t:t2})}
-  X=ri(10000,999999);var val2=fx3(X);return NQ('trunc',val2+' را یک بار با تقریب کمتر از ۱ به روش قطع کردن بنویسید.',Math.floor(X/1000),'both',{X:X});
-}
-function gApprox(l){
-  var k;

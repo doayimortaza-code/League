@@ -1,20 +1,32 @@
+    return{id:s.id,name:s.name,gid:g?g.id:null,group:g?g.name:'',total:r2(t+ad.v),ex:r2(t),adj:ad.v,pen:ad.pen,exm:ad.exm,n:n};
+  });
+  rows.sort(function(a,b){return b.total-a.total||a.name.localeCompare(b.name,'fa')});
+  rows.forEach(function(r,i){r.rank=(i>0&&r.total===rows[i-1].total)?rows[i-1].rank:i+1});
+  return rows;
+}
+function vLeagueInd(){
+  var c=active(),h=back();
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  h+='<h2>لیگ فردی '+esc(c.name)+'</h2>';
+  var list=exs(c);
+  if(!c.students.length)return h+'<div class="empty"><p>هنوز دانش‌آموزی ثبت نشده است.</p></div>';
   if(!list.length)return h+'<div class="empty"><p>هنوز آزمونی ثبت نشده است.</p><button class="btn" data-act="go" data-v="exams">رفتن به ثبت آزمون</button></div>';
   var sum=0;list.forEach(function(e){sum+=e.max});
   var rows=indTotals(c),medal={1:'🥇',2:'🥈',3:'🥉'};
   h+='<p class="muted">امتیاز هر نفر = جمع نمره‌های همه آزمون‌ها. تعداد آزمون‌ها: '+fa(list.length)+' ، جمع نمره کل آزمون‌ها: '+fn(sum)+'. نمره ثبت‌نشده (غایب) صفر حساب می‌شود.</p><ol class="card">';
   rows.forEach(function(r){
-    h+='<li class="st"><span><b>'+(r.total>0&&medal[r.rank]?medal[r.rank]+' ':'')+fa(r.rank)+'.</b> '+esc(r.name)+(r.group?'<span class="muted"> - '+esc(r.group)+'</span>':'')+'<br><span class="muted">نمره ثبت‌شده در '+fa(r.n)+' از '+fa(list.length)+' آزمون</span></span><b>'+fn(r.total)+'</b></li>';
+    h+='<li class="st"><span><b>'+(r.total>0&&medal[r.rank]?medal[r.rank]+' ':'')+fa(r.rank)+'.</b> '+esc(r.name)+(r.group?'<span class="muted"> - '+esc(r.group)+'</span>':'')+'<br><span class="muted">نمره ثبت‌شده در '+fa(r.n)+' از '+fa(list.length)+' آزمون'+(r.adj?' - نمره آزمون‌ها: '+fn(r.ex)+' - شایستگی: '+sgn(r.adj):'')+'</span></span><b>'+fn(r.total)+'</b></li>';
   });
   return h+'</ol><p class="muted">نفرات با امتیاز برابر، رتبه یکسان دارند.</p>';
 }
 function grpTotals(c){
-  var rows=indTotals(c),out=[],bn=gqBonus(c),gx=gexTotals(c);
+  var rows=indTotals(c),out=[],bn=gqBonus(c),gx=gexTotals(c),now=nowMs();
   grp(c).forEach(function(g){
     var m=rows.filter(function(r){return r.gid===g.id});
     if(!m.length)return;
-    var t=0;m.forEach(function(r){t+=r.total});
-    var base=t/m.length,bonus=bn[g.id]||0,ge=gx[g.id]||0;
-    out.push({id:g.id,name:g.name,count:m.length,sum:r2(t),raw:base+bonus+ge,avg:r2(base),bonus:bonus,gexam:ge,total:r2(base+bonus+ge),names:m.map(function(r){return r.name})});
+    var t=0;m.forEach(function(r){t+=r.ex});
+    var base=t/m.length,bonus=bn[g.id]||0,ge=gx[g.id]||0,gc=gcomp(c,g.id,now).v;
+    out.push({id:g.id,name:g.name,count:m.length,sum:r2(t),raw:base+bonus+ge+gc,avg:r2(base),bonus:bonus,gexam:ge,comp:gc,total:r2(base+bonus+ge+gc),names:m.map(function(r){return r.name})});
   });
   out.sort(function(a,b){return b.raw-a.raw||a.name.localeCompare(b.name,'fa')});
   out.forEach(function(r,i){r.rank=(i>0&&Math.abs(r.raw-out[i-1].raw)<1e-9)?out[i-1].rank:i+1});
@@ -30,9 +42,9 @@ function vLeagueGrp(){
   var rows=grpTotals(c);
   if(!rows.length)return h+'<div class="empty"><p>هیچ گروهی عضو ندارد. دانش‌آموزان را به گروه‌ها اضافه کنید.</p><button class="btn" data-act="go" data-v="groups">رفتن به گروه‌ها</button></div>';
   var un=indTotals(c).filter(function(r){return !r.gid}).length,medal={1:'🥇',2:'🥈',3:'🥉'};
-  h+='<p class="muted">امتیاز هر گروه = میانگین امتیاز اعضا (جمع نمره‌های همه آزمون‌ها) + امتیاز پرسش‌های گروهی + نمره آزمون‌های گروهی. نمره ثبت‌نشده (غایب) صفر حساب می‌شود. امتیاز پرسش گروهی و آزمون گروهی فقط به لیگ گروهی اضافه می‌شود و در لیگ فردی اثری ندارد.</p><ol class="card">';
+  h+='<p class="muted">امتیاز هر گروه = میانگین امتیاز اعضا (جمع نمره‌های همه آزمون‌ها) + امتیاز پرسش‌های گروهی + نمره آزمون‌های گروهی + تعدیل شایستگی و کار گروهی. نمره ثبت‌نشده (غایب) صفر حساب می‌شود. امتیاز پرسش گروهی و آزمون گروهی فقط به لیگ گروهی اضافه می‌شود و در لیگ فردی اثری ندارد.</p><ol class="card">';
   rows.forEach(function(r){
-    h+='<li class="st"><span><b>'+(r.total>0&&medal[r.rank]?medal[r.rank]+' ':'')+fa(r.rank)+'.</b> '+esc(r.name)+'<br><span class="muted">'+fa(r.count)+' عضو - میانگین نمره اعضا: '+fn(r.avg)+' + پرسش گروهی: '+fn(r.bonus)+' + آزمون گروهی: '+fn(r.gexam)+'<br>'+r.names.map(esc).join('، ')+'</span></span><b>'+fn(r.total)+'</b></li>';
+    h+='<li class="st"><span><b>'+(r.total>0&&medal[r.rank]?medal[r.rank]+' ':'')+fa(r.rank)+'.</b> '+esc(r.name)+'<br><span class="muted">'+fa(r.count)+' عضو - میانگین نمره اعضا: '+fn(r.avg)+' + پرسش گروهی: '+fn(r.bonus)+' + آزمون گروهی: '+fn(r.gexam)+' + شایستگی و کار گروهی: '+sgn(r.comp)+'<br>'+r.names.map(esc).join('، ')+'</span></span><b>'+fn(r.total)+'</b></li>';
   });
   h+='</ol><p class="muted">گروه‌های با امتیاز برابر، رتبه یکسان دارند.';
   if(un)h+=' '+fa(un)+' دانش‌آموز بدون گروه‌اند و در لیگ گروهی حساب نمی‌شوند.';
@@ -134,12 +146,12 @@ function pCode(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).r
 function parentCards(c,opt){
   var list=exs(c),rows=indTotals(c),gt=grpTotals(c),n=rows.length,sumMax=0,byId={},avgT=0;
   list.forEach(function(e){sumMax+=e.max});
-  rows.forEach(function(r){byId[r.id]=r;avgT+=r.total});
+  rows.forEach(function(r){byId[r.id]=r;avgT+=r.ex});
   avgT=n?r2(avgT/n):0;
   var exAvg=list.map(function(e){var t=0,k=0;c.students.forEach(function(s){var v=e.scores&&e.scores[s.id];if(v!=null){t+=v;k++}});return k?r2(t/k):null});
   return c.students.map(function(s){
     var r=byId[s.id];
-    var o={v:1,s:c.school||'',c:c.name,y:c.year||'',t:c.teacher||'',n:r.name,g:r.group||'',d:new Date().toLocaleDateString('fa-IR'),tot:r.total,mx:sumMax};
+    var o={v:1,s:c.school||'',c:c.name,y:c.year||'',t:c.teacher||'',n:r.name,g:r.group||'',d:new Date().toLocaleDateString('fa-IR'),tot:r.ex,adj:r.adj,mx:sumMax};
     if(opt.rank){o.rk=r.rank;o.cnt=n;var g=r.gid?gt.filter(function(x){return x.id===r.gid})[0]:null;if(g){o.gr=g.rank;o.gc=gt.length}}
     if(opt.avg)o.avg=avgT;
     o.ex=list.map(function(e,i){var v=e.scores&&e.scores[r.id];return[e.title,e.date,e.max,v==null?null:v,opt.avg?exAvg[i]:null]});
@@ -211,16 +223,3 @@ function mkWord(l){
   if(l===1){var k=ri(2,9),q=ri(2,20)*500;return N('word',k,q,nm+' برای '+k+' دفتر، هر دفتر '+q+' تومان، چقدر پرداخت کرد؟',k*q,true)}
   if(l===2){
     if(Math.random()<0.5){var P,k2,q2;do{P=ri(5,20)*10000;k2=ri(2,6);q2=ri(2,15)*1000}while(P<=k2*q2);return N('word',P,q2,nm+' '+P+' تومان داشت. '+k2+' بسته '+q2+' تومانی خرید. چند تومان باقی ماند؟',P-k2*q2,true)}
-    var v=ri(4,9)*10,t1=ri(2,5),t2=ri(2,5);return N('word',v,t1,'اتومبیلی با سرعت '+v+' کیلومتر در ساعت، '+t1+' ساعت و بعد '+t2+' ساعت دیگر می‌رود. در کل چند کیلومتر رفته است؟',v*(t1+t2),true);
-  }
-  if(Math.random()<0.5){var n=ri(2,9),p=ri(5,20)*1000,pr=pick([10,20,25,30,40,50]);return N('word',n,p,'مغازه‌داری '+n+' کیلو برنج، هر کیلو '+p+' تومان خرید و با '+pr+'٪ سود فروخت. فروش کل چند تومان شد؟',n*p*(100+pr)/100,true)}
-  var c=ri(2,10)*20,pc=pick([20,25,40,45,60]);return N('word',c,pc,'در کلاسی '+c+' دانش‌آموز هست. '+pc+'٪ آن‌ها دختر هستند. چند پسر در کلاس هست؟',c-c*pc/100,true);
-}
-
-
-
-
-
-var PIV=3,SGN='−';
-function cm(x){return String(x).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
-function ord(n){return n+'\u200cام'}

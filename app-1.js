@@ -1,5 +1,5 @@
 
-var parentText='',VER='۱٫۰۴',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
+var parentText='',VER='۱٫۰۵',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
 function load(){try{var s=localStorage.getItem(KEY);if(s){var d=JSON.parse(s);if(d&&d.classes)return d}}catch(e){}return{v:1,classes:[],activeId:null}}
 var db=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){msg='ذخیره‌سازی در این مرورگر ممکن نشد.'}}
@@ -9,7 +9,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp
 function norm(s){return String(s||'').replace(/\s+/g,' ').trim()}
 function active(){return db.classes.filter(function(c){return c.id===db.activeId&&!c.archived})[0]||null}
 function val(id){var e=document.getElementById(id);return e?norm(e.value):''}
-var menu=[['classes','کلاس‌ها','🏫'],['students','دانش‌آموزان','👧'],['groups','گروه‌ها','👥'],['exams','ثبت آزمون','📝'],['leagueInd','لیگ فردی','🥇'],['leagueGrp','لیگ گروهی','🏅'],['gquiz','پرسش گروهی','🙋'],['gexam','آزمون گروهی','📋'],['honors','افتخارات','⭐'],['backup','پشتیبان‌گیری','💾'],['lottery','قرعه‌کشی شانسی','🎲'],['practice','تمرین و بازی','🎮'],['settings','تنظیمات','⚙️']];
+var menu=[['classes','کلاس‌ها','🏫'],['students','دانش‌آموزان','👧'],['groups','گروه‌ها','👥'],['exams','ثبت آزمون','📝'],['leagueInd','لیگ فردی','🥇'],['leagueGrp','لیگ گروهی','🏅'],['gquiz','پرسش گروهی','🙋'],['gexam','آزمون گروهی','📋'],['comp','شایستگی','🌟'],['honors','افتخارات','⭐'],['backup','پشتیبان‌گیری','💾'],['lottery','قرعه‌کشی شانسی','🎲'],['practice','تمرین و بازی','🎮'],['settings','تنظیمات','⚙️']];
 function msgBox(){var m=msg?'<div class="msg" role="status">'+esc(msg)+'</div>':'';msg='';return m}
 function vHome(){
   var c=active(),h='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>لیگ موفقیت<br>کلاس ششم&nbsp;۵</h1><p>دبستان سیدالشهدا<br>آموزگار: مرتضی دعائی</p></div></header>';
@@ -113,6 +113,10 @@ function validate(o){
     if(c.students.length>MAX)return 'کلاس «'+c.name+'» بیش از '+fa(MAX)+' دانش‌آموز دارد.';
     if(c.former&&!Array.isArray(c.former))return 'فهرست منتقل‌شده‌های کلاس «'+c.name+'» ناقص است.';
     if(c.awards&&!Array.isArray(c.awards))return 'جوایز کلاس «'+c.name+'» ناقص است.';
+    if(c.comp&&!Array.isArray(c.comp))return 'رفتارهای ثبت‌شده کلاس «'+c.name+'» ناقص است.';
+    if(c.twork&&!Array.isArray(c.twork))return 'کار گروهی کلاس «'+c.name+'» ناقص است.';
+    if(c.twclose&&(typeof c.twclose!=='object'||Array.isArray(c.twclose)))return 'نتیجه ماه‌های کار گروهی کلاس «'+c.name+'» ناقص است.';
+    if(c.exem&&(typeof c.exem!=='object'||Array.isArray(c.exem)))return 'نمونه‌های ماه کلاس «'+c.name+'» ناقص است.';
     if(c.gexams&&!Array.isArray(c.gexams))return 'آزمون‌های گروهی کلاس «'+c.name+'» ناقص است.';
     if(c.gquiz&&!Array.isArray(c.gquiz))return 'سابقه پرسش گروهی کلاس «'+c.name+'» ناقص است.';
     if(c.practice&&!Array.isArray(c.practice))return 'نتیجه تمرین‌های کلاس «'+c.name+'» ناقص است.';
@@ -127,12 +131,12 @@ function csvCell(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
 function buildCsv(c){
   var list=exs(c),rows=indTotals(c),head=['رتبه','نام','گروه'];
   list.forEach(function(e){head.push(e.title+' (از '+e.max+')')});
-  head.push('مجموع');
+  head.push('مجموع نمره آزمون‌ها');head.push('تعدیل شایستگی');head.push('مجموع نهایی');
   var lines=[head.map(csvCell).join(',')];
   rows.forEach(function(r){
     var st=c.students.filter(function(x){return x.id===r.id})[0],line=[r.rank,r.name,r.group];
     list.forEach(function(e){var v=e.scores&&e.scores[r.id];line.push(v==null?'':v)});
-    line.push(r.total);
+    line.push(r.ex);line.push(r.adj);line.push(r.total);
     lines.push(line.map(csvCell).join(','));
   });
   return '\uFEFF'+lines.join('\r\n');
@@ -221,15 +225,4 @@ function indTotals(c){
     var t=0,n=0;
     exs(c).forEach(function(e){var v=e.scores&&e.scores[s.id];if(v!=null){t+=v;n++}});
     var g=grp(c).filter(function(x){return x.id===s.groupId})[0];
-    return{id:s.id,name:s.name,gid:g?g.id:null,group:g?g.name:'',total:r2(t),n:n};
-  });
-  rows.sort(function(a,b){return b.total-a.total||a.name.localeCompare(b.name,'fa')});
-  rows.forEach(function(r,i){r.rank=(i>0&&r.total===rows[i-1].total)?rows[i-1].rank:i+1});
-  return rows;
-}
-function vLeagueInd(){
-  var c=active(),h=back();
-  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
-  h+='<h2>لیگ فردی '+esc(c.name)+'</h2>';
-  var list=exs(c);
-  if(!c.students.length)return h+'<div class="empty"><p>هنوز دانش‌آموزی ثبت نشده است.</p></div>';
+    var ad=compIndAdj(c,s.id,nowMs());

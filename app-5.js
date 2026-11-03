@@ -1,3 +1,9 @@
+  if(k==='near'){do{x=ri(1000,99999)}while(x%10===0);var tt=pick([10,100]);var tr=Math.floor(x/tt)*tt,rd=Math.round(x/tt)*tt,ans=Math.abs(x-tr)<Math.abs(x-rd)?'قطع کردن':(Math.abs(x-tr)>Math.abs(x-rd)?'گرد کردن':'هر دو یکسان');return MQ('trunc','عدد '+x+' را یک بار با تقریب کمتر از '+tt+' به روش قطع کردن و یک بار به روش گرد کردن تقریب می‌زنیم. کدام روش به عدد واقعی نزدیک‌تر است؟',ans,['قطع کردن','گرد کردن','هر دو یکسان'].filter(function(z){return z!==ans}),'near',{x:x,t:tt})}
+  if(k==='round'){x=ri(1000,99999);var t2=pick([10,100]);return NQ('trunc',x+' را به روش گرد کردن تا نزدیک‌ترین '+(t2===10?'دهگان':'صدگان')+' تقریب بزنید.',Math.round(x/t2)*t2,'round',{x:x,t:t2})}
+  X=ri(10000,999999);var val2=fx3(X);return NQ('trunc',val2+' را یک بار با تقریب کمتر از ۱ به روش قطع کردن بنویسید.',Math.floor(X/1000),'both',{X:X});
+}
+function gApprox(l){
+  var k;
   if(l===1){var T=[['جرم یک انسان','۱ کیلوگرم'],['دمای بدن یک بیمار','۰٫۱ درجه'],['جرم یک قطعه فلز گران‌بها','۰٫۰۱ گرم'],['طول یک مداد','۱ میلی‌متر'],['جرم یک کیسه برنج','۱ کیلوگرم']],it=pick(T),wr=shuf(['۱ کیلوگرم','۰٫۱ درجه','۰٫۰۱ گرم','۱ میلی‌متر','۱ تن','۱۰ درجه','۱ کیلومتر'].filter(function(z){return z!==it[1]})).slice(0,3);return MQ('approx','برای اندازه‌گیری «'+it[0]+'» کدام دقت (تقریب کمتر از) مناسب‌تر است؟',it[1],wr,'prec',{it:it})}
   if(l===2){var a=ri(100,999),b=ri(100,999);var u=pick([10,100]);return NQ('approx','هر عدد را با تقریب کمتر از '+u+' (قطع کردن) بنویسید و سپس جمع کنید: '+a+' + '+b+' = ؟',Math.floor(a/u)*u+Math.floor(b/u)*u,'est',{a:a,b:b,u:u})}
   var money=ri(10000000,99999999),un=pick([1000,10000,100000]);return NQ('approx',cm(money)+' تومان را با تقریب کمتر از '+cm(un)+' تومان به روش قطع کردن بنویسید.',Math.floor(money/un)*un,'money',{money:money,un:un});
@@ -254,17 +260,3 @@ function vGQuiz(){
     var pts=gqPoints(),ids=Object.keys(pts).sort(function(a,b){return pts[b]-pts[a]});
     h+='<div class="card"><b>نتیجه پرسش گروهی</b>';
     ids.forEach(function(gid){var g=grp(c).filter(function(x){return x.id===gid})[0];h+='<div class="st"><span>'+esc(g?g.name:'؟')+'</span><b>'+fa(pts[gid])+' امتیاز</b></div>'});
-    var okn=GQ.res.filter(function(r){return r.ok}).length;
-    h+='<p class="muted">'+fa(okn)+' پاسخ درست از '+fa(GQ.res.length)+' سؤال. فقط با زدن دکمه زیر در لیگ گروهی ثبت می‌شود.</p><div class="row"><button class="btn" data-act="gqsave">ثبت امتیاز در لیگ گروهی</button><button class="btn ghost" data-act="gqback">ثبت نشود</button></div></div>';
-  }
-  var hist=(c.gquiz||[]).slice().reverse();
-  if(GQ.stage==='menu'&&hist.length){
-    h+='<h2>سابقه پرسش‌های گروهی</h2><div class="card">';
-    hist.forEach(function(r){
-      var line=Object.keys(r.pts).map(function(gid){var g=grp(c).filter(function(x){return x.id===gid})[0];return esc(g?g.name:'؟')+': '+fa(r.pts[gid])}).join(' - ');
-      h+='<div class="st"><span>'+esc(new Date(r.ts).toLocaleDateString('fa-IR'))+' - '+esc(chInfo(r.ch).s)+'<br><span class="muted">'+line+'</span></span><button class="btn danger" data-act="gqdel" data-id="'+r.id+'">حذف</button></div>';
-    });
-    h+='</div>';
-  }
-  return h;
-}
