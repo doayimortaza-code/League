@@ -1,5 +1,5 @@
 
-var parentText='',VER='۱٫۰۵',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
+var parentText='',VER='۱٫۰۶',KEY='league_db_v1',MAX=40,view='home',msg='',armed=null,focusId=null,pending=null,showText='',curExam=null,awFilter='all',xferId=null,csvShow='';
 function load(){try{var s=localStorage.getItem(KEY);if(s){var d=JSON.parse(s);if(d&&d.classes)return d}}catch(e){}return{v:1,classes:[],activeId:null}}
 var db=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){msg='ذخیره‌سازی در این مرورگر ممکن نشد.'}}
@@ -9,7 +9,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp
 function norm(s){return String(s||'').replace(/\s+/g,' ').trim()}
 function active(){return db.classes.filter(function(c){return c.id===db.activeId&&!c.archived})[0]||null}
 function val(id){var e=document.getElementById(id);return e?norm(e.value):''}
-var menu=[['classes','کلاس‌ها','🏫'],['students','دانش‌آموزان','👧'],['groups','گروه‌ها','👥'],['exams','ثبت آزمون','📝'],['leagueInd','لیگ فردی','🥇'],['leagueGrp','لیگ گروهی','🏅'],['gquiz','پرسش گروهی','🙋'],['gexam','آزمون گروهی','📋'],['comp','شایستگی','🌟'],['honors','افتخارات','⭐'],['backup','پشتیبان‌گیری','💾'],['lottery','قرعه‌کشی شانسی','🎲'],['practice','تمرین و بازی','🎮'],['settings','تنظیمات','⚙️']];
+var menu=[['classes','کلاس‌ها','🏫'],['students','دانش‌آموزان','👧'],['groups','گروه‌ها','👥'],['exams','ثبت آزمون','📝'],['leagueInd','لیگ فردی','🥇'],['leagueGrp','لیگ گروهی','🏅'],['gquiz','پرسش گروهی','🙋'],['gexam','آزمون گروهی','📋'],['comp','شایستگی','🌟'],['rcard','کارنامه','🧾'],['honors','افتخارات','⭐'],['backup','پشتیبان‌گیری','💾'],['lottery','قرعه‌کشی شانسی','🎲'],['practice','تمرین و بازی','🎮'],['settings','تنظیمات','⚙️']];
 function msgBox(){var m=msg?'<div class="msg" role="status">'+esc(msg)+'</div>':'';msg='';return m}
 function vHome(){
   var c=active(),h='<header class="hero"><div class="medal" aria-hidden="true">🏆</div><div><h1>لیگ موفقیت<br>کلاس ششم&nbsp;۵</h1><p>دبستان سیدالشهدا<br>آموزگار: مرتضی دعائی</p></div></header>';

@@ -4,9 +4,96 @@
   h+='<div class="row" style="margin-bottom:10px">'+tabs.map(function(t){return '<button class="btn'+(CP.tab===t[0]?'':' ghost')+'" data-act="cpTab" data-id="'+t[0]+'">'+t[1]+'</button>'}).join('')+'</div>';
   return h+(CP.tab==='rec'?cpRec(c):CP.tab==='twk'?cpTwk(c):cpExm(c));
 }
+var RC={sid:'',rank:true,avg:true,comp:false,img:''};
+function rcStudent(c){var s=c.students.filter(function(x){return x.id===RC.sid})[0];if(!s&&c.students.length){s=c.students[0];RC.sid=s.id}return s||null}
+function rcData(c,sid,opt){
+  var rows=indTotals(c),me=rows.filter(function(r){return r.id===sid})[0];
+  if(!me)return null;
+  var list=exs(c),out=[],ex=0,mx=0;
+  list.forEach(function(e){
+    var v=e.scores&&e.scores[sid],t=0,k=0;
+    c.students.forEach(function(s){var z=e.scores&&e.scores[s.id];if(z!=null){t+=z;k++}});
+    mx+=e.max;if(v!=null)ex+=v;
+    out.push({t:e.title,d:e.date,m:e.max,v:v==null?null:v,a:k?r2(t/k):null});
+  });
+  return{name:me.name,group:me.group,school:c.school||'',cls:c.name,year:c.year||'',teacher:c.teacher||'',date:new Date(nowMs()).toLocaleDateString('fa-IR'),
+    rows:out,ex:r2(ex),mx:mx,pct:mx>0?Math.round(ex/mx*1000)/10:0,rank:me.rank,cnt:rows.length,adj:me.adj,total:me.total,opt:opt};
+}
+function rcPreview(d,opt){
+  var st='style="border:1px solid var(--line);padding:6px;text-align:center"';
+  var h='<div id="rccard" style="background:#fff;color:#14302a;border:2px solid #0f5c4d;border-radius:14px;overflow:hidden;margin-top:12px"><div style="background:#0f5c4d;color:#fff;padding:14px;text-align:center"><div style="font-size:1.1rem;font-weight:800">کارنامه</div><div>'+esc(d.school)+'</div><div>'+esc(d.cls)+(d.year?' - '+esc(d.year):'')+'</div></div><div style="padding:12px">';
+  h+='<div style="font-size:1.2rem;font-weight:800">'+esc(d.name)+'</div>'+(d.group?'<div style="color:#5d726b">گروه: '+esc(d.group)+'</div>':'');
+  h+='<div style="overflow-x:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:.95rem"><tr style="background:#e6f1ee"><th '+st+'>آزمون</th><th '+st+'>تاریخ</th><th '+st+'>نمره</th>'+(opt.avg?'<th '+st+'>میانگین کلاس</th>':'')+'</tr>';
+  d.rows.forEach(function(r){h+='<tr><td '+st+'>'+esc(r.t)+'</td><td '+st+'>'+esc(r.d)+'</td><td '+st+'>'+(r.v==null?'ثبت نشده':fn(r.v)+' از '+fn(r.m))+'</td>'+(opt.avg?'<td '+st+'>'+(r.a==null?'-':fn(r.a))+'</td>':'')+'</tr>'});
+  h+='</table></div><div style="margin-top:10px;line-height:2"><b>مجموع نمره: '+fn(d.ex)+' از '+fn(d.mx)+'</b> ('+fn(d.pct)+'٪)';
+  if(opt.rank)h+='<br>رتبه در کلاس: '+fa(d.rank)+' از '+fa(d.cnt);
+  if(opt.comp&&d.adj)h+='<br>تعدیل شایستگی: '+sgn(d.adj)+' - امتیاز نهایی لیگ فردی: '+fn(d.total);
+  h+='</div><div style="margin-top:8px;color:#5d726b;font-size:.85rem">آموزگار: '+esc(d.teacher)+' - تاریخ: '+esc(d.date)+'</div></div></div>';
+  return h;
+}
+function rcDraw(d,opt){
+  var W=900,rowH=60,top=290,M=40,cv=document.createElement('canvas');
+  var H=top+(d.rows.length+1)*rowH+(opt.rank?70:0)+(opt.comp&&d.adj?70:0)+230;
+  cv.width=W;cv.height=H;
+  var x=cv.getContext('2d'),F='"Vazirmatn",Tahoma,"Segoe UI","Noto Naskh Arabic",sans-serif';
+  x.direction='rtl';x.textBaseline='middle';
+  function T(s,xr,y,size,col,bold,al){x.font=(bold?'bold ':'')+size+'px '+F;x.fillStyle=col;x.textAlign=al||'right';x.fillText(pf(String(s)),xr,y)}
+  function fit(s,maxW,size,bold){x.font=(bold?'bold ':'')+size+'px '+F;s=pf(String(s));while(x.measureText(s).width>maxW&&s.length>3)s=s.slice(0,-2);return s}
+  x.fillStyle='#ffffff';x.fillRect(0,0,W,H);
+  x.fillStyle='#0f5c4d';x.fillRect(0,0,W,200);
+  T('کارنامه',W/2,45,44,'#ffffff',true,'center');
+  T(d.school,W/2,102,30,'#ffffff',false,'center');
+  T(d.cls+(d.year?' - '+d.year:''),W/2,150,28,'#ffffff',false,'center');
+  T(fit(d.name,W-2*M,40,true),W-M,240,40,'#14302a',true);
+  if(d.group)T('گروه: '+d.group,M+200,240,28,'#5d726b',false,'left');
+  var cw=opt.avg?[330,160,200,140]:[400,200,240],xr=W-M,i,y=top;
+  var heads=['آزمون','تاریخ','نمره'].concat(opt.avg?['میانگین کلاس']:[]);
+  x.fillStyle='#e6f1ee';x.fillRect(M,y-rowH/2,W-2*M,rowH);
+  var xx=xr;heads.forEach(function(hd,k){T(hd,xx-12,y,26,'#0f5c4d',true);xx-=cw[k]});
+  d.rows.forEach(function(r,ri){
+    y=top+(ri+1)*rowH;
+    if(ri%2===1){x.fillStyle='#f4f8f6';x.fillRect(M,y-rowH/2,W-2*M,rowH)}
+    var cells=[fit(r.t,cw[0]-24,26,false),r.d,r.v==null?'ثبت نشده':fn(r.v)+' از '+fn(r.m)].concat(opt.avg?[r.a==null?'-':fn(r.a)]:[]);
+    xx=xr;cells.forEach(function(cl,k){T(cl,xx-12,y,26,'#14302a',false);xx-=cw[k]});
+  });
+  x.strokeStyle='#c9d6d0';x.lineWidth=2;x.strokeRect(M,top-rowH/2,W-2*M,(d.rows.length+1)*rowH);
+  y=top+(d.rows.length+1)*rowH+50;
+  T('مجموع نمره: '+fn(d.ex)+' از '+fn(d.mx)+' ('+fn(d.pct)+'٪)',W-M,y,34,'#0f5c4d',true);
+  if(opt.rank){y+=70;T('رتبه در کلاس: '+fa(d.rank)+' از '+fa(d.cnt),W-M,y,30,'#14302a',false)}
+  if(opt.comp&&d.adj){y+=70;T('تعدیل شایستگی: '+sgn(d.adj)+' - امتیاز نهایی لیگ فردی: '+fn(d.total),W-M,y,28,'#14302a',false)}
+  y+=90;T('آموزگار: '+d.teacher,W-M,y,26,'#5d726b',false);T('تاریخ: '+d.date,M+150,y,26,'#5d726b',false,'left');
+  return cv;
+}
+function rcSave(c,d,opt,idx){
+  var cv=rcDraw(d,opt);
+  cv.toBlob(function(b){
+    if(!b){note('ساخت عکس ممکن نشد. از صفحه کارنامه اسکرین‌شات بگیرید.');return}
+    var name='karname-'+(idx+1)+'.png',f=null;
+    try{f=new File([b],name,{type:'image/png'})}catch(e){f=null}
+    if(f&&navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'کارنامه '+d.name}).catch(function(){});return}
+    var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u)},2000);
+    note('عکس دانلود شد. اگر دانلود نشد، روی عکس کارنامه نگه دارید و گزینه ذخیره را بزنید.');
+  },'image/png');
+}
+function vRcard(){
+  var c=active(),h=back()+'<h2>کارنامه دانش‌آموزان 🧾</h2><div id="live">'+msgBox()+'</div>';
+  if(!c)return h+'<div class="empty"><div class="ic">🏫</div><p>اول یک کلاس بسازید یا انتخاب کنید.</p><button class="btn" data-act="go" data-v="classes">رفتن به کلاس‌ها</button></div>';
+  if(!c.students.length)return h+'<div class="empty"><p>هنوز دانش‌آموزی ثبت نشده است.</p><button class="btn" data-act="go" data-v="students">رفتن به دانش‌آموزان</button></div>';
+  if(!exs(c).length)return h+'<div class="empty"><p>هنوز آزمونی ثبت نشده است.</p><button class="btn" data-act="go" data-v="exams">رفتن به ثبت آزمون</button></div>';
+  var s=rcStudent(c),opt={rank:RC.rank,avg:RC.avg,comp:RC.comp},d=rcData(c,s.id,opt);
+  h+='<div class="card"><label for="rcs">دانش‌آموز</label><select id="rcs" class="fs" data-act="rcStu">'+c.students.map(function(x,i){return '<option value="'+x.id+'"'+(x.id===s.id?' selected':'')+'>'+fa(i+1)+'. '+esc(x.name)+'</option>'}).join('')+'</select>';
+  h+='<div class="row" style="margin-bottom:8px"><button class="btn ghost" data-act="rcNav" data-id="-1">▶ قبلی</button><button class="btn ghost" data-act="rcNav" data-id="1">بعدی ◀</button></div>';
+  h+='<label><input type="checkbox" data-act="rcOpt" data-k="rank"'+(RC.rank?' checked':'')+' style="width:auto;margin:0 6px"> نمایش رتبه در کلاس</label><br><label><input type="checkbox" data-act="rcOpt" data-k="avg"'+(RC.avg?' checked':'')+' style="width:auto;margin:0 6px"> نمایش میانگین کلاس در هر آزمون</label><br><label><input type="checkbox" data-act="rcOpt" data-k="comp"'+(RC.comp?' checked':'')+' style="width:auto;margin:0 6px"> نمایش تعدیل شایستگی (اگر وجود داشته باشد)</label>';
+  h+='<div class="row" style="margin-top:10px"><button class="btn" data-act="rcImg">ساخت عکس کارنامه 📷</button><button class="btn ghost" data-act="rcShare">اشتراک‌گذاری یا ذخیره عکس</button></div><p class="muted">می‌توانید از همین صفحه هم اسکرین‌شات بگیرید.</p></div>';
+  h+=rcPreview(d,opt);
+  if(RC.img)h+='<div class="card" style="text-align:center"><b>عکس کارنامه</b><p class="muted">روی عکس نگه دارید و گزینه ذخیره را بزنید، یا دکمه اشتراک‌گذاری را بزنید.</p><img alt="عکس کارنامه '+esc(d.name)+'" src="'+RC.img+'" style="max-width:100%;border-radius:10px"></div>';
+  return h;
+}
+function rcOpt(){return{rank:RC.rank,avg:RC.avg,comp:RC.comp}}
 function vPh(t){return back()+'<div class="empty"><h2>'+esc(t)+'</h2><p>این بخش در مرحله‌های بعدی ساخته می‌شود.</p></div>'}
 function render(keep){var y=window.scrollY;
-  var h=view==='home'?vHome():view==='classes'?vClasses():view==='students'?vStudents():view==='groups'?vGroups():view==='backup'?vBackup():view==='exams'?vExams():view==='leagueInd'?vLeagueInd():view==='leagueGrp'?vLeagueGrp():view==='honors'?vHonors():view==='settings'?vSettings():view==='practice'?vPractice():view==='lottery'?vLottery():view==='gquiz'?vGQuiz():view==='gexam'?vGExam():view==='comp'?vComp():vPh(view.slice(3));
+  var h=view==='home'?vHome():view==='classes'?vClasses():view==='students'?vStudents():view==='groups'?vGroups():view==='backup'?vBackup():view==='exams'?vExams():view==='leagueInd'?vLeagueInd():view==='leagueGrp'?vLeagueGrp():view==='honors'?vHonors():view==='settings'?vSettings():view==='practice'?vPractice():view==='lottery'?vLottery():view==='gquiz'?vGQuiz():view==='gexam'?vGExam():view==='comp'?vComp():view==='rcard'?vRcard():vPh(view.slice(3));
   document.getElementById('app').innerHTML=h;window.scrollTo(0,keep?y:0);
   if(focusId){var f=document.getElementById(focusId);if(f)f.focus();focusId=null}
 }
@@ -20,7 +107,7 @@ function hasName(c,n){return c.students.some(function(s){return s.name===n})}
 document.addEventListener('click',function(e){
   var t=e.target.closest('[data-act]');if(!t)return;
   var a=t.dataset.act,id=t.dataset.id,c=active();
-  if(a==='go'){view=t.dataset.v;armed=null;curExam=null;xferId=null;pr=null;GE.cur=null;CP.open=null;render()}
+  if(a==='go'){view=t.dataset.v;armed=null;curExam=null;xferId=null;pr=null;GE.cur=null;CP.open=null;RC.img='';render()}
   else if(a==='pick'){db.activeId=id;save();msg='کلاس فعال تغییر کرد.';render()}
   else if(a==='delClass'){
     if(!arm(t,'c'+id,'مطمئنید؟ دوباره بزنید'))return;
@@ -210,109 +297,3 @@ document.addEventListener('click',function(e){
   else if(a==='ldraw'){
     ltRead();
     var pool=ltPool(),k=LT.count;
-    if(!pool.length){LT.msg=LT.norep&&LT.used.length?'همه شماره‌ها قبلاً انتخاب شده‌اند. «پاک کردن سابقه» را بزنید.':'شماره‌ای برای انتخاب وجود ندارد. «از» و «تا» را بررسی کنید.';LT.last=[];render(true);return}
-    var got=ltPick(pool,k);
-    if(got.length<k)LT.msg='فقط '+fa(got.length)+' شماره باقی مانده بود و همه آن‌ها انتخاب شدند.';
-    LT.last=got;got.forEach(function(x){if(LT.used.indexOf(x)<0)LT.used.push(x)});render(true);
-  }
-  else if(a==='lreset'){ltRead();LT.used=[];LT.last=[];LT.msg='سابقه پاک شد. همه شماره‌ها دوباره شرکت می‌کنند.';render(true)}
-  else if(a==='gexAdd'&&c){
-    var gt=val('gt'),gm=num(val('gm')),gd=val('gd');
-    if(!gt)note('عنوان آزمون را بنویسید.');
-    else if(gm===null||isNaN(gm)||gm<=0||gm>1000)note('نمره کل آزمون را درست بنویسید (عددی بزرگ‌تر از صفر).');
-    else if((c.gexams||[]).some(function(x){return x.title===gt&&x.date===gd}))note('آزمونی با همین عنوان و تاریخ قبلاً ثبت شده است.');
-    else{if(!c.gexams)c.gexams=[];var ng={id:uid('y'),title:gt,date:gd,max:gm,scores:{}};c.gexams.push(ng);save();GE.cur=ng.id;msg='آزمون گروهی ساخته شد. حالا نمره هر گروه را وارد کنید.';render()}
-  }
-  else if(a==='gexOpen'){GE.cur=id;render()}
-  else if(a==='gexBack'){GE.cur=null;render()}
-  else if(a==='gexEdit'&&c){
-    var ge1=gexFind(c,GE.cur);if(!ge1)return;
-    var et=val('gt'),em=num(val('gm')),ed=val('gd'),hi=0;
-    Object.keys(ge1.scores||{}).forEach(function(k){if(ge1.scores[k]>hi)hi=ge1.scores[k]});
-    if(!et)note('عنوان آزمون را بنویسید.');
-    else if(em===null||isNaN(em)||em<=0||em>1000)note('نمره کل آزمون را درست بنویسید.');
-    else if(em<hi)note('نمره کل نمی‌تواند از بالاترین نمره ثبت‌شده ('+fn(hi)+') کمتر باشد.');
-    else{ge1.title=et;ge1.max=em;ge1.date=ed;save();msg='مشخصات آزمون ذخیره شد.';render(true)}
-  }
-  else if(a==='gexSave'&&c){
-    var ge2=gexFind(c,GE.cur);if(!ge2)return;
-    var badg=[],ns2={};
-    gexGroups(c).forEach(function(g){var el=document.getElementById('ge_'+g.id);if(!el)return;var v=num(el.value);if(v===null)return;if(isNaN(v)||v<0||v>ge2.max)badg.push(g.name);else ns2[g.id]=v});
-    if(badg.length){note('نمره نامعتبر برای گروه: '+badg.join('، ')+'. نمره باید بین ۰ و '+fn(ge2.max)+' باشد. چیزی ذخیره نشد.');return}
-    ge2.scores=ns2;save();msg='نمره‌های گروه‌ها ذخیره شد.';render(true);
-  }
-  else if(a==='gexDel'&&c){
-    if(!arm(t,'gx'+id,'مطمئنید؟ دوباره بزنید'))return;
-    armed=null;c.gexams=(c.gexams||[]).filter(function(x){return x.id!==id});if(GE.cur===id)GE.cur=null;save();msg='آزمون گروهی حذف شد.';render(true);
-  }
-  else if(a==='cpTab'){CP.tab=id;CP.open=null;render()}
-  else if(a==='cpArea'){CP.text=val('cpt');CP.area=id;render(true)}
-  else if(a==='cpOpen'){CP.open=id;render()}
-  else if(a==='cpCloseOpen'){CP.open=null;render(true)}
-  else if(a==='cpAdd'&&c){
-    var cs=t.dataset.s,cst=c.students.filter(function(x){return x.id===id})[0];
-    if(!cst||(cs!=='+'&&cs!=='-'))return;
-    if(!c.comp)c.comp=[];
-    var ce={id:uid('p'),sid:id,area:CP.area,sign:cs,text:val('cpt').slice(0,300),ts:new Date(nowMs()).toISOString()};
-    c.comp.push(ce);CP.last={k:'c',id:ce.id};CP.text='';save();
-    var cng=compNeg(c,id,nowMs());
-    msg=(cs==='+'?'مثبت':'منفی')+' برای «'+cst.name+'» ثبت شد ('+AREAS[CP.area]+').'+(cs==='-'?' منفی‌های فعال او: '+fa(cng.act)+(cng.pen?' - کسر شایستگی اعمال شد.':''):'');
-    render(true);
-  }
-  else if(a==='twAdd'&&c){
-    var ts2=t.dataset.s,tg=grp(c).filter(function(x){return x.id===id})[0];
-    if(!tg||(ts2!=='+'&&ts2!=='-'))return;
-    if(!c.twork)c.twork=[];
-    var te={id:uid('t'),gid:id,sign:ts2,text:val('cpt').slice(0,300),ts:new Date(nowMs()).toISOString()};
-    c.twork.push(te);CP.last={k:'t',id:te.id};CP.text='';save();
-    msg=(ts2==='+'?'مثبت':'منفی')+' برای گروه «'+tg.name+'» ثبت شد.';render(true);
-  }
-  else if(a==='cpUndo'&&c&&CP.last){
-    var lk=CP.last;if(lk.k==='c')c.comp=(c.comp||[]).filter(function(x){return x.id!==lk.id});else c.twork=(c.twork||[]).filter(function(x){return x.id!==lk.id});
-    CP.last=null;save();msg='آخرین ثبت برگردانده شد.';render(true);
-  }
-  else if(a==='cpDel'&&c){if(!arm(t,'pd'+id,'مطمئنید؟ دوباره بزنید'))return;armed=null;c.comp=(c.comp||[]).filter(function(x){return x.id!==id});if(CP.last&&CP.last.id===id)CP.last=null;save();msg='رفتار حذف شد.';render(true)}
-  else if(a==='twDel'&&c){if(!arm(t,'td'+id,'مطمئنید؟ دوباره بزنید'))return;armed=null;c.twork=(c.twork||[]).filter(function(x){return x.id!==id});if(CP.last&&CP.last.id===id)CP.last=null;save();msg='رفتار گروه حذف شد.';render(true)}
-  else if(a==='twClose'&&c){
-    if(!arm(t,'twc','مطمئنید؟ دوباره بزنید'))return;
-    armed=null;var tk=CP.month,tres={};
-    gexGroups(c).forEach(function(g2){tres[g2.id]=twDelta(c,g2.id,tk)});
-    if(!c.twclose)c.twclose={};c.twclose[tk]=tres;save();msg='نتیجه کار گروهی '+mName(tk)+' در لیگ گروهی ثبت شد.';render(true);
-  }
-  else if(a==='exSave'&&c){
-    var exk=CP.month,exids=[];
-    c.students.forEach(function(s2){var e=document.getElementById('ex_'+s2.id);if(e&&e.checked)exids.push(s2.id)});
-    if(!exids.length){note('حداقل یک نفر را انتخاب کنید.');return}
-    if(exids.length>3){note('در هر ماه حداکثر ۳ نفر قابل ثبت است. تعداد انتخاب‌شده: '+fa(exids.length));return}
-    if((c.exem||{})[exk]&&!arm(t,'exs','مطمئنید؟ فهرست قبلی عوض می‌شود'))return;
-    armed=null;if(!c.exem)c.exem={};c.exem[exk]=exids;save();
-    msg='نمونه‌های '+mName(exk)+' ثبت شد: '+exids.map(function(x){return gqName(c,x)}).join('، ')+'. هر نفر ۱ نمره فردی و ۱ امتیاز برای گروهش گرفت.';render(true);
-  }
-  else if(a==='exDel'&&c){if(!arm(t,'xd'+id,'مطمئنید؟ دوباره بزنید'))return;armed=null;if(c.exem)delete c.exem[id];save();msg='نمونه‌های آن ماه حذف شد و امتیازشان برداشته شد.';render(true)}
-  else if(a==='exCopy'&&c&&c.exem&&c.exem[id]){copyText(exText(c,id)).then(function(ok){note(ok?'متن کپی شد ✅':'کپی خودکار ممکن نشد.')})}
-  else if(a==='export'){doExport()}
-  else if(a==='showText'){showText=encodeBackup();msg='متن پشتیبان در کادر پایین است.';render(true)}
-  else if(a==='checkText'){takeText((document.getElementById('pt').value||'').trim())}
-  else if(a==='restoreCancel'){pending=null;msg='بازیابی لغو شد.';render(true)}
-  else if(a==='restoreMerge'&&pending){
-    var added=0;pending.data.classes.forEach(function(k){if(!db.classes.some(function(x){return x.id===k.id})){if(!k.groups)k.groups=[];db.classes.push(k);added++}});
-    if(!db.activeId)db.activeId=firstActive();
-    save();pending=null;msg=fa(added)+' کلاس جدید اضافه شد. کلاس‌های موجود دست‌نخورده ماندند.';render(true);
-  }
-  else if(a==='restoreReplace'&&pending){
-    if(!arm(t,'rep','مطمئنید؟ دوباره بزنید'))return;
-    armed=null;
-    try{localStorage.setItem(KEY+'_prev',JSON.stringify(db))}catch(e){}
-    var nd=pending.data;nd.classes.forEach(function(k){if(!k.groups)k.groups=[]});
-    db={v:1,classes:nd.classes,activeId:nd.classes.some(function(k){return k.id===nd.activeId})?nd.activeId:(function(){var f=nd.classes.filter(function(k){return !k.archived})[0];return f?f.id:null})()};
-    save();pending=null;msg='اطلاعات بازیابی شد.';render(true);
-  }
-  else if(a==='delStu'&&c){
-    if(!arm(t,'s'+id,'مطمئنید؟'))return;
-    armed=null;c.students=c.students.filter(function(s){return s.id!==id});save();msg='دانش‌آموز حذف شد.';render();
-  }
-});
-document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target&&e.target.id==='pa'){var b=document.querySelector('[data-act="pcheck"]');if(b)b.click()}});
-document.addEventListener('change',function(e){
-  var t=e.target;if(!t.dataset)return;
-  if(t.dataset.act==='cpMonth'){CP.month=t.value;render(true);return}
